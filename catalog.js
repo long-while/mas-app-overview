@@ -41,7 +41,7 @@
   function section(title, count) {
     const s = el('section', 'catalog__section');
     const h = el('h2', 'catalog__h2', title);
-    if (count !== undefined) h.append(el('small', '', String(count)));
+    if (count !== undefined) h.append(el('small', '', count));
     s.append(h);
     return s;
   }
@@ -81,7 +81,7 @@
   }
 
   function iconTile(ctx, svgs, item) {
-    const tile = el('article', 'icon-tile');
+    const tile = el('article', item.files.length > 1 ? 'icon-tile icon-tile--pair' : 'icon-tile');
     const glyphs = el('div', 'icon-tile__glyphs');
     glyphs.style.cssText = 'background:var(--tile-bg);color:var(--tile-fg)';
     const pair = item.files.length > 1;
@@ -114,7 +114,9 @@
     return seg;
   }
 
-  function filterTiles(root, q, meta, total) {
+  // A tile is one prototype key (one SVG, or its outline + filled pair); counts are in tiles, the toolbar also
+  // names the SVG file total once. Files without a key get a tile of their own.
+  function filterTiles(root, q, meta, summary) {
     const needle = norm(q);
     let shown = 0;
     root.querySelectorAll('.catalog__section').forEach(sec => {
@@ -128,7 +130,7 @@
       sec.hidden = n === 0;
       shown += n;
     });
-    meta.textContent = needle ? `${shown}개 찾음 / ${total}개` : `${total}개 타일`;
+    meta.textContent = needle ? `${shown}칸 찾음 · ${summary}` : summary;
     root.querySelector('.catalog__empty').hidden = shown > 0;
   }
 
@@ -139,18 +141,17 @@
     current = { root, kind: 'icons', ground: themeGround(tokens) };
     const bar = el('div', 'catalog__toolbar');
     const meta = el('span', 'catalog__meta');
-    const files = Object.keys(icons.svgs).length;
-    const refilter = () => filterTiles(root, ctx.state.q, meta, total);
+    const keys = icons.sections.reduce((n, s) => n + s.items.filter(item => item.key).length, 0);
+    const summary = `SVG 파일 ${Object.keys(icons.svgs).length}개 · 프로토타입 키 ${keys}개`;
+    const refilter = () => filterTiles(root, ctx.state.q, meta, summary);
     bar.append(searchBox(ctx, '키 · 이름 · 파일 이름으로 찾기 ( / )', refilter), sizeSeg(ctx, root), meta,
-      el('span', 'catalog__hint', `SVG ${files}개 · 아이콘을 누르면 파일 이름 복사`));
+      el('span', 'catalog__hint', '한 칸 = 프로토타입 키 하나 (기본 · 채움 짝은 한 칸) · 아이콘을 누르면 파일 이름 복사'));
     root.append(bar);
-    let total = 0;
     for (const s of icons.sections) {
-      const sec = section(s.title, s.items.length);
+      const sec = section(s.title, `${s.items.length}칸`);
       sec.dataset.title = s.title;
       const grid = el('div', 'icons');
       s.items.forEach(item => grid.append(iconTile(ctx, icons.svgs, item)));
-      total += s.items.length;
       sec.append(grid);
       root.append(sec);
     }
@@ -248,7 +249,7 @@
   }
 
   function avatarSection(ctx, avatars) {
-    const sec = section(avatars.title, avatars.pairs.length);
+    const sec = section(avatars.title, `${avatars.pairs.length}쌍`);
     const grid = el('div', 'avatars');
     for (const p of avatars.pairs) {
       const card = el('div', 'avatar-card');
@@ -265,7 +266,7 @@
   }
 
   function cssSection(ctx, css) {
-    const sec = section(css.title, css.vars.length);
+    const sec = section(css.title, `${css.vars.length}개`);
     const list = el('div', 'css-list');
     const scope = s => s === ':root' ? '공통' : (s === '.is-dark' ? '다크 테마' : s);
     for (const v of css.vars) {
@@ -284,7 +285,12 @@
   function colorsHead() {
     const head = el('div', 'ct__head');
     head.append(el('div', 'ct__col', '토큰 · 이름 (Swift · Kotlin · CSS)'));
-    THEMES.forEach((t, i) => { const c = el('div', 'ct__col', t); c.dataset.col = i; head.append(c); });
+    THEMES.forEach((t, i) => {
+      const c = el('div', 'ct__col');
+      c.dataset.col = i;
+      c.append(el('span', '', t), el('span', 'ct__picked', '선택됨'));
+      head.append(c);
+    });
     return head;
   }
 
@@ -293,8 +299,12 @@
     const legend = el('div', 'legend');
     const diffs = all.filter(t => t.diff).length;
     legend.append(el('span', '', `테마 토큰 ${all.length}개 · 고정 색 ${tokens.fixed.reduce((n, g) => n + g.tokens.length, 0)}개`));
-    const warn = el('span', 'badge badge--warn', 'iOS ≠ Android');
-    legend.append(warn, el('span', '', diffs ? `${diffs}개 토큰이 플랫폼마다 다름` : '지금은 모든 토큰이 두 플랫폼에서 같습니다'));
+    // The iOS ≠ Android badge is explained only when at least one token carries it.
+    if (!diffs) {
+      legend.append(el('span', '', '모든 색이 iOS와 Android에서 같습니다'));
+      return legend;
+    }
+    legend.append(el('span', 'badge badge--warn', 'iOS ≠ Android'), el('span', '', `${diffs}개 토큰은 플랫폼마다 값이 다릅니다`));
     return legend;
   }
 
@@ -315,7 +325,7 @@
   }
 
   function tokenSection(ctx, group) {
-    const sec = section(group.title, group.tokens.length);
+    const sec = section(group.title, `${group.tokens.length}개`);
     sec.dataset.title = group.title;
     group.tokens.forEach(t => sec.append(tokenRow(ctx, t)));
     return sec;

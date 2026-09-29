@@ -7,8 +7,9 @@
 </head>
 <body>
 <x-dc>
-<helmet><style>html,body{margin:0;background:transparent}</style></helmet>
-<dc-import name="NaldaAndroid" screen="{{ screen }}" theme="{{ theme }}" textSize="{{ textSize }}" hint-size="412px,922px" style="width:412px;height:922px"></dc-import>
+<helmet><style>html,body{margin:0;background:transparent!important;overflow:hidden}</style></helmet>
+<dc-import name="NaldaAndroid" screen="{{ screen }}" theme="{{ theme }}" textSize="{{ textSize }}"
+  hint-size="412px,922px" style="width:412px;height:922px"></dc-import>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{}">
 class Component extends DCLogic {

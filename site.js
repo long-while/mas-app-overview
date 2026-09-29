@@ -1,29 +1,42 @@
-// Nalda preview shell: state in the URL, top bar, and the four views (all screens, one screen, icons, colors).
+// Nalda preview shell: state in the URL, the fixed top bar, screen ordering, the one-screen view and view routing.
 (() => {
   'use strict';
 
-  const DEFAULTS = { view: 'all', p: 'ios', theme: 'White', size: 'auto', screen: 'home', sec: '', q: '', isz: '24' };
-  const FRAME_W = 412, FRAME_H = 922;
-  const OVERVIEW_MIN_W = 540;
-  const TOUCH_RAIL = window.matchMedia('(pointer: coarse), (max-width: 720px)');
+  const DEFAULTS = { view: 'cover', p: 'ios', theme: 'White', size: 'auto', screen: 'home', sec: '', q: '', isz: '24' };
+  const VIEWS = ['cover', 'flows', 'all', 'screen', 'icons', 'colors', 'appendix'];
+  const SEARCH_VIEWS = ['all', 'icons', 'colors'];
+  const BOTH_ONLY_SCREEN = '나란히는 한 화면 보기와 소개에서만 쓸 수 있어요';
+  // Why a top-bar option does nothing in a view: { view: { field: reason } }; 'both' covers the 나란히 button only.
+  const OFF = {
+    flows: { both: BOTH_ONLY_SCREEN },
+    all: { both: BOTH_ONLY_SCREEN },
+    icons: { p: '아이콘은 iOS와 Android가 같은 SVG 파일을 써요', size: '글자 크기는 화면 미리보기에만 적용돼요' },
+    colors: { p: '색상 표는 iOS와 Android 값을 한 줄에 함께 보여줘요', size: '글자 크기는 화면 미리보기에만 적용돼요' },
+    appendix: {
+      p: '부록은 글만 있어서 플랫폼을 고를 필요가 없어요',
+      theme: '부록은 글만 있어서 테마를 고를 필요가 없어요',
+      size: '부록은 글만 있어서 글자 크기를 고를 필요가 없어요',
+    },
+  };
+  const F = window.NaldaFrames;
   const $ = id => document.getElementById(id);
   const q = new URLSearchParams(location.search);
   const state = Object.fromEntries(Object.entries(DEFAULTS).map(([k, v]) => [k, q.get(k) || v]));
-  const data = { screens: [], sections: { ios: [], android: [] } };
+  const data = { screens: [], byKey: new Map(), sections: [], content: null, flowsOf: new Map() };
   let cleanup = () => {};
-  let refit = null;
+  let onResize = null;
 
-  const platforms = () => state.p === 'both' ? ['ios', 'android'] : [state.p];
-  const textSize = p => state.size !== 'auto' ? state.size : (p === 'ios' ? '작게 보기' : '기본');
-  const viewUrl = p => `view-${p}.dc.html?` + new URLSearchParams({ screen: state.screen, theme: state.theme, textSize: textSize(p) });
-  const overviewUrl = p => `overview-${p}.dc.html?` + new URLSearchParams({ theme: state.theme });
+  if (!VIEWS.includes(state.view)) state.view = DEFAULTS.view;
 
   function el(tag, cls, text) {
     const node = document.createElement(tag);
     if (cls) node.className = cls;
-    if (text !== undefined) node.textContent = text;
+    if (text !== undefined && text !== null) node.textContent = text;
     return node;
   }
+
+  const platforms = () => state.p === 'both' ? ['ios', 'android'] : [state.p];
+  const platformName = p => p === 'ios' ? 'iOS' : 'Android';
 
   function syncUrl() {
     const out = new URLSearchParams();
@@ -33,25 +46,52 @@
 
   // Keys that only mean something in one view are dropped when leaving it, so shared links stay short.
   function normalizeState() {
-    if (state.view === 'all' && state.p === 'both') state.p = 'ios';
-    if (state.view !== 'all') state.sec = '';
-    if (state.view !== 'icons' && state.view !== 'colors') state.q = '';
+    if (OFF[state.view]?.both && state.p === 'both') state.p = 'ios';
+    if (state.view !== 'all' && state.view !== 'flows') state.sec = '';
+    if (!SEARCH_VIEWS.includes(state.view)) state.q = '';
     if (state.view !== 'icons') state.isz = DEFAULTS.isz;
+    if (!data.byKey.has(state.screen) && data.screens.length) state.screen = data.screens[0].key;
+  }
+
+  // ---------- Top bar ----------
+
+  function markOff(button, reason, whyId) {
+    button.setAttribute('aria-disabled', String(!!reason));
+    if (reason) {
+      button.title = reason;
+      button.setAttribute('aria-describedby', whyId);
+    } else {
+      button.removeAttribute('title');
+      button.removeAttribute('aria-describedby');
+    }
   }
 
   function syncControls() {
     normalizeState();
+    const off = OFF[state.view] || {};
     document.querySelectorAll('.bar .seg').forEach(seg => {
-      seg.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(state[seg.dataset.key] === b.dataset.v)));
+      const key = seg.dataset.key;
+      const why = $(`why-${key}`);
+      const fieldReason = off[key] || '';
+      seg.querySelectorAll('button').forEach(b => {
+        b.setAttribute('aria-pressed', String(state[key] === b.dataset.v));
+        if (!why) return;
+        const reason = fieldReason || (key === 'p' && b.dataset.v === 'both' ? off.both || '' : '');
+        markOff(b, reason, why.id);
+      });
+      if (why) why.textContent = fieldReason || (key === 'p' ? off.both || '' : '');
+      seg.closest('.field').classList.toggle('is-off', !!fieldReason);
     });
-    document.querySelector('[data-key="p"] [data-v="both"]').disabled = state.view === 'all';
-    $('platformField').hidden = state.view === 'icons' || state.view === 'colors';
-    $('picker').hidden = state.view !== 'screen';
-    $('sizeField').hidden = state.view !== 'screen';
-    $('screen').value = state.screen;
   }
 
-  // ---------- Toast + clipboard (shared with catalog.js) ----------
+  function trackBarHeight() {
+    const bar = $('bar');
+    const set = () => document.documentElement.style.setProperty('--bar-h', bar.offsetHeight + 'px');
+    new ResizeObserver(set).observe(bar);
+    set();
+  }
+
+  // ---------- Toast + clipboard ----------
 
   let toastT;
   function toast(message) {
@@ -78,328 +118,263 @@
     else fallback();
   }
 
-  // ---------- One screen ----------
+  // ---------- Screen data ----------
 
-  function fitScale() {
-    const stage = $('stage');
-    const n = platforms().length;
-    const availW = (stage.clientWidth - 32 - (n - 1) * 24) / n;
-    const availH = stage.clientHeight - 48 - 28;
-    return Math.min(1, availW / FRAME_W, Math.max(availH, 480) / FRAME_H);
+  const byCode = (a, b) => a.code.localeCompare(b.code, 'en', { numeric: true });
+
+  // Section order from content.json; inside a section, representatives by code, each followed by its states.
+  function orderScreens(screens, sections) {
+    const ordered = [];
+    for (const sec of sections) {
+      const own = screens.filter(s => s.section === sec.id);
+      const keys = new Set(own.map(s => s.key));
+      const isChild = s => s.stateOf && keys.has(s.stateOf);
+      for (const rep of own.filter(s => !isChild(s)).sort(byCode)) {
+        ordered.push(rep);
+        ordered.push(...own.filter(s => s.stateOf === rep.key).sort(byCode));
+      }
+      const placed = new Set(ordered.map(s => s.key));
+      ordered.push(...own.filter(s => !placed.has(s.key)).sort(byCode));
+    }
+    return ordered;
   }
 
-  function frame(src, title) {
-    const f = document.createElement('iframe');
-    f.src = src;
-    f.title = title;
-    f.addEventListener('load', () => { $('loading').hidden = true; });
-    return f;
+  function loadData(screens, content) {
+    data.content = content;
+    data.sections = content.sections;
+    data.screens = orderScreens(screens, content.sections);
+    data.byKey = new Map(data.screens.map(s => [s.key, s]));
+    for (const flow of content.flows) {
+      flow.steps.forEach((key, i) => {
+        if (!data.flowsOf.has(key)) data.flowsOf.set(key, []);
+        data.flowsOf.get(key).push({ flow, step: i + 1 });
+      });
+    }
+  }
+
+  // ---------- One screen ----------
+
+  const SIDE_W = 320;
+
+  function fitScale(stage) {
+    const n = platforms().length;
+    const wide = innerWidth > 960;
+    const availW = (stage.clientWidth - 48 - (wide ? SIDE_W + 32 : 0) - (n - 1) * 24) / n;
+    const availH = innerHeight - stage.getBoundingClientRect().top - 48 - 28;
+    return Math.max(0.3, Math.min(1, availW / F.FRAME_W, Math.max(availH, 420) / F.FRAME_H));
+  }
+
+  function screenPicker() {
+    const wrap = el('div', 'picker');
+    const prev = el('button', 'icon-btn', '‹');
+    prev.setAttribute('aria-label', '이전 화면 (←)');
+    prev.title = '이전 화면 (←)';
+    const next = el('button', 'icon-btn', '›');
+    next.setAttribute('aria-label', '다음 화면 (→)');
+    next.title = '다음 화면 (→)';
+    const sel = el('select');
+    sel.setAttribute('aria-label', '화면 고르기');
+    for (const sec of data.sections) {
+      const og = document.createElement('optgroup');
+      og.label = `${sec.id} · ${sec.name}`;
+      for (const s of data.screens.filter(x => x.section === sec.id)) og.append(new Option(`${s.code} · ${s.title}`, s.key));
+      sel.append(og);
+    }
+    sel.value = state.screen;
+    sel.addEventListener('change', () => go({ screen: sel.value }));
+    prev.addEventListener('click', () => step(-1));
+    next.addEventListener('click', () => step(1));
+    wrap.append(prev, sel, next);
+    return wrap;
+  }
+
+  function screenLink(s, prefix) {
+    const b = el('button', 'link');
+    b.append(el('span', 'code', s.code), document.createTextNode(` ${prefix || ''}${s.title}`));
+    b.addEventListener('click', () => go({ screen: s.key }));
+    return b;
+  }
+
+  function screenInfo(s) {
+    const side = el('aside', 'one__side');
+    side.append(screenPicker());
+    const head = el('div', 'one__head');
+    const meta = el('div', 'one__meta');
+    meta.append(el('span', 'code code--lg', s.code), el('span', 'tag', s.since));
+    if (s.stateOf) meta.append(el('span', 'tag tag--state', '상태'));
+    meta.append(el('span', 'one__old', `옛 번호 ${s.id} · ${s.key}`));
+    head.append(meta, el('h1', 'one__title', s.title));
+    side.append(head);
+    if (s.detail) side.append(el('p', 'one__detail', s.detail));
+    side.append(...screenRelations(s));
+    return side;
+  }
+
+  function relationBlock(title, nodes) {
+    const box = el('div', 'one__rel');
+    box.append(el('h2', 'one__h2', title));
+    const list = el('ul', 'one__list');
+    nodes.forEach(n => { const li = el('li'); li.append(n); list.append(li); });
+    box.append(list);
+    return box;
+  }
+
+  function screenRelations(s) {
+    const blocks = [];
+    const parent = s.stateOf && data.byKey.get(s.stateOf);
+    if (parent) blocks.push(relationBlock('이 상태의 기본 화면', [screenLink(parent)]));
+    const kids = data.screens.filter(x => x.stateOf === s.key);
+    if (kids.length) blocks.push(relationBlock(`상태 ${kids.length}개`, kids.map(k => screenLink(k))));
+    const flows = data.flowsOf.get(s.key) || [];
+    if (flows.length) {
+      blocks.push(relationBlock('핵심 흐름', flows.map(({ flow, step: n }) => {
+        const b = el('button', 'link', `${flow.title} · ${n}단계`);
+        b.addEventListener('click', () => go({ view: 'flows', sec: flow.id }));
+        return b;
+      })));
+    }
+    const back = el('button', 'link link--muted', '전체 화면에서 이 화면 찾기');
+    back.addEventListener('click', () => go({ view: 'all', sec: s.section, q: '' }, { focusKey: s.key }));
+    blocks.push(back);
+    return blocks;
   }
 
   function renderScreen(stage) {
     stage.className = 'stage stage--screen';
-    const s = fitScale();
+    const s = data.byKey.get(state.screen);
+    const phones = el('div', 'one__phones');
+    const apply = () => phones.style.setProperty('--scale', fitScale(stage).toFixed(3));
     for (const p of platforms()) {
-      const box = el('div', 'phone__box');
-      box.style.width = FRAME_W * s + 'px';
-      box.style.height = FRAME_H * s + 'px';
-      const f = frame(viewUrl(p), `Nalda ${p === 'ios' ? 'iOS' : 'Android'} 화면`);
-      f.style.transform = `scale(${s})`;
-      box.append(f);
-      const wrap = el('div', 'phone');
-      wrap.append(el('div', 'phone__label', p === 'ios' ? 'iOS' : 'Android'), box);
-      stage.append(wrap);
+      const box = F.phone(F.frameUrl(p, s.key, state.theme, state.size), `${s.code} ${s.title} — ${platformName(p)}`);
+      const wrap = el('figure', 'one__phone');
+      wrap.append(box, el('figcaption', 'one__label', platformName(p)));
+      phones.append(wrap);
+      F.mountNow(box).then(done);
     }
+    stage.append(screenInfo(s), phones);
+    apply();
+    onResize = apply;
   }
 
   function step(delta) {
     const list = data.screens;
     const i = list.findIndex(s => s.key === state.screen);
     const next = list[(i + delta + list.length) % list.length];
-    if (next) { state.screen = next.key; render(); }
-  }
-
-  // ---------- All screens (overview) ----------
-
-  function overviewDoc(f) {
-    try { return f.contentDocument; } catch { return null; }
-  }
-
-  // Section headings are the 18px bold spans the overview renders from its GROUPS titles.
-  function findSections(doc, titles) {
-    const found = new Map();
-    if (!doc) return found;
-    for (const span of doc.querySelectorAll('span')) {
-      if (span.style.fontSize !== '18px') continue;
-      const title = span.textContent.trim();
-      if (titles.includes(title) && !found.has(title)) found.set(title, span.parentElement.parentElement);
-    }
-    return found;
-  }
-
-  function buildNav(list, onPick, onClose) {
-    const nav = el('nav', 'ov-nav');
-    nav.setAttribute('aria-label', '화면 묶음');
-    const head = el('div', 'ov-nav__head');
-    const close = el('button', 'icon-btn ov-nav__close', '×');
-    close.setAttribute('aria-label', '목차 닫기');
-    close.addEventListener('click', onClose);
-    head.append(el('span', 'ov-nav__title', `화면 묶음 ${list.length}`), close);
-    const ul = el('ul', 'ov-nav__list');
-    for (const g of list) {
-      const li = el('li');
-      const b = el('button', 'ov-nav__item');
-      b.dataset.title = g.title;
-      if (g.note) b.title = g.note;
-      b.append(el('span', 'ov-nav__name', g.title), el('span', 'ov-nav__count', String(g.count)));
-      b.addEventListener('click', () => onPick(g.title));
-      li.append(b);
-      ul.append(li);
-    }
-    nav.append(head, ul);
-    return nav;
-  }
-
-  function renderOverview(stage) {
-    stage.className = 'stage stage--all';
-    const list = data.sections[state.p] || [];
-    const titles = list.map(g => g.title);
-    const main = el('div', 'ov-main');
-    const f = frame(overviewUrl(state.p), `Nalda ${state.p === 'ios' ? 'iOS' : 'Android'} 전체 화면`);
-    const toc = el('button', 'ov-toc');
-    const tocCurrent = el('span', 'ov-toc__current');
-    toc.append(el('span', '', '목차'), tocCurrent);
-    const scrim = el('div', 'ov-scrim');
-    const setOpen = open => stage.classList.toggle('is-nav-open', open);
-    const ov = { f, titles, sections: new Map(), active: '' };
-    const nav = buildNav(list, title => { setOpen(false); goToSection(ov, title); }, () => setOpen(false));
-    toc.addEventListener('click', () => setOpen(true));
-    scrim.addEventListener('click', () => setOpen(false));
-    main.append(f, toc);
-    stage.append(nav, scrim, main);
-    ov.markActive = title => markActive(ov, nav, tocCurrent, title);
-    fitOverview(main, f);
-    ov.main = main;
-    refit = () => { fitOverview(main, f); if (ov.rail) ov.rail.sync(); };
-    wireOverview(ov);
-  }
-
-  // Phones in the overview are 402px wide; narrower frames render it at OVERVIEW_MIN_W and scale down.
-  function fitOverview(main, f) {
-    const w = main.clientWidth, h = main.clientHeight;
-    if (!w || w >= OVERVIEW_MIN_W) { f.style.cssText = ''; return; }
-    const s = w / OVERVIEW_MIN_W;
-    f.style.width = OVERVIEW_MIN_W + 'px';
-    f.style.height = h / s + 'px';
-    f.style.transform = `scale(${s})`;
-  }
-
-  function markActive(ov, nav, tocCurrent, title) {
-    if (ov.active === title) return;
-    ov.active = title;
-    tocCurrent.textContent = title;
-    nav.querySelectorAll('.ov-nav__item').forEach(b => {
-      const on = b.dataset.title === title;
-      b.setAttribute('aria-current', String(on));
-      if (on) b.scrollIntoView({ block: 'nearest' });
-    });
-    if (state.sec !== title) { state.sec = title === ov.titles[0] ? '' : title; syncUrl(); }
-  }
-
-  function sectionsOf(ov) {
-    if (ov.sections.size < ov.titles.length) ov.sections = findSections(overviewDoc(ov.f), ov.titles);
-    return ov.sections;
-  }
-
-  function goToSection(ov, title) {
-    const target = sectionsOf(ov).get(title);
-    const doc = overviewDoc(ov.f);
-    if (!target || !doc) return false;
-    const se = doc.scrollingElement;
-    se.scrollTop = target.getBoundingClientRect().top + se.scrollTop - 16;
-    ov.markActive(title);
-    return true;
-  }
-
-  function currentSection(ov) {
-    let current = ov.titles[0];
-    for (const [title, node] of sectionsOf(ov)) if (node.getBoundingClientRect().top <= 120) current = title;
-    return current;
-  }
-
-  // Classic scrollbars take layout width; overlay ones (macOS, phones) take none and stay hidden until used.
-  function hasClassicScrollbar(f) {
-    const doc = overviewDoc(f);
-    return !!doc && f.contentWindow.innerWidth - doc.documentElement.clientWidth > 0;
-  }
-
-  function wireOverview(ov) {
-    ov.f.addEventListener('load', () => {
-      const win = ov.f.contentWindow;
-      let queued = false;
-      const onScroll = () => {
-        if (queued) return;
-        queued = true;
-        requestAnimationFrame(() => { queued = false; ov.markActive(currentSection(ov)); if (ov.rail) ov.rail.sync(); });
-      };
-      win.addEventListener('scroll', onScroll, { passive: true });
-      win.addEventListener('resize', onScroll);
-      // The overview's styles arrive with its render, so the scrollbar is measured once the sections exist.
-      restoreSection(ov, () => {
-        if (!ov.rail && (TOUCH_RAIL.matches || !hasClassicScrollbar(ov.f))) ov.rail = buildRail(ov.main, ov.f);
-        onScroll();
-      });
-    });
-  }
-
-  // The overview renders after its own scripts load; wait for the section headings, then jump to ?sec=.
-  function restoreSection(ov, onReady) {
-    const wanted = state.sec;
-    let tries = 0;
-    const timer = setInterval(() => {
-      tries += 1;
-      const ready = sectionsOf(ov).size === ov.titles.length;
-      if (ready && (!wanted || goToSection(ov, wanted))) { clearInterval(timer); onReady(); }
-      else if (tries > 100) { clearInterval(timer); onReady(); }
-    }, 150);
-    cleanup = () => clearInterval(timer);
-  }
-
-  // A drawn scroll bar for touch screens, where the iframe's own bar is hidden or too thin to grab.
-  function buildRail(main, f) {
-    const rail = el('div', 'rail');
-    rail.setAttribute('aria-hidden', 'true');
-    const track = el('div', 'rail__track');
-    const thumb = el('div', 'rail__thumb');
-    track.append(thumb);
-    rail.append(track);
-    main.append(rail);
-    const se = () => overviewDoc(f)?.scrollingElement;
-    const api = {
-      sync() {
-        const s = se();
-        if (!s) return;
-        const trackH = track.clientHeight;
-        const ratio = s.clientHeight / Math.max(s.scrollHeight, 1);
-        const thumbH = Math.max(40, trackH * ratio);
-        const max = Math.max(s.scrollHeight - s.clientHeight, 1);
-        thumb.style.height = thumbH + 'px';
-        thumb.style.top = (trackH - thumbH) * (s.scrollTop / max) + 'px';
-      },
-    };
-    wireRailDrag(rail, track, thumb, se, api);
-    return api;
-  }
-
-  function wireRailDrag(rail, track, thumb, se, api) {
-    const scrollTo = clientY => {
-      const s = se();
-      if (!s) return;
-      const r = track.getBoundingClientRect();
-      const thumbH = thumb.offsetHeight;
-      const pos = Math.min(Math.max(clientY - r.top - thumbH / 2, 0), r.height - thumbH);
-      s.scrollTop = pos / Math.max(r.height - thumbH, 1) * (s.scrollHeight - s.clientHeight);
-      api.sync();
-    };
-    rail.addEventListener('pointerdown', e => {
-      rail.setPointerCapture(e.pointerId);
-      rail.classList.add('is-dragging');
-      scrollTo(e.clientY);
-    });
-    rail.addEventListener('pointermove', e => { if (rail.classList.contains('is-dragging')) scrollTo(e.clientY); });
-    const end = () => rail.classList.remove('is-dragging');
-    rail.addEventListener('pointerup', end);
-    rail.addEventListener('pointercancel', end);
+    if (next) go({ screen: next.key });
   }
 
   // ---------- Render ----------
 
-  function render() {
+  function done() { $('loading').hidden = true; }
+
+  function fail(stage, err) {
+    done();
+    const box = el('div', 'error');
+    box.append(el('h1', '', '데이터를 불러오지 못했습니다'), el('p', 'mono', String(err?.message || err)));
+    stage.append(box);
+    console.error('Nalda preview:', err);
+  }
+
+  function render(opts = {}) {
     cleanup();
     cleanup = () => {};
-    refit = null;
+    onResize = null;
     syncControls();
     syncUrl();
     const stage = $('stage');
     stage.querySelectorAll(':scope > :not(#loading)').forEach(node => node.remove());
-    stage.classList.remove('is-nav-open');
     $('loading').hidden = false;
-    if (state.view === 'all') return renderOverview(stage);
-    if (state.view === 'screen') return renderScreen(stage);
-    stage.className = 'stage stage--catalog';
-    const ctx = { state, stage, el, copyText, setState, done: () => { $('loading').hidden = true; } };
-    const view = state.view === 'icons' ? window.NaldaCatalog.renderIcons : window.NaldaCatalog.renderColors;
-    view(ctx).catch(err => {
-      $('loading').hidden = true;
-      stage.append(el('p', 'catalog__empty', `데이터를 불러오지 못했습니다: ${err.message}`));
-    });
+    if (!opts.keepScroll) scrollTo(0, 0);
+    if (!data.content) return;
+    const ctx = { state, data, stage, el, copyText, toast, setState, go, done, platformName, opts,
+      setCleanup: fn => { cleanup = fn; }, setResize: fn => { onResize = fn; } };
+    try {
+      const out = VIEWS_RENDER[state.view](ctx);
+      if (out && out.catch) out.catch(err => fail(stage, err));
+    } catch (err) {
+      fail(stage, err);
+    }
   }
 
-  // Catalog views update small bits of state (search, size) without a full re-render.
+  const VIEWS_RENDER = {
+    cover: ctx => window.NaldaDocs.renderCover(ctx),
+    appendix: ctx => window.NaldaDocs.renderAppendix(ctx),
+    flows: ctx => window.NaldaGrid.renderFlows(ctx),
+    all: ctx => window.NaldaGrid.renderAll(ctx),
+    screen: ctx => renderScreen(ctx.stage),
+    icons: ctx => window.NaldaCatalog.renderIcons(ctx),
+    colors: ctx => window.NaldaCatalog.renderColors(ctx),
+  };
+
+  // Views update small bits of state (search, section, size) without a full re-render.
   function setState(patch) {
     Object.assign(state, patch);
     syncUrl();
   }
 
-  function fillScreens() {
-    const sel = $('screen');
-    const groups = new Map();
-    for (const s of data.screens) {
-      if (!groups.has(s.group)) groups.set(s.group, []);
-      groups.get(s.group).push(s);
+  function go(patch, opts) {
+    Object.assign(state, patch);
+    render(opts);
+  }
+
+  // ---------- Wiring ----------
+
+  function onSegClick(seg, e) {
+    const b = e.target.closest('button');
+    const key = seg.dataset.key;
+    if (!b || b.getAttribute('aria-disabled') === 'true' || state[key] === b.dataset.v) return;
+    state[key] = b.dataset.v;
+    if (key === 'theme' && (state.view === 'icons' || state.view === 'colors')) {
+      syncControls();
+      syncUrl();
+      window.NaldaCatalog.setTheme(state.theme);
+      return;
     }
-    for (const [group, list] of groups) {
-      const og = document.createElement('optgroup');
-      og.label = group;
-      for (const s of list) og.append(new Option(`${s.id} · ${s.label}`, s.key));
-      sel.append(og);
-    }
+    render({ keepScroll: key !== 'view' });
   }
 
   function wireControls() {
-    document.querySelectorAll('.bar .seg').forEach(seg => seg.addEventListener('click', e => {
-      const b = e.target.closest('button');
-      if (!b || b.disabled || state[seg.dataset.key] === b.dataset.v) return;
-      state[seg.dataset.key] = b.dataset.v;
-      if (seg.dataset.key === 'theme' && (state.view === 'icons' || state.view === 'colors')) {
-        syncControls();
-        syncUrl();
-        window.NaldaCatalog.setTheme(state.theme);
-        return;
-      }
-      render();
-    }));
-    $('screen').addEventListener('change', e => { state.screen = e.target.value; render(); });
-    $('prev').addEventListener('click', () => step(-1));
-    $('next').addEventListener('click', () => step(1));
+    document.querySelectorAll('.bar .seg').forEach(seg => seg.addEventListener('click', e => onSegClick(seg, e)));
+    const more = $('more');
+    more.addEventListener('click', () => {
+      const open = more.getAttribute('aria-expanded') !== 'true';
+      more.setAttribute('aria-expanded', String(open));
+      $('bar').classList.toggle('is-open', open);
+    });
     document.addEventListener('keydown', onKey);
     let resizeT;
     window.addEventListener('resize', () => {
       clearTimeout(resizeT);
-      // The overview only refits (reloading it would lose the scroll position, e.g. when a mobile URL bar hides).
-      resizeT = setTimeout(() => { if (state.view === 'screen') render(); else if (refit) refit(); }, 200);
+      resizeT = setTimeout(() => onResize?.(), 150);
     });
   }
 
   function onKey(e) {
-    const typing = ['INPUT', 'SELECT', 'TEXTAREA'].includes(e.target.tagName);
-    if (e.key === '/' && !typing && (state.view === 'icons' || state.view === 'colors')) {
+    const typing = ['INPUT', 'SELECT', 'TEXTAREA'].includes(e.target.tagName) || e.target.isContentEditable;
+    if (e.key === '/' && !typing && SEARCH_VIEWS.includes(state.view)) {
       e.preventDefault();
       document.querySelector('.search')?.focus();
       return;
     }
-    if (e.key === 'Escape') $('stage').classList.remove('is-nav-open');
-    if (state.view !== 'screen' || typing) return;
+    if (e.key === 'Escape') {
+      document.body.classList.remove('is-nav-open');
+      $('bar').classList.remove('is-open');
+      $('more').setAttribute('aria-expanded', 'false');
+    }
+    if (state.view !== 'screen' || typing || e.altKey || e.ctrlKey || e.metaKey) return;
     if (e.key === 'ArrowLeft') step(-1);
     if (e.key === 'ArrowRight') step(1);
   }
 
-  const getJson = url => fetch(url).then(r => { if (!r.ok) throw new Error(`${url} ${r.status}`); return r.json(); });
-
-  wireControls();
-  Promise.allSettled([getJson('screens.json'), getJson('overview-groups.json')]).then(([s, g]) => {
-    if (s.status === 'fulfilled') { data.screens = s.value; fillScreens(); }
-    if (g.status === 'fulfilled') data.sections = g.value;
-    render();
+  const getJson = url => fetch(url).then(r => {
+    if (!r.ok) throw new Error(`${url}: HTTP ${r.status}`);
+    return r.json();
   });
+
+  trackBarHeight();
+  wireControls();
+  syncControls();
+  Promise.all([getJson('screens.json'), getJson('content.json')])
+    .then(([screens, content]) => { loadData(screens, content); render({ keepScroll: true }); })
+    .catch(err => fail($('stage'), err));
 })();

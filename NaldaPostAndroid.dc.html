@@ -30,7 +30,7 @@
   <div class="nd-post__row">
     <div class="nd-post__avatar-col">
       <sc-if value="{{ post.threadUp }}" hint-placeholder-val="{{ false }}"><div class="nd-post__thread-up"></div></sc-if>
-      <button onClick="{{ post.onProfile }}" class="nd-avatar nd-avatar--lg" style="background:{{ post.abg }};color:{{ post.afg }}">{{ post.ini }}</button>
+      <button onClick="{{ post.onProfile }}" aria-label="{{ post.name }} 프로필" class="nd-avatar nd-avatar--lg" style="background:{{ post.abg }};color:{{ post.afg }}">{{ post.ini }}</button>
       <sc-if value="{{ post.threadDown }}" hint-placeholder-val="{{ false }}"><div class="nd-post__thread-down"></div></sc-if>
     </div>
     <div class="nd-post__main">
@@ -91,8 +91,7 @@
             <span class="nd-quote__name">{{ post.q.nameNode }}</span>
             <span class="nd-quote__meta">{{ post.q.handle }} · {{ post.q.time }}</span>
           </div>
-          <p class="nd-quote__text">{{ post.q.textNode }}</p>
-          <sc-if value="{{ post.q.imgs }}" hint-placeholder-val="{{ false }}"><div class="nd-quote__media nd-placeholder">이미지</div></sc-if>
+          <div class="nd-quote__body"><p class="nd-quote__text">{{ post.q.textNode }}</p><sc-if value="{{ post.q.hasThumb }}" hint-placeholder-val="{{ false }}"><span class="nd-quote__thumb"><span class="nd-quote__thumb-image nd-placeholder" style="filter:{{ post.q.thumbFilter }}"></span><sc-if value="{{ post.q.hasMoreMedia }}" hint-placeholder-val="{{ false }}"><span class="nd-badge nd-badge--media nd-quote__thumb-count">{{ post.q.moreMedia }}</span></sc-if></span></sc-if></div>
         </button>
         </sc-if>
       </sc-if>
@@ -108,7 +107,7 @@
           </sc-if>
           <sc-if value="{{ post.poll.showResult }}" hint-placeholder-val="{{ false }}">
             <sc-for list="{{ post.poll.opts }}" as="o" hint-placeholder-count="2">
-              <div class="nd-poll__result {{ o.resCls }}"><span class="nd-poll__bar" style="width:{{ o.w }}"></span><span class="nd-poll__label"><span class="nd-poll__choice">{{ o.label }}<sc-if value="{{ o.mine }}" hint-placeholder-val="{{ false }}"><span class="nd-glyph">{{ o.mineIcon }}</span></sc-if></span><span class="nd-poll__pct">{{ o.pct }}</span></span></div>
+              <div class="nd-poll__result {{ o.resCls }}"><span class="nd-poll__bar" style="width:{{ o.w }}"></span><span class="nd-poll__label"><span class="nd-poll__pct">{{ o.pct }}</span><span class="nd-poll__choice"><span class="nd-ellipsis">{{ o.label }}</span><sc-if value="{{ o.mine }}" hint-placeholder-val="{{ false }}"><span role="img" aria-label="내 선택" class="nd-glyph nd-poll__mine">{{ o.mineIcon }}</span></sc-if></span></span></div>
             </sc-for>
           </sc-if>
           <div class="nd-poll__meta">{{ post.poll.meta }}</div>

@@ -34,18 +34,18 @@
         </div>
         <sc-if value="{{ netOffline }}" hint-placeholder-val="{{ false }}"><div role="status" class="nd-banner nd-banner--action nd-home__banner">{{ ic16.offline }}<span class="nd-banner__text">오프라인 · 마지막으로 불러온 글을 보고 있어요</span><button onClick="{{ retryNet }}" class="nd-button nd-button--xs nd-button--plain">다시 시도</button></div></sc-if>
         <div role="status" aria-live="polite" class="nd-sr-only">{{ liveAnnounce }}</div>
-        <sc-if value="{{ refreshing }}" hint-placeholder-val="{{ false }}"><div class="nd-home__spinner"><span class="nd-home__spin">{{ ic16.spinner }}</span></div></sc-if>
         <sc-if value="{{ hasNewPill }}" hint-placeholder-val="{{ false }}"><button onClick="{{ loadNew }}" class="nd-button nd-button--sm nd-button--filled nd-home__pill {{ newPillCls }}">{{ ic16.arrowUp }}<span>{{ newPillLabel }}</span></button></sc-if>
         <div ref="{{ homeRef }}" onScroll="{{ onHomeScroll }}" class="nd-scroll nd-scroll--fab nd-home__scroll {{ homeScrollCls }}">
-          <sc-if value="{{ netError }}" hint-placeholder-val="{{ false }}"><div class="nd-empty-state"><span class="nd-empty-state__disc">{{ ic32.warn }}</span><div class="nd-empty-state__title">타임라인을 불러올 수 없어요</div><div class="nd-empty-state__body">nalda.kr이 응답하지 않습니다 (503). 서버 점검 중일 수 있어요.</div><div class="nd-empty-state__actions"><button onClick="{{ retryNet }}" class="nd-button nd-button--md nd-button--outlined">다시 시도</button><button onClick="{{ openServerInfo }}" class="nd-button nd-button--md nd-button--plain">서버 상태 보기</button></div></div></sc-if>
-          <sc-if value="{{ homeEmpty }}" hint-placeholder-val="{{ false }}"><div class="nd-empty-state"><span class="nd-empty-state__disc nd-empty-state__disc--brand">{{ ic32.home }}</span><div class="nd-empty-state__title">아직 조용하네요</div><div class="nd-empty-state__body">팔로우한 사람의 글이 여기에 모입니다. 로컬 탭에서 이 서버 사람들을 둘러보세요.</div><div class="nd-empty-state__actions"><button onClick="{{ feedLocal }}" class="nd-button nd-button--md nd-button--outlined">로컬 둘러보기</button></div></div>
+          <sc-if value="{{ refreshing }}" hint-placeholder-val="{{ false }}"><div role="status" aria-label="새로고침 중" class="nd-home__spinner"><span class="nd-home__spin">{{ ic20.spinner }}</span></div></sc-if>
+          <sc-if value="{{ netError }}" hint-placeholder-val="{{ false }}"><div class="nd-empty-state"><span class="nd-empty-state__disc">{{ ic32.warn }}</span><div class="nd-empty-state__title">타임라인을 불러올 수 없어요</div><div class="nd-empty-state__body">nalda.kr에 연결할 수 없어요. 서버 점검 중일 수 있으니 잠시 후 다시 시도해 주세요.</div><div class="nd-empty-state__actions"><button onClick="{{ retryNet }}" class="nd-button nd-button--md nd-button--outlined">다시 시도</button><button onClick="{{ openServerInfo }}" class="nd-button nd-button--md nd-button--plain">서버 상태 보기</button></div></div></sc-if>
+          <sc-if value="{{ homeEmpty }}" hint-placeholder-val="{{ false }}"><div class="nd-empty-state"><span class="nd-empty-state__disc nd-empty-state__disc--brand">{{ ic32.home }}</span><div class="nd-empty-state__title">아직 조용하네요</div><div class="nd-empty-state__body">팔로우한 사람의 글이 여기에 모여요. 로컬 탭에서 이 서버 사람들을 둘러보세요.</div><div class="nd-empty-state__actions"><button onClick="{{ feedLocal }}" class="nd-button nd-button--md nd-button--outlined">로컬 둘러보기</button></div></div>
             <div class="nd-section-title">추천 계정</div>
             <sc-for list="{{ suggestRows }}" as="u" hint-placeholder-count="5">
               <div class="nd-person-row">
-                <button onClick="{{ u.onProfile }}" class="nd-avatar nd-avatar--lg" style="background:{{ u.bg }};color:{{ u.fg }}">{{ u.ini }}</button>
+                <button onClick="{{ u.onProfile }}" aria-label="{{ u.name }} 프로필" class="nd-avatar nd-avatar--lg" style="background:{{ u.bg }};color:{{ u.fg }}">{{ u.ini }}</button>
                 <div class="nd-person-row__main">
                   <div class="nd-person-row__head">
-                    <button onClick="{{ u.onProfile }}" class="nd-person-row__names"><div class="nd-person-row__name"><span>{{ u.nameNode }}</span><sc-if value="{{ u.locked }}" hint-placeholder-val="{{ false }}"><span class="nd-glyph nd-muted">{{ ic16.lock }}</span></sc-if></div><div class="nd-person-row__handle">{{ u.handle }}</div><sc-if value="{{ u.followsMe }}" hint-placeholder-val="{{ false }}"><span class="nd-badge nd-badge--neutral nd-person-row__badge">나를 팔로우합니다</span></sc-if></button>
+                    <button onClick="{{ u.onProfile }}" class="nd-person-row__names"><div class="nd-person-row__name"><span>{{ u.nameNode }}</span><sc-if value="{{ u.locked }}" hint-placeholder-val="{{ false }}"><span class="nd-glyph nd-muted">{{ ic16.lock }}</span></sc-if></div><div class="nd-person-row__handle">{{ u.handle }}</div><sc-if value="{{ u.followsMe }}" hint-placeholder-val="{{ false }}"><span class="nd-badge nd-badge--neutral nd-person-row__badge">나를 팔로우해요</span></sc-if></button>
                     <button onClick="{{ u.onFollow }}" class="nd-button nd-button--xs nd-button--filled nd-follow {{ u.fcls }}">{{ u.flabel }}</button>
                   </div>
                   <sc-if value="{{ u.hasBio }}" hint-placeholder-val="{{ false }}"><div class="nd-person-row__bio">{{ u.bio }}</div></sc-if>
@@ -69,7 +69,7 @@
             </sc-if>
           </sc-for>
           <sc-if value="{{ footerLoading }}" hint-placeholder-val="{{ false }}"><div role="status" aria-label="불러오는 중" class="nd-list-footer"><span class="nd-spinner">{{ ic20.spinner }}</span></div></sc-if>
-          <sc-if value="{{ footerError }}" hint-placeholder-val="{{ false }}"><button onClick="{{ retryFooter }}" class="nd-list-footer"><span>불러오지 못했습니다 · <span class="nd-list-footer__retry">다시 시도</span></span></button></sc-if>
+          <sc-if value="{{ footerError }}" hint-placeholder-val="{{ false }}"><button onClick="{{ retryFooter }}" class="nd-list-footer"><span>불러오지 못했어요 · <span class="nd-list-footer__retry">다시 시도</span></span></button></sc-if>
           </sc-if>
         </div>
       </div>
@@ -81,13 +81,13 @@
         <div class="nd-header nd-header--bordered">
           <div class="nd-header__bar">
             <button onClick="{{ openDrawer }}" aria-label="메뉴" class="nd-header__slot nd-header__slot--avatar"><span class="nd-avatar nd-avatar--md" style="background:{{ me.bg }};color:{{ me.fg }}">{{ me.ini }}</span></button>
-            <div class="nd-header__title">멘션</div>
+            <div class="nd-header__title"><div>멘션</div><div class="nd-header__subtitle">답장할 멘션</div></div>
             <sc-if value="{{ mentionsHas }}" hint-placeholder-val="{{ true }}"><button onClick="{{ mentionsDoneAll }}" class="nd-header__slot nd-header__slot--auto nd-header__action">모두 완료</button></sc-if>
             <sc-if value="{{ mentionsEmpty }}" hint-placeholder-val="{{ false }}"><div class="nd-header__slot nd-header__slot--avatar"></div></sc-if>
           </div>
         </div>
         <div class="nd-scroll nd-scroll--fab">
-          <sc-if value="{{ mentionsEmpty }}" hint-placeholder-val="{{ false }}"><div class="nd-empty-state"><span class="nd-empty-state__disc nd-empty-state__disc--brand">{{ ic32.at }}</span><div class="nd-empty-state__title">아직 멘션이 없어요</div><div class="nd-empty-state__body">누군가 @ahyeon을 부르면 여기에 모입니다. 답장한 멘션은 자동으로 사라져요.</div></div></sc-if>
+          <sc-if value="{{ mentionsEmpty }}" hint-placeholder-val="{{ false }}"><div class="nd-empty-state"><span class="nd-empty-state__disc nd-empty-state__disc--brand">{{ ic32.at }}</span><div class="nd-empty-state__title">아직 멘션이 없어요</div><div class="nd-empty-state__body">누군가 @ahyeon을 부르면 여기에 모여요. 답장한 멘션은 자동으로 사라져요.</div></div></sc-if>
           <sc-if value="{{ mentionsHas }}" hint-placeholder-val="{{ true }}">
           <div class="nd-section-header nd-section-header--first">답장을 기다리는 멘션 {{ pendingCount }}개</div>
           <sc-for list="{{ mentionRows }}" as="m" hint-placeholder-count="3">
@@ -147,8 +147,8 @@
                 <sc-if value="{{ n.isFollow }}" hint-placeholder-val="{{ false }}"><button onClick="{{ n.onFollow }}" class="nd-button nd-button--xs nd-button--filled nd-follow {{ n.fcls }}" style="align-self:flex-start">{{ n.flabel }}</button></sc-if>
                 <sc-if value="{{ n.isRequest }}" hint-placeholder-val="{{ false }}">
                   <div class="nd-notification__actions">
-                    <button onClick="{{ n.onReject }}" aria-label="거절" class="nd-icon-button nd-icon-button--disc">{{ ic20.close }}</button>
-                    <button onClick="{{ n.onAccept }}" aria-label="승인" class="nd-icon-button nd-icon-button--filled">{{ ic20.check }}</button>
+                    <button onClick="{{ n.onReject }}" class="nd-button nd-button--sm nd-button--outlined">거절</button>
+                    <button onClick="{{ n.onAccept }}" class="nd-button nd-button--sm nd-button--filled">수락</button>
                   </div>
                 </sc-if>
               </div>
@@ -276,7 +276,7 @@
         </div>
         <sc-if value="{{ chatIsRequest }}" hint-placeholder-val="{{ false }}">
           <div class="nd-bottom-bar">
-            <div class="nd-footnote" style="text-align:center">팔로우하지 않는 계정의 채팅 요청입니다. 수락하기 전까지 상대는 내가 읽었는지 알 수 없습니다.</div>
+            <div class="nd-footnote" style="text-align:center">팔로우하지 않는 계정의 채팅 요청이에요. 수락하기 전까지 상대는 내가 읽었는지 알 수 없어요.</div>
             <div style="display:flex;gap:var(--nd-space-sm)"><button onClick="{{ rejectChat }}" class="nd-button nd-button--lg nd-button--fill nd-button--outlined-destructive">거절</button><button onClick="{{ acceptChat }}" class="nd-button nd-button--lg nd-button--fill nd-button--filled">수락</button></div>
           </div>
         </sc-if>
@@ -314,7 +314,7 @@
         <div class="nd-scroll nd-scroll--end">
           <div class="nd-identity">
             <sc-if value="{{ chatIsGroup }}" hint-placeholder-val="{{ false }}"><div class="nd-avatar-pair nd-avatar-pair--xl"><span class="nd-avatar" style="background:{{ chatUser.a1.bg }};color:{{ chatUser.a1.fg }}">{{ chatUser.a1.ini }}</span><span class="nd-avatar" style="background:{{ chatUser.a2.bg }};color:{{ chatUser.a2.fg }}">{{ chatUser.a2.ini }}</span></div></sc-if>
-            <sc-if value="{{ chatIsDirect }}" hint-placeholder-val="{{ true }}"><button onClick="{{ chatUser.onProfile }}" class="nd-avatar nd-avatar--xl" style="background:{{ chatUser.bg }};color:{{ chatUser.fg }}">{{ chatUser.ini }}</button></sc-if>
+            <sc-if value="{{ chatIsDirect }}" hint-placeholder-val="{{ true }}"><button onClick="{{ chatUser.onProfile }}" aria-label="{{ chatUser.name }} 프로필" class="nd-avatar nd-avatar--xl" style="background:{{ chatUser.bg }};color:{{ chatUser.fg }}">{{ chatUser.ini }}</button></sc-if>
             <div class="nd-identity__name">{{ chatUser.name }}</div>
             <div class="nd-identity__sub">{{ chatUser.full }}</div>
           </div>
@@ -377,14 +377,14 @@
                   <button onClick="{{ openEditProfile }}" class="nd-button nd-button--sm nd-button--outlined">프로필 편집</button>
                 </sc-if>
                 <sc-if value="{{ prof.showActions }}" hint-placeholder-val="{{ true }}">
-                  <button onClick="{{ prof.onChat }}" aria-label="쪽지" class="nd-icon-button nd-icon-button--disc">{{ ic20.chats }}</button>
+                  <sc-if value="{{ prof.showFollow }}" hint-placeholder-val="{{ true }}"><button onClick="{{ prof.onChat }}" aria-label="쪽지" class="nd-icon-button nd-icon-button--disc">{{ ic20.chats }}</button>
                   <button onClick="{{ prof.onNotify }}" aria-label="새 글 알림" aria-pressed="{{ prof.notifyOn }}" class="nd-icon-button nd-icon-button--disc {{ prof.notifyCls }}">{{ prof.notifyIcon }}</button>
-                  <sc-if value="{{ prof.showFollow }}" hint-placeholder-val="{{ true }}"><button onClick="{{ prof.onFollow }}" class="nd-button nd-button--sm nd-button--filled nd-follow {{ prof.fcls }}">{{ prof.flabel }}</button></sc-if>
+                  <button onClick="{{ prof.onFollow }}" class="nd-button nd-button--sm nd-button--filled nd-follow {{ prof.fcls }}">{{ prof.flabel }}</button></sc-if>
                 </sc-if>
               </div>
             </div>
             <div class="nd-profile__name">{{ prof.name }}<sc-if value="{{ prof.locked }}" hint-placeholder-val="{{ false }}"><span class="nd-glyph nd-muted">{{ ic16.lock }}</span></sc-if><sc-if value="{{ prof.isBot }}" hint-placeholder-val="{{ false }}"><span class="nd-badge nd-badge--neutral">봇</span></sc-if><sc-if value="{{ prof.isGroup }}" hint-placeholder-val="{{ false }}"><span class="nd-badge nd-badge--neutral">그룹</span></sc-if></div>
-            <div class="nd-profile__handle"><span>{{ prof.full }}</span><sc-if value="{{ prof.followsMe }}" hint-placeholder-val="{{ false }}"><span class="nd-badge nd-badge--neutral">나를 팔로우합니다</span></sc-if><sc-if value="{{ prof.isMuted }}" hint-placeholder-val="{{ false }}"><span class="nd-badge nd-badge--neutral">뮤트함</span></sc-if></div>
+            <div class="nd-profile__handle"><span>{{ prof.full }}</span><sc-if value="{{ prof.followsMe }}" hint-placeholder-val="{{ false }}"><span class="nd-badge nd-badge--neutral">나를 팔로우해요</span></sc-if><sc-if value="{{ prof.isMuted }}" hint-placeholder-val="{{ false }}"><span class="nd-badge nd-badge--neutral">뮤트함</span></sc-if></div>
             <sc-if value="{{ prof.showBody }}" hint-placeholder-val="{{ true }}">
             <p class="nd-profile__bio nd-body">{{ prof.bio }}</p>
             <sc-if value="{{ prof.hasFields }}" hint-placeholder-val="{{ false }}">
@@ -425,14 +425,14 @@
           <sc-if value="{{ prof.showBody }}" hint-placeholder-val="{{ true }}">
           <div class="nd-tabs" style="margin-top:var(--nd-space-sm)">
             <sc-for list="{{ ptabs }}" as="t" hint-placeholder-count="4">
-              <button onClick="{{ t.go }}" aria-label="{{ t.label }}" class="nd-tabs__tab {{ t.cls }}">{{ t.icon }}<sc-if value="{{ t.active }}" hint-placeholder-val="{{ false }}"><span>{{ t.label }}</span></sc-if></button>
+              <button onClick="{{ t.go }}" class="nd-tabs__tab {{ t.cls }}">{{ t.label }}</button>
             </sc-for>
           </div>
           <sc-for list="{{ profPosts }}" as="p" hint-placeholder-count="2">
             <dc-import name="NaldaPost" post="{{ p }}" hint-size="100%,150px"></dc-import>
           </sc-for>
-          <sc-if value="{{ profLockedEmpty }}" hint-placeholder-val="{{ false }}"><div class="nd-empty-state"><span class="nd-empty-state__disc">{{ ic32.lock }}</span><div class="nd-empty-state__title">비공개 계정입니다</div><div class="nd-empty-state__body">{{ profLockedText }}</div></div></sc-if>
-          <sc-if value="{{ profEmpty }}" hint-placeholder-val="{{ false }}"><div class="nd-empty-state nd-empty-state--text"><div class="nd-empty-state__body">아직 표시할 게시물이 없습니다</div></div></sc-if>
+          <sc-if value="{{ profLockedEmpty }}" hint-placeholder-val="{{ false }}"><div class="nd-empty-state"><span class="nd-empty-state__disc">{{ ic32.lock }}</span><div class="nd-empty-state__title">비공개 계정이에요</div><div class="nd-empty-state__body">{{ profLockedText }}</div></div></sc-if>
+          <sc-if value="{{ profEmpty }}" hint-placeholder-val="{{ false }}"><div class="nd-empty-state nd-empty-state--text"><div class="nd-empty-state__body">아직 표시할 게시물이 없어요</div></div></sc-if>
           <sc-if value="{{ profNoPosts }}" hint-placeholder-val="{{ false }}"><div class="nd-empty-state nd-empty-state--text"><div class="nd-empty-state__body">아직 게시물이 없어요</div><sc-if value="{{ prof.isMe }}" hint-placeholder-val="{{ false }}"><div class="nd-empty-state__actions"><button onClick="{{ composeFirst }}" class="nd-button nd-button--md nd-button--outlined">첫 글 쓰기</button></div></sc-if></div></sc-if>
           </sc-if>
           </sc-if>
@@ -452,7 +452,7 @@
           </sc-for>
           <div class="nd-detail">
             <div class="nd-detail__author">
-              <button onClick="{{ det.onProfile }}" class="nd-avatar nd-avatar--lg" style="background:{{ det.abg }};color:{{ det.afg }}">{{ det.ini }}</button>
+              <button onClick="{{ det.onProfile }}" aria-label="{{ det.name }} 프로필" class="nd-avatar nd-avatar--lg" style="background:{{ det.abg }};color:{{ det.afg }}">{{ det.ini }}</button>
               <button onClick="{{ det.onProfile }}" class="nd-person-row__names"><div class="nd-person-row__name"><span>{{ det.nameNode }}</span></div><div class="nd-person-row__handle">{{ det.handle }}</div></button>
               <sc-if value="{{ det.showFollow }}" hint-placeholder-val="{{ false }}"><button onClick="{{ det.onFollow }}" class="nd-button nd-button--sm nd-button--filled nd-follow {{ det.fcls }}">{{ det.flabel }}</button></sc-if>
             </div>
@@ -496,7 +496,7 @@
               <sc-if value="{{ det.q.ok }}" hint-placeholder-val="{{ true }}">
               <button onClick="{{ det.q.onOpen }}" class="nd-quote">
                 <div class="nd-quote__head"><span class="nd-avatar nd-avatar--xs" style="background:{{ det.q.abg }};color:{{ det.q.afg }}">{{ det.q.ini }}</span><span class="nd-quote__name">{{ det.q.nameNode }}</span><span class="nd-quote__meta">{{ det.q.handle }} · {{ det.q.time }}</span></div>
-                <p class="nd-quote__text">{{ det.q.textNode }}</p>
+                <div class="nd-quote__body"><p class="nd-quote__text">{{ det.q.textNode }}</p><sc-if value="{{ det.q.imgs }}" hint-placeholder-val="{{ false }}"><span role="img" aria-label="{{ det.q.thumbLabel }}" class="nd-quote__thumb {{ det.q.thumbCls }}"><span class="nd-quote__thumb-img nd-stripes"></span><sc-if value="{{ det.q.moreImgs }}" hint-placeholder-val="{{ false }}"><span class="nd-badge nd-badge--media nd-quote__more">{{ det.q.more }}</span></sc-if></span></sc-if></div>
               </button>
               </sc-if>
             </sc-if>
@@ -507,7 +507,7 @@
                   <sc-if value="{{ det.poll.showSubmit }}" hint-placeholder-val="{{ false }}"><button onClick="{{ det.poll.submit }}" class="nd-button nd-button--xs nd-button--filled {{ det.poll.submitCls }}" style="align-self:flex-start">투표하기</button></sc-if>
                 </sc-if>
                 <sc-if value="{{ det.poll.showResult }}" hint-placeholder-val="{{ false }}">
-                  <sc-for list="{{ det.poll.opts }}" as="o" hint-placeholder-count="2"><div class="nd-poll__result {{ o.cls }}"><span class="nd-poll__bar" style="width:{{ o.w }}"></span><span class="nd-poll__line"><span class="nd-poll__label">{{ o.label }}<sc-if value="{{ o.mine }}" hint-placeholder-val="{{ false }}"><span class="nd-poll__mine">✓</span></sc-if></span><span class="nd-poll__pct">{{ o.pct }}</span></span></div></sc-for>
+                  <sc-for list="{{ det.poll.opts }}" as="o" hint-placeholder-count="2"><div class="nd-poll__result {{ o.cls }}"><span class="nd-poll__bar" style="width:{{ o.w }}"></span><span class="nd-poll__line"><span class="nd-poll__pct">{{ o.pct }}</span><span class="nd-poll__label">{{ o.label }}</span><sc-if value="{{ o.mine }}" hint-placeholder-val="{{ false }}"><span aria-label="내 선택" class="nd-poll__mine">{{ o.checkIcon }}</span></sc-if></span></div></sc-for>
                 </sc-if>
                 <div class="nd-poll__meta">{{ det.poll.meta }}</div>
               </div>
@@ -528,7 +528,13 @@
           <sc-for list="{{ det.replies }}" as="p" hint-placeholder-count="2">
             <dc-import name="NaldaPost" post="{{ p }}" hint-size="100%,150px"></dc-import>
           </sc-for>
-          <sc-if value="{{ det.noReplies }}" hint-placeholder-val="{{ false }}"><div class="nd-empty-state nd-empty-state--text"><div class="nd-empty-state__body">아직 답글이 없습니다. 첫 답글을 남겨보세요.</div></div></sc-if>
+          <sc-if value="{{ det.showHiddenRow }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ det.toggleHidden }}" aria-expanded="false" class="nd-hidden-replies"><span class="nd-glyph">{{ det.hiddenIcon }}</span><span class="nd-hidden-replies__label">{{ det.hiddenLabel }}</span><span class="nd-glyph">{{ det.hiddenChevron }}</span></button>
+          </sc-if>
+          <sc-for list="{{ det.hiddenRows }}" as="p" hint-placeholder-count="0">
+            <dc-import name="NaldaPost" post="{{ p }}" hint-size="100%,72px"></dc-import>
+          </sc-for>
+          <sc-if value="{{ det.noReplies }}" hint-placeholder-val="{{ false }}"><div class="nd-empty-state nd-empty-state--text"><div class="nd-empty-state__body">아직 답글이 없어요. 첫 답글을 남겨 보세요.</div></div></sc-if>
         </div>
         <button onClick="{{ det.onReply }}" class="nd-input-bar">
           <div class="nd-avatar nd-avatar--md" style="background:{{ me.bg }};color:{{ me.fg }}">{{ me.ini }}</div>
@@ -559,11 +565,11 @@
           <sc-if value="{{ people.showCount }}" hint-placeholder-val="{{ false }}"><div class="nd-section-header nd-section-header--first">멤버 {{ people.count }}명</div></sc-if>
           <sc-for list="{{ people.rows }}" as="u" hint-placeholder-count="3">
             <div class="nd-person-row">
-              <button onClick="{{ u.onProfile }}" class="nd-avatar nd-avatar--lg" style="background:{{ u.bg }};color:{{ u.fg }}">{{ u.ini }}</button>
+              <button onClick="{{ u.onProfile }}" aria-label="{{ u.name }} 프로필" class="nd-avatar nd-avatar--lg" style="background:{{ u.bg }};color:{{ u.fg }}">{{ u.ini }}</button>
               <div class="nd-person-row__main">
                 <div class="nd-person-row__head">
                   <button onClick="{{ u.onProfile }}" class="nd-person-row__names"><div class="nd-person-row__name"><span>{{ u.nameNode }}</span><sc-if value="{{ u.locked }}" hint-placeholder-val="{{ false }}"><span class="nd-glyph nd-muted">{{ ic16.lock }}</span></sc-if></div><div class="nd-person-row__handle">{{ u.handle }}</div></button>
-                  <sc-if value="{{ people.isMembers }}" hint-placeholder-val="{{ false }}"><button onClick="{{ u.remove }}" class="nd-button nd-button--xs nd-button--outlined">삭제</button></sc-if>
+                  <sc-if value="{{ people.isMembers }}" hint-placeholder-val="{{ false }}"><button onClick="{{ u.remove }}" aria-label="{{ u.removeLabel }}" class="nd-button nd-button--xs nd-button--outlined">빼기</button></sc-if>
                   <sc-if value="{{ people.showFollow }}" hint-placeholder-val="{{ true }}"><button onClick="{{ u.onFollow }}" class="nd-button nd-button--xs nd-button--filled nd-follow {{ u.fcls }}">{{ u.flabel }}</button></sc-if>
                 </div>
                 <sc-if value="{{ u.hasBio }}" hint-placeholder-val="{{ false }}"><div class="nd-person-row__bio">{{ u.bio }}</div></sc-if>
@@ -600,7 +606,7 @@
           </sc-if>
           <sc-if value="{{ srAccounts }}" hint-placeholder-val="{{ false }}">
             <sc-for list="{{ srUsers }}" as="u" hint-placeholder-count="2">
-              <div class="nd-person-row"><button onClick="{{ u.onProfile }}" class="nd-avatar nd-avatar--lg" style="background:{{ u.bg }};color:{{ u.fg }}">{{ u.ini }}</button><div class="nd-person-row__main"><div class="nd-person-row__head"><button onClick="{{ u.onProfile }}" class="nd-person-row__names"><div class="nd-person-row__name"><span>{{ u.name }}</span></div><div class="nd-person-row__handle">{{ u.handle }}</div></button><button onClick="{{ u.onFollow }}" class="nd-button nd-button--xs nd-button--filled nd-follow {{ u.fcls }}">{{ u.flabel }}</button></div><sc-if value="{{ u.hasBio }}" hint-placeholder-val="{{ false }}"><div class="nd-person-row__bio">{{ u.bio }}</div></sc-if></div></div>
+              <div class="nd-person-row"><button onClick="{{ u.onProfile }}" aria-label="{{ u.name }} 프로필" class="nd-avatar nd-avatar--lg" style="background:{{ u.bg }};color:{{ u.fg }}">{{ u.ini }}</button><div class="nd-person-row__main"><div class="nd-person-row__head"><button onClick="{{ u.onProfile }}" class="nd-person-row__names"><div class="nd-person-row__name"><span>{{ u.name }}</span></div><div class="nd-person-row__handle">{{ u.handle }}</div></button><button onClick="{{ u.onFollow }}" class="nd-button nd-button--xs nd-button--filled nd-follow {{ u.fcls }}">{{ u.flabel }}</button></div><sc-if value="{{ u.hasBio }}" hint-placeholder-val="{{ false }}"><div class="nd-person-row__bio">{{ u.bio }}</div></sc-if></div></div>
             </sc-for>
           </sc-if>
           <sc-if value="{{ srPosts }}" hint-placeholder-val="{{ false }}">
@@ -609,7 +615,7 @@
           <sc-if value="{{ srTags }}" hint-placeholder-val="{{ false }}">
             <sc-for list="{{ srTagList }}" as="t" hint-placeholder-count="2"><button onClick="{{ t.go }}" class="nd-list-row"><div class="nd-list-row__body"><div class="nd-list-row__text"><div class="nd-list-row__title nd-list-row__title--strong">#{{ t.tag }}</div><div class="nd-list-row__subtitle">{{ t.meta }}</div></div><span class="nd-list-row__trailing">{{ ic20.chevR }}</span></div></button></sc-for>
           </sc-if>
-          <sc-if value="{{ srEmpty }}" hint-placeholder-val="{{ false }}"><div class="nd-empty-state nd-empty-state--text"><div class="nd-empty-state__body">"{{ q }}"에 대한 결과가 없습니다</div></div></sc-if>
+          <sc-if value="{{ srEmpty }}" hint-placeholder-val="{{ false }}"><div class="nd-empty-state nd-empty-state--text"><div class="nd-empty-state__body">"{{ q }}"에 대한 결과가 없어요</div></div></sc-if>
         </div>
       </div>
     </sc-if>
@@ -639,7 +645,7 @@
             <div class="nd-section-header">팔로워 목록</div>
             <sc-for list="{{ tl.people }}" as="u" hint-placeholder-count="3">
               <div class="nd-person-row">
-                <button onClick="{{ u.onProfile }}" class="nd-avatar nd-avatar--lg" style="background:{{ u.bg }};color:{{ u.fg }}">{{ u.ini }}</button>
+                <button onClick="{{ u.onProfile }}" aria-label="{{ u.name }} 프로필" class="nd-avatar nd-avatar--lg" style="background:{{ u.bg }};color:{{ u.fg }}">{{ u.ini }}</button>
                 <div class="nd-person-row__main">
                   <div class="nd-person-row__head">
                     <button onClick="{{ u.onProfile }}" class="nd-person-row__names"><div class="nd-person-row__name"><span>{{ u.nameNode }}</span></div><div class="nd-person-row__handle">{{ u.handle }}</div></button>
@@ -672,10 +678,10 @@
         <div class="nd-scroll nd-scroll--fab">
           <sc-for list="{{ followList }}" as="u" hint-placeholder-count="5">
             <div class="nd-person-row">
-              <button onClick="{{ u.onProfile }}" class="nd-avatar nd-avatar--lg" style="background:{{ u.bg }};color:{{ u.fg }}">{{ u.ini }}</button>
+              <button onClick="{{ u.onProfile }}" aria-label="{{ u.name }} 프로필" class="nd-avatar nd-avatar--lg" style="background:{{ u.bg }};color:{{ u.fg }}">{{ u.ini }}</button>
               <div class="nd-person-row__main">
                 <div class="nd-person-row__head">
-                  <button onClick="{{ u.onProfile }}" class="nd-person-row__names"><div class="nd-person-row__name"><span>{{ u.nameNode }}</span><sc-if value="{{ u.locked }}" hint-placeholder-val="{{ false }}"><span class="nd-glyph nd-muted">{{ ic16.lock }}</span></sc-if></div><div class="nd-person-row__handle">{{ u.handle }}</div><sc-if value="{{ u.followsMe }}" hint-placeholder-val="{{ false }}"><span class="nd-badge nd-badge--neutral nd-person-row__badge">나를 팔로우합니다</span></sc-if></button>
+                  <button onClick="{{ u.onProfile }}" class="nd-person-row__names"><div class="nd-person-row__name"><span>{{ u.nameNode }}</span><sc-if value="{{ u.locked }}" hint-placeholder-val="{{ false }}"><span class="nd-glyph nd-muted">{{ ic16.lock }}</span></sc-if></div><div class="nd-person-row__handle">{{ u.handle }}</div><sc-if value="{{ u.followsMe }}" hint-placeholder-val="{{ false }}"><span class="nd-badge nd-badge--neutral nd-person-row__badge">나를 팔로우해요</span></sc-if></button>
                   <button onClick="{{ u.onFollow }}" class="nd-button nd-button--xs nd-button--filled nd-follow {{ u.fcls }}">{{ u.flabel }}</button>
                 </div>
                 <sc-if value="{{ u.hasBio }}" hint-placeholder-val="{{ false }}"><div class="nd-person-row__bio">{{ u.bio }}</div></sc-if>
@@ -701,7 +707,7 @@
           <sc-for list="{{ bookmarkPosts }}" as="p" hint-placeholder-count="2">
             <dc-import name="NaldaPost" post="{{ p }}" hint-size="100%,150px"></dc-import>
           </sc-for>
-          <sc-if value="{{ bookmarksEmpty }}" hint-placeholder-val="{{ false }}"><div class="nd-empty-state"><span class="nd-empty-state__disc">{{ ic32.mark }}</span><div class="nd-empty-state__title">저장한 게시물이 없어요</div><div class="nd-empty-state__body">게시물의 북마크 버튼을 누르면 여기에 모입니다.</div></div></sc-if>
+          <sc-if value="{{ bookmarksEmpty }}" hint-placeholder-val="{{ false }}"><div class="nd-empty-state"><span class="nd-empty-state__disc">{{ ic32.mark }}</span><div class="nd-empty-state__title">저장한 게시물이 없어요</div><div class="nd-empty-state__body">게시물의 북마크 버튼을 누르면 여기에 모여요.</div></div></sc-if>
         </div>
       </div>
     </sc-if>
@@ -717,17 +723,17 @@
           </div>
         </div>
         <div class="nd-scroll nd-scroll--end">
-          <sc-if value="{{ requestsHas }}" hint-placeholder-val="{{ true }}"><div class="nd-section-footnote nd-section-footnote--lead">비공개 계정이라 승인한 사람만 내 게시물을 볼 수 있습니다. 대기 중 {{ requestCount }}명</div></sc-if>
+          <sc-if value="{{ requestsHas }}" hint-placeholder-val="{{ true }}"><div class="nd-section-footnote nd-section-footnote--lead">비공개 계정이라 수락한 사람만 내 게시물을 볼 수 있어요. 대기 중 {{ requestCount }}명</div></sc-if>
           <sc-for list="{{ requestList }}" as="u" hint-placeholder-count="3">
             <div class="nd-person-row">
-              <button onClick="{{ u.onProfile }}" class="nd-avatar nd-avatar--lg" style="background:{{ u.bg }};color:{{ u.fg }}">{{ u.ini }}</button>
+              <button onClick="{{ u.onProfile }}" aria-label="{{ u.name }} 프로필" class="nd-avatar nd-avatar--lg" style="background:{{ u.bg }};color:{{ u.fg }}">{{ u.ini }}</button>
               <div class="nd-person-row__main">
                 <button onClick="{{ u.onProfile }}" class="nd-person-row__names"><div class="nd-person-row__name"><span>{{ u.name }}</span></div><div class="nd-person-row__handle">{{ u.full }}</div></button>
                 <sc-if value="{{ u.hasBio }}" hint-placeholder-val="{{ false }}"><div class="nd-person-row__bio">{{ u.bio }}</div></sc-if>
               </div>
               <div class="nd-person-row__trailing">
-                <button onClick="{{ u.reject }}" aria-label="거절" class="nd-icon-button nd-icon-button--disc">{{ ic20.close }}</button>
-                <button onClick="{{ u.accept }}" aria-label="승인" class="nd-icon-button nd-icon-button--filled">{{ ic20.check }}</button>
+                <button onClick="{{ u.reject }}" class="nd-button nd-button--sm nd-button--outlined">거절</button>
+                <button onClick="{{ u.accept }}" class="nd-button nd-button--sm nd-button--filled">수락</button>
               </div>
             </div>
           </sc-for>
@@ -743,7 +749,7 @@
           <div class="nd-header__bar">
             <button onClick="{{ back }}" aria-label="뒤로" class="nd-icon-button nd-header__slot">{{ ic.back }}</button>
             <label class="nd-search-field">{{ ic20.search }}<input placeholder="리스트 검색" class="nd-search-field__input"></label>
-            <button aria-label="더 보기" class="nd-icon-button nd-header__slot">{{ ic.more }}</button>
+            <button onClick="{{ openNewList }}" aria-label="새 리스트" class="nd-icon-button nd-header__slot">{{ ic.listPlus }}</button>
           </div>
         </div>
         <div class="nd-scroll nd-scroll--fab">
@@ -836,12 +842,12 @@
         <div class="nd-onboarding__intro">
           <div class="nd-onboarding__wordmark">Nalda</div>
           <div class="nd-title-xl" style="letter-spacing:-0.01em">역극과 커뮤를 위한<br>가벼운 마스토돈 앱</div>
-          <div class="nd-lead nd-lead--lg" style="max-width:var(--nd-lead-max-w)">타임라인, 멘션, 알림, 채팅. 필요한 것만 남겼습니다. 어느 마스토돈 서버 계정으로도 쓸 수 있어요.</div>
+          <div class="nd-lead nd-lead--lg" style="max-width:var(--nd-lead-max-w)">타임라인, 멘션, 알림, 채팅. 필요한 것만 남겼어요. 어느 마스토돈 서버 계정으로도 쓸 수 있어요.</div>
         </div>
         <div class="nd-stack nd-stack--md">
           <button onClick="{{ obStart }}" class="nd-button nd-button--lg nd-button--block nd-button--filled">로그인</button>
           <button onClick="{{ obSignup }}" class="nd-button nd-button--lg nd-button--block nd-button--outlined">계정이 없어요</button>
-          <div class="nd-footnote" style="text-align:center;padding:var(--nd-space-xs) var(--nd-space-sm) 0">계속하면 Nalda의 <span class="nd-link">이용약관</span>과 <span class="nd-link">개인정보 처리방침</span>에 동의하는 것입니다.</div>
+          <div class="nd-footnote" style="text-align:center;padding:var(--nd-space-xs) var(--nd-space-sm) 0">계속하면 Nalda의 <span class="nd-link">이용약관</span>과 <span class="nd-link">개인정보 처리방침</span>에 동의하게 돼요.</div>
         </div>
       </div>
     </sc-if>
@@ -854,8 +860,8 @@
         </div>
         <div class="nd-scroll nd-onboarding__step">
           <sc-if value="{{ ob.isBrowser }}" hint-placeholder-val="{{ true }}">
-            <div class="nd-title-xl">{{ ob.server }}에<br>로그인합니다</div>
-            <div class="nd-lead nd-lead--lg" style="margin-top:var(--nd-space-md)">서버의 로그인 페이지가 브라우저로 열립니다. 로그인하고 <b style="color:var(--fg)" class="nd-semibold">승인</b>을 누르면 Nalda로 돌아옵니다. 암호는 Nalda에 저장되지 않습니다.</div>
+            <div class="nd-title-xl">{{ ob.server }}에<br>로그인해요</div>
+            <div class="nd-lead nd-lead--lg" style="margin-top:var(--nd-space-md)">서버의 로그인 페이지가 브라우저로 열려요. 로그인하고 <b style="color:var(--fg)" class="nd-semibold">승인</b>을 누르면 Nalda로 돌아와요. 암호는 Nalda에 저장되지 않아요.</div>
             <div class="nd-oauth">
               <div class="nd-oauth__bar">{{ ic16.lock }}<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ ob.server }}/oauth/authorize</span></div>
               <div class="nd-oauth__body">
@@ -871,7 +877,7 @@
             <div class="nd-hero">
               <span class="nd-hero__disc">{{ ic40.bell }}</span>
               <div class="nd-title-xl">멘션과 채팅을<br>놓치지 마세요</div>
-              <div class="nd-hero__body">푸시 알림을 켜면 답글, 멘션, 채팅이 올 때 바로 알려드립니다. 종류별로 설정에서 끌 수 있어요.</div>
+              <div class="nd-hero__body">푸시 알림을 켜면 답글, 멘션, 채팅이 올 때 바로 알려 드려요. 종류별로 설정에서 끌 수 있어요.</div>
             </div>
             <div class="nd-stack nd-stack--md">
               <button onClick="{{ obAllowPush }}" class="nd-button nd-button--lg nd-button--block nd-button--filled">알림 켜기</button>
@@ -892,7 +898,7 @@
         <div class="nd-scroll nd-onboarding__form">
           <sc-if value="{{ su.isRules }}" hint-placeholder-val="{{ true }}">
             <div class="nd-title-lg">{{ su.server }}의 규칙</div>
-            <div class="nd-lead" style="margin-top:var(--nd-space-sm)">이 서버의 운영자가 정한 규칙입니다. 동의해야 가입할 수 있습니다.</div>
+            <div class="nd-lead" style="margin-top:var(--nd-space-sm)">이 서버의 운영자가 정한 규칙이에요. 동의해야 가입할 수 있어요.</div>
             <div style="margin-top:var(--nd-space-lg)">
               <sc-for list="{{ serverRules }}" as="r" hint-placeholder-count="4"><div class="nd-list-row nd-list-row--flush nd-list-row--top nd-list-row--divided"><span class="nd-list-row__leading nd-number">{{ r.n }}</span><div class="nd-list-row__body"><div class="nd-list-row__text"><div class="nd-list-row__title nd-list-row__title--strong">{{ r.title }}</div><div class="nd-list-row__subtitle">{{ r.desc }}</div></div></div></div></sc-for>
             </div>
@@ -902,10 +908,10 @@
           <sc-if value="{{ su.isForm }}" hint-placeholder-val="{{ false }}">
             <div class="nd-title-lg">계정 정보</div>
             <div class="nd-stack nd-stack--lg" style="margin-top:var(--nd-space-lg)">
-              <label class="nd-field"><div class="nd-field__label">사용자 이름</div><div class="nd-text-field {{ su.userFieldCls }}"><span class="nd-text-field__affix">@</span><input value="{{ su.username }}" onChange="{{ onSuUsername }}" placeholder="username" aria-invalid="{{ su.userHasErr }}" autocapitalize="off" class="nd-text-field__input"><span class="nd-text-field__affix nd-text-field__affix--sm">@{{ su.server }}</span><sc-if value="{{ su.userOk }}" hint-placeholder-val="{{ false }}"><span role="img" aria-label="사용할 수 있는 이름" class="nd-text-field__status">{{ ic16.check }}</span></sc-if></div><sc-if value="{{ su.userHasErr }}" hint-placeholder-val="{{ false }}"><div role="alert" class="nd-field__error">{{ su.userErr }}</div></sc-if><div class="nd-field__help">영문, 숫자, 밑줄만. 나중에 바꿀 수 없습니다.</div></label>
+              <label class="nd-field"><div class="nd-field__label">사용자 이름</div><div class="nd-text-field {{ su.userFieldCls }}"><span class="nd-text-field__affix">@</span><input value="{{ su.username }}" onChange="{{ onSuUsername }}" placeholder="username" aria-invalid="{{ su.userHasErr }}" autocapitalize="off" class="nd-text-field__input"><span class="nd-text-field__affix nd-text-field__affix--sm">@{{ su.server }}</span><sc-if value="{{ su.userOk }}" hint-placeholder-val="{{ false }}"><span role="img" aria-label="사용할 수 있는 이름" class="nd-text-field__status">{{ ic16.check }}</span></sc-if></div><sc-if value="{{ su.userHasErr }}" hint-placeholder-val="{{ false }}"><div role="alert" class="nd-field__error">{{ su.userErr }}</div></sc-if><div class="nd-field__help">영문, 숫자, 밑줄만 쓸 수 있어요. 나중에 바꿀 수 없어요.</div></label>
               <label class="nd-field"><div class="nd-field__label">이메일</div><input value="{{ su.email }}" onChange="{{ onSuEmail }}" placeholder="you@example.com" class="nd-text-field"></label>
               <label class="nd-field"><div class="nd-field__label">암호</div><div class="nd-text-field nd-text-field--trailing"><input type="{{ su.pwType }}" value="{{ su.password }}" onChange="{{ onSuPassword }}" placeholder="8자 이상" class="nd-text-field__input"><button type="button" onClick="{{ suTogglePw }}" aria-label="{{ su.pwLabel }}" aria-pressed="{{ su.pwShown }}" class="nd-icon-button nd-icon-button--inline">{{ su.pwIcon }}</button></div></label>
-              <sc-if value="{{ su.needsReason }}" hint-placeholder-val="{{ true }}"><label class="nd-field"><div class="nd-field__label">가입하려는 이유</div><textarea value="{{ su.reason }}" onChange="{{ onSuReason }}" rows="3" placeholder="이 서버는 운영자 승인이 필요합니다. 어떤 극·커뮤를 하는지 간단히 적어주세요." class="nd-text-area"></textarea></label></sc-if>
+              <sc-if value="{{ su.needsReason }}" hint-placeholder-val="{{ true }}"><label class="nd-field"><div class="nd-field__label">가입하려는 이유</div><textarea value="{{ su.reason }}" onChange="{{ onSuReason }}" rows="3" placeholder="이 서버는 운영자 승인이 필요해요. 어떤 극·커뮤를 하는지 간단히 적어 주세요." class="nd-text-area"></textarea></label></sc-if>
             </div>
             <div class="nd-spacer"></div>
             <button onClick="{{ suNext }}" aria-disabled="{{ su.formDisabled }}" class="nd-button nd-button--lg nd-button--block nd-button--filled {{ su.formCls }}" style="margin-top:var(--nd-space-xl)">가입하기</button>
@@ -914,7 +920,7 @@
             <div class="nd-hero">
               <span class="nd-hero__disc">{{ ic40.mail }}</span>
               <div class="nd-title-xl">이메일을 확인하세요</div>
-              <div class="nd-hero__body"><b style="color:var(--fg)" class="nd-semibold">{{ su.emailShown }}</b>으로 확인 링크를 보냈습니다. 링크를 누르면 가입이 완료됩니다.</div>
+              <div class="nd-hero__body"><b style="color:var(--fg)" class="nd-semibold">{{ su.emailShown }}</b>으로 확인 링크를 보냈어요. 링크를 누르면 가입이 완료돼요.</div>
             </div>
             <div class="nd-stack nd-stack--md">
               <button onClick="{{ suOpenMail }}" class="nd-button nd-button--lg nd-button--block nd-button--filled">메일 앱 열기</button>
@@ -925,7 +931,7 @@
             <div class="nd-hero">
               <span class="nd-hero__disc">{{ ic40.hourglass }}</span>
               <div class="nd-title-xl">운영자가 가입을 검토하고 있어요</div>
-              <div class="nd-hero__body">승인되면 이메일로 알려 드립니다.</div>
+              <div class="nd-hero__body">승인되면 이메일로 알려 드려요.</div>
             </div>
             <div class="nd-stack nd-stack--md">
               <button onClick="{{ suBrowseServers }}" class="nd-button nd-button--lg nd-button--block nd-button--plain">다른 서버 둘러보기</button>
@@ -963,7 +969,7 @@
           <sc-for list="{{ aboutRows }}" as="r" hint-placeholder-count="5"><button onClick="{{ r.go }}" class="nd-list-row nd-list-row--settings {{ r.cls }}"><div class="nd-list-row__body"><span class="nd-list-row__text nd-list-row__title">{{ r.label }}</span><span class="nd-list-row__value">{{ r.value }}</span><span class="nd-list-row__trailing">{{ r.trail }}</span></div></button></sc-for>
           <div class="nd-section-header">오픈소스 라이선스</div>
           <sc-for list="{{ licenses }}" as="l" hint-placeholder-count="4"><div class="nd-list-row nd-list-row--divided"><div class="nd-list-row__body"><div class="nd-list-row__text"><div class="nd-list-row__title" style="font-size:var(--fs2,15px)">{{ l.name }}</div><div class="nd-list-row__subtitle">{{ l.lic }}</div></div></div></div></sc-for>
-          <div class="nd-footnote" style="padding:var(--nd-space-xl) var(--nd-space-lg) 0;text-align:center">Nalda는 Mastodon API 위에서 동작하는 독립 클라이언트입니다. Mastodon은 Mastodon gGmbH의 상표입니다.</div>
+          <div class="nd-footnote" style="padding:var(--nd-space-xl) var(--nd-space-lg) 0;text-align:center">Nalda는 Mastodon API 위에서 동작하는 독립 클라이언트예요. Mastodon은 Mastodon gGmbH의 상표예요.</div>
         </div>
       </div>
     </sc-if>
@@ -971,11 +977,10 @@
     <!-- LOGIN -->
     <sc-if value="{{ v.login }}" hint-placeholder-val="{{ false }}">
       <div class="nd-screen nd-screen--push">
-        <div class="nd-header"><div class="nd-header__bar"><div class="nd-spacer"></div><button onClick="{{ back }}" aria-label="닫기" class="nd-icon-button nd-header__slot">{{ ic.close }}</button></div></div>
+        <div class="nd-header"><div class="nd-header__bar"><button onClick="{{ back }}" class="nd-header__slot nd-header__slot--text nd-header__cancel">취소</button><div class="nd-header__title">로그인</div><div class="nd-header__slot nd-header__slot--text"></div></div></div>
         <div class="nd-scroll nd-login">
-          <div class="nd-login__title">로그인<span class="nd-link" style="font-size:24px">Nalda</span></div>
-          <div class="nd-muted nd-type-body" style="margin-top:var(--nd-space-sm)">기존 계정으로 계속하기</div>
-          <div class="nd-stack nd-stack--md" style="margin-top:var(--nd-space-xxl)">
+          <div class="nd-muted nd-type-body" style="margin-top:var(--nd-space-lg)">기존 계정으로 계속하기</div>
+          <div class="nd-stack nd-stack--md" style="margin-top:var(--nd-space-lg)">
             <sc-for list="{{ loginAccounts }}" as="a" hint-placeholder-count="3">
               <button onClick="{{ a.switchTo }}" class="nd-person-row nd-person-row--card">
                 <div class="nd-avatar nd-avatar--lg" style="background:{{ a.bg }};color:{{ a.fg }}">{{ a.ini }}</div>
@@ -1029,14 +1034,14 @@
       <div class="nd-sheet__grabber"></div>
       <div class="nd-person-row nd-person-row--flush nd-person-row--center">
         <div class="nd-avatar nd-avatar--lg" style="background:{{ muteUser.bg }};color:{{ muteUser.fg }}">{{ muteUser.ini }}</div>
-        <div class="nd-person-row__main" style="line-height:20px"><div class="nd-type-body nd-semibold">{{ muteUser.name }} 님 뮤트</div><div class="nd-footnote">게시물과 부스트가 타임라인에서 사라집니다. 상대는 알 수 없습니다.</div></div>
+        <div class="nd-person-row__main" style="line-height:20px"><div class="nd-type-body nd-semibold">{{ muteUser.name }} 님 뮤트</div><div class="nd-footnote">게시물과 부스트가 타임라인에서 사라져요. 상대는 알 수 없어요.</div></div>
       </div>
       <div class="nd-section-header nd-section-header--first nd-section-header--flush">기간</div>
       <div class="nd-chip-row">
         <sc-for list="{{ muteDurs }}" as="d" hint-placeholder-count="8"><button onClick="{{ d.pick }}" aria-pressed="{{ d.on }}" class="nd-chip nd-chip--brand {{ d.cls }}">{{ d.label }}</button></sc-for>
       </div>
       <div class="nd-list-row nd-list-row--settings nd-list-row--flush nd-list-row--boxed" style="margin-top:var(--nd-space-sm)">
-        <div class="nd-list-row__body"><div class="nd-list-row__text"><div class="nd-list-row__title">알림도 뮤트</div><div class="nd-list-row__subtitle">이 사람이 보내는 멘션·답글 알림을 받지 않습니다</div></div><button onClick="{{ toggleMuteNotifs }}" role="switch" aria-checked="{{ muteNotifs }}" aria-label="알림도 뮤트" class="nd-switch {{ muteNotifsSw }}"><span class="nd-switch__knob"></span></button></div>
+        <div class="nd-list-row__body"><div class="nd-list-row__text"><div class="nd-list-row__title">알림도 뮤트</div><div class="nd-list-row__subtitle">이 사람이 보내는 멘션·답글 알림을 받지 않아요</div></div><button onClick="{{ toggleMuteNotifs }}" role="switch" aria-checked="{{ muteNotifs }}" aria-label="알림도 뮤트" class="nd-switch {{ muteNotifsSw }}"><span class="nd-switch__knob"></span></button></div>
       </div>
       <button onClick="{{ doMute }}" class="nd-button nd-button--lg nd-button--block nd-button--filled" style="margin-top:var(--nd-space-lg)">{{ muteDurLabel }} 뮤트</button>
     </div>
@@ -1047,10 +1052,10 @@
     <div onClick="{{ saveAlt }}" class="nd-scrim"></div>
     <div class="nd-sheet">
       <div class="nd-sheet__grabber"></div>
-      <div class="nd-sheet__header"><div class="nd-sheet__slot"></div><div class="nd-sheet__title">대체 텍스트</div><button onClick="{{ saveAlt }}" class="nd-sheet__slot nd-header__action">완료</button></div>
+      <div class="nd-sheet__header"><button onClick="{{ cancelAlt }}" class="nd-sheet__slot nd-header__cancel">취소</button><div class="nd-sheet__title">대체 텍스트</div><button onClick="{{ saveAlt }}" class="nd-sheet__slot nd-header__action">저장</button></div>
       <div style="display:flex;gap:var(--nd-space-md);margin-top:var(--nd-space-sm)">
         <div class="nd-thumb" style="background:{{ altBg }}"></div>
-        <div class="nd-footnote" style="flex:1;min-width:0">화면을 볼 수 없는 사람에게 읽어주는 설명입니다. 사진에 담긴 것, 분위기, 글자가 있다면 그 내용을 적어주세요.</div>
+        <div class="nd-footnote" style="flex:1;min-width:0">화면을 볼 수 없는 사람에게 읽어 주는 설명이에요. 사진에 담긴 것, 분위기, 글자가 있다면 그 내용을 적어 주세요.</div>
       </div>
       <textarea value="{{ altText }}" onChange="{{ onAltText }}" placeholder="이 사진을 설명해 주세요" rows="4" class="nd-text-area" style="margin-top:var(--nd-space-md)"></textarea>
       <div class="nd-field__counter">{{ altCount }} / 1500</div>
@@ -1064,17 +1069,17 @@
         <div class="nd-header__bar">
           <sc-if value="{{ rpShowBack }}" hint-placeholder-val="{{ false }}"><button onClick="{{ rpBack }}" aria-label="뒤로" class="nd-icon-button nd-header__slot">{{ ic.back }}</button></sc-if>
           <sc-if value="{{ rpIsReason }}" hint-placeholder-val="{{ true }}"><button onClick="{{ closeReport }}" class="nd-header__slot nd-header__slot--text nd-header__cancel">취소</button></sc-if>
-          <sc-if value="{{ rpIsDone }}" hint-placeholder-val="{{ false }}"><div class="nd-header__slot"></div></sc-if>
+          <sc-if value="{{ rpIsDone }}" hint-placeholder-val="{{ false }}"><div class="nd-header__slot nd-header__slot--text"></div></sc-if>
           <div class="nd-header__title"><div>{{ rpUser.name }} 님 신고</div><div class="nd-header__subtitle">{{ rpUser.handle }}</div></div>
           <sc-if value="{{ rpIsReason }}" hint-placeholder-val="{{ true }}"><div class="nd-header__slot nd-header__slot--text"></div></sc-if>
           <sc-if value="{{ rpShowBack }}" hint-placeholder-val="{{ false }}"><div class="nd-header__slot"></div></sc-if>
-          <sc-if value="{{ rpIsDone }}" hint-placeholder-val="{{ false }}"><button onClick="{{ closeReport }}" aria-label="닫기" class="nd-icon-button nd-header__slot">{{ ic.close }}</button></sc-if>
+          <sc-if value="{{ rpIsDone }}" hint-placeholder-val="{{ false }}"><button onClick="{{ closeReport }}" class="nd-header__slot nd-header__slot--text nd-header__action">완료</button></sc-if>
         </div>
       </div>
       <div class="nd-scroll nd-report">
         <sc-if value="{{ rpIsReason }}" hint-placeholder-val="{{ true }}">
           <div class="nd-title-lg nd-report__title">어떤 문제가 있나요?</div>
-          <div class="nd-lead">가장 가까운 항목을 고르세요. 신고는 nalda.kr 운영자에게 전달됩니다.</div>
+          <div class="nd-lead">가장 가까운 항목을 고르세요. 신고는 nalda.kr 운영자에게 전달돼요.</div>
           <div style="margin-top:var(--nd-space-lg)">
             <sc-for list="{{ reportReasons }}" as="r" hint-placeholder-count="5">
               <button onClick="{{ r.pick }}" role="radio" aria-checked="{{ r.on }}" class="nd-list-row nd-list-row--two-line nd-list-row--flush nd-list-row--divided"><div class="nd-list-row__body"><div class="nd-list-row__text"><div class="nd-list-row__title">{{ r.label }}</div><div class="nd-list-row__subtitle">{{ r.desc }}</div></div><span class="nd-check {{ r.cls }}">{{ ic20.check }}</span></div></button>
@@ -1083,11 +1088,11 @@
         </sc-if>
         <sc-if value="{{ rpIsDislike }}" hint-placeholder-val="{{ false }}">
           <div class="nd-title-lg nd-report__title">신고하지 않아도 괜찮아요</div>
-          <div class="nd-lead" style="margin-bottom:var(--nd-space-xl)">마음에 들지 않는 글은 운영자에게 알리지 않고 내 화면에서 치울 수 있어요. 상대는 알 수 없습니다.</div>
+          <div class="nd-lead" style="margin-bottom:var(--nd-space-xl)">마음에 들지 않는 글은 운영자에게 알리지 않고 내 화면에서 치울 수 있어요. 상대는 알 수 없어요.</div>
           <div class="nd-list-group nd-list-group--boxed">
-            <button onClick="{{ rpDoneUnfollow }}" class="nd-list-row nd-list-row--settings nd-list-row--flush nd-list-row--divided"><div class="nd-list-row__body"><div class="nd-list-row__text"><div class="nd-list-row__title">{{ rpUser.name }} 님 팔로우 취소</div><div class="nd-list-row__subtitle">홈 타임라인에서 사라집니다</div></div><span class="nd-list-row__trailing">{{ ic20.chevR }}</span></div></button>
-            <button onClick="{{ rpDoneMute }}" class="nd-list-row nd-list-row--settings nd-list-row--flush nd-list-row--divided"><div class="nd-list-row__body"><div class="nd-list-row__text"><div class="nd-list-row__title">{{ rpUser.name }} 님 뮤트</div><div class="nd-list-row__subtitle">게시물과 알림이 보이지 않습니다. 상대는 알 수 없습니다</div></div><span class="nd-list-row__trailing">{{ ic20.chevR }}</span></div></button>
-            <button onClick="{{ rpDoneBlock }}" class="nd-list-row nd-list-row--settings nd-list-row--flush nd-list-row--destructive"><div class="nd-list-row__body"><div class="nd-list-row__text"><div class="nd-list-row__title">{{ rpUser.name }} 님 차단</div><div class="nd-list-row__subtitle">서로의 게시물을 볼 수 없고 팔로우가 해제됩니다</div></div><span class="nd-list-row__trailing">{{ ic20.chevR }}</span></div></button>
+            <button onClick="{{ rpDoneUnfollow }}" class="nd-list-row nd-list-row--settings nd-list-row--flush nd-list-row--divided"><div class="nd-list-row__body"><div class="nd-list-row__text"><div class="nd-list-row__title">{{ rpUser.name }} 님 팔로우 취소</div><div class="nd-list-row__subtitle">홈 타임라인에서 사라져요</div></div><span class="nd-list-row__trailing">{{ ic20.chevR }}</span></div></button>
+            <button onClick="{{ rpDoneMute }}" class="nd-list-row nd-list-row--settings nd-list-row--flush nd-list-row--divided"><div class="nd-list-row__body"><div class="nd-list-row__text"><div class="nd-list-row__title">{{ rpUser.name }} 님 뮤트</div><div class="nd-list-row__subtitle">게시물과 알림이 보이지 않아요. 상대는 알 수 없어요</div></div><span class="nd-list-row__trailing">{{ ic20.chevR }}</span></div></button>
+            <button onClick="{{ rpDoneBlock }}" class="nd-list-row nd-list-row--settings nd-list-row--flush nd-list-row--destructive"><div class="nd-list-row__body"><div class="nd-list-row__text"><div class="nd-list-row__title">{{ rpUser.name }} 님 차단</div><div class="nd-list-row__subtitle">서로의 게시물을 볼 수 없고 팔로우가 해제돼요</div></div><span class="nd-list-row__trailing">{{ ic20.chevR }}</span></div></button>
           </div>
         </sc-if>
         <sc-if value="{{ rpIsRules }}" hint-placeholder-val="{{ false }}">
@@ -1101,32 +1106,32 @@
         </sc-if>
         <sc-if value="{{ rpIsPosts }}" hint-placeholder-val="{{ false }}">
           <div class="nd-title-lg nd-report__title">관련 게시물이 있나요?</div>
-          <div class="nd-lead">운영자가 함께 볼 게시물을 고르세요. 고르지 않아도 됩니다.</div>
+          <div class="nd-lead">운영자가 함께 볼 게시물을 고르세요. 고르지 않아도 돼요.</div>
           <div style="margin-top:var(--nd-space-lg)">
             <sc-for list="{{ rpPostRows }}" as="rq" hint-placeholder-count="3">
               <button onClick="{{ rq.toggle }}" role="checkbox" aria-checked="{{ rq.on }}" class="nd-list-row nd-list-row--two-line nd-list-row--flush nd-list-row--divided"><div class="nd-list-row__body"><div class="nd-list-row__text"><div class="nd-list-row__title nd-list-row__title--regular nd-clamp-2">{{ rq.textNode }}</div><div class="nd-list-row__subtitle" style="margin-top:var(--nd-space-xs)">{{ rq.time }}</div></div><span class="nd-checkmark {{ rq.checkCls }}">{{ ic16.check }}</span></div></button>
             </sc-for>
-            <sc-if value="{{ rpPostsEmpty }}" hint-placeholder-val="{{ false }}"><div class="nd-empty-state nd-empty-state--text"><div class="nd-empty-state__body">최근 게시물이 없습니다. 다음으로 넘어가도 신고할 수 있어요.</div></div></sc-if>
+            <sc-if value="{{ rpPostsEmpty }}" hint-placeholder-val="{{ false }}"><div class="nd-empty-state nd-empty-state--text"><div class="nd-empty-state__body">최근 게시물이 없어요. 다음으로 넘어가도 신고할 수 있어요.</div></div></sc-if>
           </div>
         </sc-if>
         <sc-if value="{{ rpIsDetail }}" hint-placeholder-val="{{ false }}">
           <div class="nd-title-lg nd-report__title">더 알려줄 내용이 있나요?</div>
-          <div class="nd-lead">선택 사항입니다. 운영자가 상황을 이해하는 데 도움이 됩니다.</div>
+          <div class="nd-lead">선택 사항이에요. 운영자가 상황을 이해하는 데 도움이 돼요.</div>
           <textarea value="{{ rpComment }}" onChange="{{ onRpComment }}" placeholder="추가 설명 (선택)" rows="5" class="nd-text-area" style="margin-top:var(--nd-space-lg)"></textarea>
           <div class="nd-list-row nd-list-row--settings nd-list-row--flush nd-list-row--boxed" style="margin-top:var(--nd-space-lg)">
-            <div class="nd-list-row__body"><div class="nd-list-row__text"><div class="nd-list-row__title">상대 서버에도 전달</div><div class="nd-list-row__subtitle">{{ rpRemote }} 운영자에게 익명으로 사본을 보냅니다</div></div><button onClick="{{ toggleRpForward }}" role="switch" aria-checked="{{ rpForward }}" aria-label="상대 서버에도 전달" class="nd-switch {{ rpForwardSw }}"><span class="nd-switch__knob"></span></button></div>
+            <div class="nd-list-row__body"><div class="nd-list-row__text"><div class="nd-list-row__title">상대 서버에도 전달</div><div class="nd-list-row__subtitle">{{ rpRemote }} 운영자에게 익명으로 사본을 보내요</div></div><button onClick="{{ toggleRpForward }}" role="switch" aria-checked="{{ rpForward }}" aria-label="상대 서버에도 전달" class="nd-switch {{ rpForwardSw }}"><span class="nd-switch__knob"></span></button></div>
           </div>
         </sc-if>
         <sc-if value="{{ rpIsDone }}" hint-placeholder-val="{{ false }}">
           <div class="nd-empty-state">
             <span class="nd-empty-state__disc nd-empty-state__disc--brand">{{ ic32.check }}</span>
-            <div class="nd-empty-state__title">신고를 보냈습니다</div>
-            <div class="nd-empty-state__body">운영자가 확인하면 알림으로 결과를 알려드립니다. 그동안 이 사람이 보이지 않게 할 수 있어요.</div>
+            <div class="nd-empty-state__title">신고를 보냈어요</div>
+            <div class="nd-empty-state__body">운영자가 확인하면 알림으로 결과를 알려 드려요. 그동안 이 사람이 보이지 않게 할 수 있어요.</div>
           </div>
           <div class="nd-list-group nd-list-group--boxed">
-            <button onClick="{{ rpDoneUnfollow }}" class="nd-list-row nd-list-row--settings nd-list-row--flush nd-list-row--divided"><div class="nd-list-row__body"><div class="nd-list-row__text"><div class="nd-list-row__title">{{ rpUser.name }} 님 팔로우 취소</div><div class="nd-list-row__subtitle">홈 타임라인에서 사라집니다</div></div><span class="nd-list-row__trailing">{{ ic20.chevR }}</span></div></button>
-            <button onClick="{{ rpDoneMute }}" class="nd-list-row nd-list-row--settings nd-list-row--flush nd-list-row--divided"><div class="nd-list-row__body"><div class="nd-list-row__text"><div class="nd-list-row__title">{{ rpUser.name }} 님 뮤트</div><div class="nd-list-row__subtitle">게시물과 알림이 보이지 않습니다. 상대는 알 수 없습니다</div></div><span class="nd-list-row__trailing">{{ ic20.chevR }}</span></div></button>
-            <button onClick="{{ rpDoneBlock }}" class="nd-list-row nd-list-row--settings nd-list-row--flush nd-list-row--destructive"><div class="nd-list-row__body"><div class="nd-list-row__text"><div class="nd-list-row__title">{{ rpUser.name }} 님 차단</div><div class="nd-list-row__subtitle">서로의 게시물을 볼 수 없고 팔로우가 해제됩니다</div></div><span class="nd-list-row__trailing">{{ ic20.chevR }}</span></div></button>
+            <button onClick="{{ rpDoneUnfollow }}" class="nd-list-row nd-list-row--settings nd-list-row--flush nd-list-row--divided"><div class="nd-list-row__body"><div class="nd-list-row__text"><div class="nd-list-row__title">{{ rpUser.name }} 님 팔로우 취소</div><div class="nd-list-row__subtitle">홈 타임라인에서 사라져요</div></div><span class="nd-list-row__trailing">{{ ic20.chevR }}</span></div></button>
+            <button onClick="{{ rpDoneMute }}" class="nd-list-row nd-list-row--settings nd-list-row--flush nd-list-row--divided"><div class="nd-list-row__body"><div class="nd-list-row__text"><div class="nd-list-row__title">{{ rpUser.name }} 님 뮤트</div><div class="nd-list-row__subtitle">게시물과 알림이 보이지 않아요. 상대는 알 수 없어요</div></div><span class="nd-list-row__trailing">{{ ic20.chevR }}</span></div></button>
+            <button onClick="{{ rpDoneBlock }}" class="nd-list-row nd-list-row--settings nd-list-row--flush nd-list-row--destructive"><div class="nd-list-row__body"><div class="nd-list-row__text"><div class="nd-list-row__title">{{ rpUser.name }} 님 차단</div><div class="nd-list-row__subtitle">서로의 게시물을 볼 수 없고 팔로우가 해제돼요</div></div><span class="nd-list-row__trailing">{{ ic20.chevR }}</span></div></button>
           </div>
         </sc-if>
       </div>
@@ -1158,9 +1163,9 @@
             <div style="display:flex;gap:var(--nd-space-sm);margin-top:var(--nd-space-sm)"><input value="{{ f.label }}" onChange="{{ f.onLabel }}" placeholder="라벨" class="nd-text-field nd-text-field--compact" style="width:35%"><input value="{{ f.value }}" onChange="{{ f.onValue }}" placeholder="내용" class="nd-text-field nd-text-field--compact" style="flex:1;min-width:0"></div>
           </sc-for>
           <div class="nd-list-row nd-list-row--settings nd-list-row--flush nd-list-row--boxed" style="margin-top:var(--nd-space-xl)">
-            <div class="nd-list-row__body"><div class="nd-list-row__text"><div class="nd-list-row__title">팔로우 직접 승인</div><div class="nd-list-row__subtitle">켜면 팔로우 요청을 내가 승인해야 합니다. 이름 옆에 잠금 표시가 붙습니다.</div></div><button onClick="{{ toggleEpLocked }}" role="switch" aria-checked="{{ epLocked }}" aria-label="팔로우 직접 승인" class="nd-switch {{ epLockedSw }}"><span class="nd-switch__knob"></span></button></div>
+            <div class="nd-list-row__body"><div class="nd-list-row__text"><div class="nd-list-row__title">팔로우 직접 승인</div><div class="nd-list-row__subtitle">켜면 팔로우 요청을 내가 승인해야 해요. 이름 옆에 잠금 표시가 붙어요.</div></div><button onClick="{{ toggleEpLocked }}" role="switch" aria-checked="{{ epLocked }}" aria-label="팔로우 직접 승인" class="nd-switch {{ epLockedSw }}"><span class="nd-switch__knob"></span></button></div>
           </div>
-          <div class="nd-footnote" style="margin-top:var(--nd-space-md)">이메일, 암호, 2단계 인증은 설정 › 서버에서 관리에서 바꿉니다.</div>
+          <div class="nd-footnote" style="margin-top:var(--nd-space-md)">이메일, 암호, 2단계 인증은 설정 › 서버에서 관리에서 바꿔요.</div>
         </div>
       </div>
     </div>
@@ -1168,23 +1173,19 @@
 
       <!-- MEDIA PICKER (compose + chat) — OS PhotosPicker mock -->
       <sc-if value="{{ ov.media }}" hint-placeholder-val="{{ false }}">
-        <div class="nd-cover sys-picker">
-          <div class="nd-header nd-header--clear">
-            <div class="sys-picker__hint">{{ mediaHint }}</div>
-            <div class="nd-header__bar nd-header__bar--split">
-              <button onClick="{{ closeOverlay }}" aria-label="닫기" class="nd-icon-button nd-icon-button--viewer">{{ ic.close }}</button>
-              <div class="nd-segmented sys-picker__segmented"><span class="nd-segmented__item is-selected">사진</span><span class="nd-segmented__item">앨범</span></div>
-              <div class="nd-header__spacer"></div>
-            </div>
+        <div onClick="{{ closeOverlay }}" class="nd-scrim"></div>
+        <div role="dialog" aria-label="사진" class="sys-picker">
+          <div class="sys-picker__grabber"></div>
+          <div class="sys-picker__nav">
+            <button onClick="{{ closeOverlay }}" class="sys-picker__text">취소</button>
+            <span class="sys-picker__title">{{ mediaTitle }}</span>
+            <button onClick="{{ confirmMedia }}" aria-disabled="{{ mediaNone }}" class="sys-picker__text sys-picker__text--confirm {{ mediaConfirmCls }}">추가</button>
           </div>
+          <div class="nd-segmented nd-segmented--fill sys-picker__segmented"><span class="nd-segmented__item is-selected">사진</span><span class="nd-segmented__item">앨범</span></div>
           <div class="sys-picker__grid">
             <sc-for list="{{ mediaGrid }}" as="mg" hint-placeholder-count="12">
               <button onClick="{{ mg.toggle }}" aria-pressed="{{ mg.selected }}" class="sys-picker__tile {{ mg.cls }}" style="background:{{ mg.bg }}">{{ mg.label }}<sc-if value="{{ mg.selected }}" hint-placeholder-val="{{ false }}"><span class="nd-count sys-picker__count">{{ mg.num }}</span></sc-if><sc-if value="{{ mg.isVideo }}" hint-placeholder-val="{{ false }}"><span class="sys-picker__duration">{{ mg.dur }}</span></sc-if></button>
             </sc-for>
-          </div>
-          <div class="sys-picker__bar">
-            <span class="sys-picker__title">{{ mediaTitle }}</span>
-            <button onClick="{{ confirmMedia }}" class="nd-button nd-button--lg nd-button--filled {{ mediaConfirmCls }}">{{ mediaConfirmLabel }}</button>
           </div>
         </div>
       </sc-if>
@@ -1245,7 +1246,7 @@
 
   <!-- TOAST -->
   <sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
-    <div role="status" class="nd-toast">
+    <div role="status" class="nd-toast {{ toastCls }}">
       <span class="nd-toast__text">{{ toastText }}</span>
       <sc-if value="{{ toastHasAction }}" hint-placeholder-val="{{ false }}"><button onClick="{{ toastGo }}" class="nd-toast__action">{{ toastAction }}</button></sc-if>
     </div>
@@ -1365,7 +1366,7 @@
       <sc-if value="{{ v.newGroup }}" hint-placeholder-val="{{ false }}">
         <div class="nd-screen nd-screen--push">
           <div class="nd-header">
-            <div class="nd-header__bar"><button onClick="{{ backToNewChat }}" class="nd-header__slot nd-header__slot--text nd-header__cancel">뒤로</button><div class="nd-header__title">새 그룹 채팅</div><button onClick="{{ createGroup }}" class="nd-header__slot nd-header__slot--text nd-header__action {{ createGroupCls }}">만들기</button></div>
+            <div class="nd-header__bar"><button onClick="{{ backToNewChat }}" aria-label="뒤로" class="nd-icon-button nd-header__slot nd-header__slot--text">{{ ic.back }}</button><div class="nd-header__title">새 그룹 채팅</div><button onClick="{{ createGroup }}" class="nd-header__slot nd-header__slot--text nd-header__action {{ createGroupCls }}">만들기</button></div>
             <label class="nd-search-field nd-search-field--block">{{ ic20.search }}<input placeholder="검색" class="nd-search-field__input"></label>
             <sc-if value="{{ hasGroupSel }}" hint-placeholder-val="{{ false }}">
               <div class="nd-chip-row nd-chip-row--header">
@@ -1394,21 +1395,19 @@
   <sc-if value="{{ v.newList }}" hint-placeholder-val="{{ false }}">
     <div class="nd-cover">
       <div class="nd-header">
-        <div class="nd-header__bar"><button onClick="{{ closeModal }}" class="nd-header__slot nd-header__slot--text nd-header__cancel">취소</button><div class="nd-header__title"><div>{{ listSheetTitle }}</div><sc-if value="{{ listCreating }}" hint-placeholder-val="{{ true }}"><div class="nd-header__subtitle">2단계 중 1단계</div></sc-if></div><div class="nd-header__slot nd-header__slot--text"></div></div>
+        <div class="nd-header__bar"><button onClick="{{ closeModal }}" class="nd-header__slot nd-header__slot--text nd-header__cancel">취소</button><div class="nd-header__title"><div>{{ listSheetTitle }}</div><sc-if value="{{ listCreating }}" hint-placeholder-val="{{ true }}"><div class="nd-header__subtitle">2단계 중 1단계</div></sc-if></div><button onClick="{{ createList }}" class="nd-header__slot nd-header__slot--text nd-header__action {{ listCreateCls }}">{{ listSubmitLabel }}</button></div>
       </div>
       <div class="nd-scroll nd-scroll--padded">
-        <div style="display:flex;justify-content:center;padding:var(--nd-space-xxl) 0"><button aria-label="리스트 이미지" class="nd-image-pick">{{ ic.plus }}</button></div>
         <div class="nd-form-row"><div class="nd-form-row__label">이름</div><input value="{{ listName }}" onChange="{{ onListName }}" placeholder="이름을 입력하세요" class="nd-form-row__input"></div>
-        <div class="nd-form-row"><div class="nd-form-row__label">답글 표시</div><div class="nd-list-row__subtitle">리스트 타임라인에 어떤 답글을 보여줄지 정합니다.</div>
+        <div class="nd-form-row"><div class="nd-form-row__label">답글 표시</div><div class="nd-list-row__subtitle">리스트 타임라인에 어떤 답글을 보여 줄지 정해요.</div>
           <div class="nd-segmented nd-segmented--fill" style="margin-top:var(--nd-space-md)">
             <sc-for list="{{ listReplyOpts }}" as="o" hint-placeholder-count="3"><button onClick="{{ o.go }}" class="nd-segmented__item {{ o.cls }}">{{ o.label }}</button></sc-for>
           </div>
         </div>
         <div class="nd-list-row nd-list-row--settings nd-list-row--flush nd-list-row--boxed">
-          <div class="nd-list-row__body"><div class="nd-list-row__text"><div class="nd-list-row__title nd-list-row__title--strong">홈에서 숨기기</div><div class="nd-list-row__subtitle">리스트 멤버의 게시물을 홈 타임라인에서 숨기고 이 리스트에서만 봅니다.</div></div><button onClick="{{ toggleListHide }}" role="switch" aria-checked="{{ listHide }}" aria-label="홈에서 숨기기" class="nd-switch {{ listHideSw }}"><span class="nd-switch__knob"></span></button></div>
+          <div class="nd-list-row__body"><div class="nd-list-row__text"><div class="nd-list-row__title nd-list-row__title--strong">홈에서 숨기기</div><div class="nd-list-row__subtitle">리스트 멤버의 게시물을 홈 타임라인에서 숨기고 이 리스트에서만 봐요.</div></div><button onClick="{{ toggleListHide }}" role="switch" aria-checked="{{ listHide }}" aria-label="홈에서 숨기기" class="nd-switch {{ listHideSw }}"><span class="nd-switch__knob"></span></button></div>
         </div>
       </div>
-      <div class="nd-bottom-bar nd-bottom-bar--end nd-bottom-bar--inset"><button onClick="{{ createList }}" class="nd-button nd-button--lg nd-button--filled {{ listCreateCls }}">{{ listSubmitLabel }}</button></div>
     </div>
   </sc-if>
 
@@ -1418,7 +1417,7 @@
     <div class="nd-sheet nd-sheet--tall">
       <div class="nd-sheet__grabber"></div>
       <div class="nd-sheet__header">
-        <sc-if value="{{ msChatAdd }}" hint-placeholder-val="{{ false }}"><button onClick="{{ recipBack }}" class="nd-sheet__slot nd-header__cancel">뒤로</button></sc-if>
+        <sc-if value="{{ msChatAdd }}" hint-placeholder-val="{{ false }}"><div class="nd-sheet__slot"><button onClick="{{ recipBack }}" aria-label="뒤로" class="nd-icon-button">{{ ic.back }}</button></div></sc-if>
         <sc-if value="{{ msNoBack }}" hint-placeholder-val="{{ true }}"><div class="nd-sheet__slot"></div></sc-if>
         <div class="nd-sheet__title">{{ msTitle }}</div>
         <button onClick="{{ closeMentionSheet }}" class="nd-sheet__slot nd-header__action">완료</button>
@@ -1492,7 +1491,7 @@
           </div>
         </div>
       </div>
-      <sc-if value="{{ restoreOffer }}" hint-placeholder-val="{{ false }}"><button onClick="{{ restoreDraft }}" class="nd-banner nd-banner--tappable">{{ ic16.pencil }}<span class="nd-banner__text">작성 중이던 글이 있어요 · <span class="nd-banner__link">이어 쓰기</span></span></button></sc-if>
+      <sc-if value="{{ restoreOffer }}" hint-placeholder-val="{{ false }}"><div role="status" class="nd-restore-banner"><span class="nd-glyph nd-restore-banner__icon">{{ ic20.pencil }}</span><span class="nd-restore-banner__text">작성 중이던 글이 있어요</span><button onClick="{{ restoreDraft }}" class="nd-button nd-button--sm nd-button--plain">이어 쓰기</button><button onClick="{{ dismissRestore }}" aria-label="닫기" class="nd-icon-button nd-restore-banner__close">{{ ic20.close }}</button></div></sc-if>
       <div class="nd-compose__scroll">
         <sc-if value="{{ isReply }}" hint-placeholder-val="{{ false }}">
           <div class="nd-compose__row">
@@ -1528,7 +1527,6 @@
                     <label class="nd-text-field" style="font-size:var(--fs1,15px)"><input value="{{ po.value }}" onChange="{{ po.onChange }}" placeholder="{{ po.placeholder }}" class="nd-text-field__input"><sc-if value="{{ po.canRemove }}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{ po.remove }}" aria-label="{{ po.removeLabel }}" class="nd-icon-button nd-icon-button--inline">{{ ic20.close }}</button></sc-if></label>
                   </sc-for>
                   <sc-if value="{{ pollCanAdd }}" hint-placeholder-val="{{ true }}"><button onClick="{{ pollAdd }}" class="nd-button nd-button--md nd-button--plain nd-compose__poll-add">{{ ic16.plus }}<span>선택지 추가</span></button></sc-if>
-                  <button onClick="{{ togglePoll }}" aria-label="투표 삭제" class="nd-icon-button nd-icon-button--disc nd-compose__poll-remove">{{ ic20.close }}</button>
                 </div>
                 <div class="nd-compose__poll-settings">
                   <button onClick="{{ togglePollMulti }}" class="nd-compose__poll-setting"><span>{{ pollMultiLabel }}</span><span class="nd-glyph nd-muted">{{ ic16.chevD }}</span></button>
@@ -1539,7 +1537,7 @@
             <sc-if value="{{ hasQuote }}" hint-placeholder-val="{{ false }}">
               <div class="nd-quote">
                 <div class="nd-quote__head"><span class="nd-avatar nd-avatar--xs" style="background:{{ quote.abg }};color:{{ quote.afg }}">{{ quote.ini }}</span><span class="nd-quote__name">{{ quote.name }}</span><span class="nd-quote__meta">{{ quote.handle }} · {{ quote.time }}</span></div>
-                <p class="nd-quote__text">{{ quote.text }}</p>
+                <div class="nd-quote__body"><p class="nd-quote__text">{{ quote.textNode }}</p><sc-if value="{{ quote.imgs }}" hint-placeholder-val="{{ false }}"><span role="img" aria-label="{{ quote.thumbLabel }}" class="nd-quote__thumb {{ quote.thumbCls }}"><span class="nd-quote__thumb-img nd-stripes"></span><sc-if value="{{ quote.moreImgs }}" hint-placeholder-val="{{ false }}"><span class="nd-badge nd-badge--media nd-quote__more">{{ quote.more }}</span></sc-if></span></sc-if></div>
               </div>
             </sc-if>
             <sc-if value="{{ hasMedia }}" hint-placeholder-val="{{ false }}">
@@ -1557,7 +1555,7 @@
               </div>
               <sc-if value="{{ hasUploadFailed }}" hint-placeholder-val="{{ false }}"><div role="alert" class="nd-compose__note nd-compose__note--alert">올리지 못한 사진이 있어요</div></sc-if>
               <button onClick="{{ toggleSensitive }}" role="switch" aria-checked="{{ sensOn }}" class="nd-chip {{ sensCls }}" style="margin-top:var(--nd-space-sm)">{{ ic16.eyeOff }}<span>민감한 미디어로 표시</span><sc-if value="{{ sensOn }}" hint-placeholder-val="{{ false }}">{{ ic16.check }}</sc-if></button>
-              <sc-if value="{{ cwOn }}" hint-placeholder-val="{{ false }}"><div class="nd-compose__note">내용 경고를 달면 미디어도 함께 가려집니다.</div></sc-if>
+              <sc-if value="{{ cwOn }}" hint-placeholder-val="{{ false }}"><div class="nd-compose__note">내용 경고를 달면 미디어도 함께 가려져요.</div></sc-if>
             </sc-if>
             <sc-if value="{{ field0Foot }}" hint-placeholder-val="{{ false }}"><div class="nd-thread-composer__foot"><sc-if value="{{ field0.isOver }}" hint-placeholder-val="{{ false }}"><button onClick="{{ field0.split }}" class="nd-button nd-button--xs nd-button--plain nd-thread-composer__split">나머지를 다음 글로 나누기</button></sc-if><sc-if value="{{ hasThread }}" hint-placeholder-val="{{ false }}"><span class="nd-thread-composer__counter {{ field0.remainCls }}">{{ field0.remain }}</span></sc-if></div></sc-if>
           </div>
@@ -1601,7 +1599,7 @@
           </div>
         </div>
         </sc-if>
-      <div class="nd-compose__toolbar">
+      <div class="nd-compose__toolbar {{ toolbarCls }}">
         <div class="nd-compose__tools">
           <button onClick="{{ openMedia }}" aria-label="이미지" aria-disabled="{{ mediaLocked }}" class="nd-icon-button {{ mediaToolCls }}">{{ ic.image }}</button>
           <button aria-label="카메라" class="nd-icon-button">{{ ic.camera }}</button>
@@ -1611,8 +1609,19 @@
           <sc-if value="{{ showScheduleTool }}" hint-placeholder-val="{{ true }}"><button onClick="{{ openSchedule }}" aria-label="예약" class="nd-icon-button {{ scheduleToolCls }}">{{ scheduleToolIcon }}</button></sc-if>
         </div>
         <div role="img" aria-label="{{ remainLabel }}" class="nd-compose__counter {{ remainCls }}"><sc-if value="{{ isOverLimit }}" hint-placeholder-val="{{ false }}"><span aria-hidden="true" class="nd-compose__over">{{ overText }}</span></sc-if><span aria-hidden="true">{{ remain }}</span><span class="nd-compose__ring" style="background:conic-gradient(var(--brand) {{ remainPct }}, var(--bd) 0)"></span></div>
-        <sc-if value="{{ canAddField }}" hint-placeholder-val="{{ true }}"><button onClick="{{ addField }}" aria-label="글 이어 쓰기" class="nd-icon-button">{{ ic.plus }}</button></sc-if>
+        <sc-if value="{{ canAddField }}" hint-placeholder-val="{{ true }}"><button onClick="{{ addField }}" aria-label="글 이어 쓰기" class="nd-icon-button">{{ ic.threadAdd }}</button></sc-if>
       </div>
+
+      <!-- SYSTEM KEYBOARD MOCK (D1: iOS Korean 2-set, follows the theme's light/dark appearance; OS-drawn, not a component) -->
+      <sc-if value="{{ showKeyboard }}" hint-placeholder-val="{{ false }}">
+        <div aria-hidden="true" class="sys-kb">
+          <div class="sys-kb__row"><sc-for list="{{ kbRow1 }}" as="k" hint-placeholder-count="10"><span class="sys-kb__key">{{ k.l }}</span></sc-for></div>
+          <div class="sys-kb__row sys-kb__row--inset"><sc-for list="{{ kbRow2 }}" as="k" hint-placeholder-count="9"><span class="sys-kb__key">{{ k.l }}</span></sc-for></div>
+          <div class="sys-kb__row"><span class="sys-kb__key sys-kb__key--fn sys-kb__key--side">⇧</span><sc-for list="{{ kbRow3 }}" as="k" hint-placeholder-count="7"><span class="sys-kb__key">{{ k.l }}</span></sc-for><span class="sys-kb__key sys-kb__key--fn sys-kb__key--side">⌫</span></div>
+          <div class="sys-kb__row"><span class="sys-kb__key sys-kb__key--fn sys-kb__key--wide">123</span><span class="sys-kb__key sys-kb__key--fn sys-kb__key--side">{{ kbEmoji }}</span><span class="sys-kb__key sys-kb__key--space">스페이스</span><span class="sys-kb__key sys-kb__key--fn sys-kb__key--wide">리턴</span></div>
+          <div class="sys-kb__strip"><span class="sys-kb__globe">{{ kbGlobe }}</span></div>
+        </div>
+      </sc-if>
 
       <!-- VISIBILITY + QUOTE MENU (iOS pop-up menu, inside compose) -->
       <sc-if value="{{ ov.visMenu }}" hint-placeholder-val="{{ false }}">
@@ -1629,7 +1638,7 @@
             <sc-for list="{{ quoteOptions }}" as="qo" hint-placeholder-count="3">
               <button onClick="{{ qo.pick }}" role="menuitemradio" aria-checked="{{ qo.on }}" aria-disabled="{{ quoteLocked }}" class="nd-menu__item {{ qo.itemCls }}"><span class="nd-menu__check {{ qo.cls }}">{{ ic20.check }}</span><span class="nd-menu__label">{{ qo.label }}</span></button>
             </sc-for>
-            <sc-if value="{{ quoteLocked }}" hint-placeholder-val="{{ false }}"><div class="nd-menu__note">팔로워만 · 멘션한 사람만 글은 다른 사람이 인용할 수 없습니다.</div></sc-if>
+            <sc-if value="{{ quoteLocked }}" hint-placeholder-val="{{ false }}"><div class="nd-menu__note">팔로워만 · 멘션한 사람만 글은 다른 사람이 인용할 수 없어요.</div></sc-if>
           </div>
         </div>
       </sc-if>
@@ -1667,7 +1676,7 @@
         <div onClick="{{ closeOverlay }}" class="nd-scrim"></div>
         <div role="dialog" class="nd-confirm">
           <div class="nd-confirm__group">
-            <div class="nd-confirm__title">수정을 취소할까요?<br>변경한 내용은 저장되지 않습니다.</div>
+            <div class="nd-confirm__title">수정을 취소할까요?<br>변경한 내용은 저장되지 않아요.</div>
             <button onClick="{{ discardModal }}" class="nd-confirm__action is-destructive">수정 취소</button>
           </div>
           <button onClick="{{ closeOverlay }}" class="nd-confirm__cancel">계속 수정</button>
@@ -1679,11 +1688,11 @@
         <div onClick="{{ closeOverlay }}" class="nd-scrim"></div>
         <div role="dialog" class="nd-confirm">
           <div class="nd-confirm__group">
-            <div class="nd-confirm__title">{{ discardTitle }}<br>임시 보관함에 저장하면 나중에 이어서 쓸 수 있습니다.</div>
-            <button onClick="{{ discardDraft }}" class="nd-confirm__action is-destructive">삭제</button>
+            <div class="nd-confirm__title">작성 중인 글을 버릴까요?</div>
             <button onClick="{{ saveDraft }}" class="nd-confirm__action">임시 보관함에 저장</button>
+            <button onClick="{{ discardDraft }}" class="nd-confirm__action is-destructive">버리기</button>
           </div>
-          <button onClick="{{ closeOverlay }}" class="nd-confirm__cancel">계속 작성</button>
+          <button onClick="{{ closeOverlay }}" class="nd-confirm__cancel">취소</button>
         </div>
       </sc-if>
 
@@ -1702,11 +1711,11 @@
           <div class="nd-scroll">
             <sc-for list="{{ draftList }}" as="d" hint-placeholder-count="3">
               <button onClick="{{ d.load }}" class="nd-draft">
-                <sc-if value="{{ d.hasMeta }}" hint-placeholder-val="{{ false }}"><div class="nd-draft__meta">{{ d.metaIcon }}<span>{{ d.meta }}</span></div></sc-if>
+                <div class="nd-draft__meta"><sc-if value="{{ d.hasIcon }}" hint-placeholder-val="{{ false }}">{{ d.metaIcon }}</sc-if><span>{{ d.meta }}</span></div>
                 <div class="nd-draft__text">{{ d.text }}</div>
               </button>
             </sc-for>
-            <sc-if value="{{ draftsEmpty }}" hint-placeholder-val="{{ false }}"><div class="nd-empty-state nd-empty-state--text"><div class="nd-empty-state__body">예약된 게시물이 없습니다</div></div></sc-if>
+            <sc-if value="{{ draftsEmpty }}" hint-placeholder-val="{{ false }}"><div class="nd-empty-state nd-empty-state--text"><div class="nd-empty-state__body">예약된 게시물이 없어요</div></div></sc-if>
           </div>
         </div>
       </sc-if>
@@ -1717,7 +1726,7 @@
         <div class="nd-sheet">
           <div class="nd-sheet__grabber"></div>
           <sc-if value="{{ schedIsDate }}" hint-placeholder-val="{{ true }}">
-            <div class="nd-header__bar nd-header__bar--split" style="padding:0"><span style="white-space:nowrap" class="nd-type-title3 nd-bold">게시물 예약</span><button onClick="{{ closeOverlay }}" aria-label="닫기" class="nd-icon-button nd-header__slot">{{ ic.close }}</button></div>
+            <div class="nd-header__bar" style="padding:0"><button onClick="{{ closeOverlay }}" class="nd-header__slot nd-header__slot--text nd-header__cancel">취소</button><span class="nd-header__title">게시물 예약</span><div class="nd-header__slot nd-header__slot--text"></div></div>
             <div style="display:flex;align-items:center;justify-content:space-between;margin-top:var(--nd-space-lg)">
               <span style="display:flex;align-items:center;gap:var(--nd-space-xs)" class="nd-type-body nd-semibold">{{ schedMonthLabel }}{{ ic16.chevR }}</span>
               <div style="display:flex;margin-right:var(--nd-optical-inset)"><button onClick="{{ schedPrev }}" aria-label="이전 달" class="nd-icon-button">{{ ic.chevL }}</button><button onClick="{{ schedNext }}" aria-label="다음 달" class="nd-icon-button">{{ ic.chevR }}</button></div>
@@ -1731,13 +1740,13 @@
               </sc-for>
             </div>
             <div style="display:flex;gap:var(--nd-space-md);margin-top:var(--nd-space-xl)">
-              <button onClick="{{ schedClear }}" class="nd-button nd-button--lg nd-button--fill nd-button--outlined">{{ schedClearLabel }}</button>
+              <sc-if value="{{ hasScheduled }}" hint-placeholder-val="{{ false }}"><button onClick="{{ schedClear }}" class="nd-button nd-button--lg nd-button--fill nd-button--outlined">예약 삭제</button></sc-if>
               <button onClick="{{ schedToTime }}" class="nd-button nd-button--lg nd-button--fill nd-button--filled">다음</button>
             </div>
           </sc-if>
           <sc-if value="{{ schedIsTime }}" hint-placeholder-val="{{ false }}">
-            <div class="nd-header__bar" style="padding:0"><button onClick="{{ schedToDate }}" aria-label="뒤로" class="nd-icon-button nd-header__slot">{{ ic.chevL }}</button><span class="nd-header__title">시간 선택</span><button onClick="{{ closeOverlay }}" aria-label="닫기" class="nd-icon-button nd-header__slot">{{ ic.close }}</button></div>
-            <div style="margin-top:var(--nd-space-xl);text-align:center;line-height:22px;word-break:keep-all" class="nd-muted nd-type-subheadline">게시물이 {{ schedFullText }}에<br>전송됩니다.</div>
+            <div class="nd-header__bar" style="padding:0"><button onClick="{{ schedToDate }}" aria-label="뒤로" class="nd-icon-button nd-header__slot">{{ ic.chevL }}</button><span class="nd-header__title">시간 선택</span><div class="nd-header__slot"></div></div>
+            <div style="margin-top:var(--nd-space-xl);text-align:center;line-height:22px;word-break:keep-all" class="nd-muted nd-type-subheadline">게시물이 {{ schedFullText }}에<br>올라가요.</div>
             <div class="nd-wheel">
               <div class="nd-wheel__band"></div>
               <sc-for list="{{ timeCols }}" as="col" hint-placeholder-count="3">
@@ -1893,7 +1902,7 @@
         </sc-for>
       </div>
       <button onClick="{{ loginContinue }}" aria-busy="{{ serverChecking }}" class="nd-button nd-button--lg nd-button--block nd-button--filled {{ loginCls }}" style="margin-top:var(--nd-space-xl)"><sc-if value="{{ serverChecking }}" hint-placeholder-val="{{ false }}"><span aria-label="서버 확인 중" class="nd-spinner">{{ ic20.spinner }}</span></sc-if><sc-if value="{{ serverIdle }}" hint-placeholder-val="{{ true }}">계속하기</sc-if></button>
-      <sc-if value="{{ serverSheetLogin }}" hint-placeholder-val="{{ true }}"><div class="nd-footnote" style="margin-top:var(--nd-space-lg);text-align:center;line-height:20px">서버의 로그인 페이지로 이동합니다. 계정이 없다면 nalda.kr에서 만들 수 있습니다.</div></sc-if>
+      <sc-if value="{{ serverSheetLogin }}" hint-placeholder-val="{{ true }}"><div class="nd-footnote" style="margin-top:var(--nd-space-lg);text-align:center;line-height:20px">서버의 로그인 페이지로 이동해요. 계정이 없다면 nalda.kr에서 만들 수 있어요.</div></sc-if>
     </div>
   </sc-if>
 
@@ -1901,13 +1910,13 @@
 </x-import>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props="{&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;White&quot;,&quot;options&quot;:[&quot;White&quot;,&quot;Dim&quot;,&quot;Black&quot;],&quot;tsType&quot;:&quot;'White'|'Dim'|'Black'&quot;,&quot;section&quot;:&quot;테마&quot;},&quot;textSize&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;작게 보기&quot;,&quot;options&quot;:[&quot;작게 보기&quot;,&quot;기본&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;글자 크기&quot;},&quot;screen&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;home&quot;,&quot;options&quot;:[&quot;home&quot;,&quot;homeScrolled&quot;,&quot;boostMenu&quot;,&quot;menu&quot;,&quot;drawer&quot;,&quot;accounts&quot;,&quot;accountsEdit&quot;,&quot;lists&quot;,&quot;newList&quot;,&quot;mentions&quot;,&quot;notifications&quot;,&quot;explore&quot;,&quot;chats&quot;,&quot;chatFilter&quot;,&quot;chat&quot;,&quot;chatGroup&quot;,&quot;newChat&quot;,&quot;newGroup&quot;,&quot;profile&quot;,&quot;me&quot;,&quot;follows&quot;,&quot;settings&quot;,&quot;login&quot;,&quot;loginSheet&quot;,&quot;compose&quot;,&quot;composeQuote&quot;,&quot;drafts&quot;,&quot;media&quot;,&quot;schedule&quot;,&quot;time&quot;,&quot;composeScheduled&quot;,&quot;reply&quot;,&quot;cardStates&quot;,&quot;quoteStates&quot;,&quot;boostMenuNoQuote&quot;,&quot;composeVisibility&quot;,&quot;emojiPicker&quot;,&quot;composeSensitive&quot;,&quot;editDiscard&quot;,&quot;reportDislike&quot;,&quot;reportRules&quot;,&quot;reportPosts&quot;,&quot;composePollDuration&quot;,&quot;chatGroupRecipients&quot;,&quot;replyContext&quot;,&quot;notifAllTypes&quot;,&quot;notifFollowRequest&quot;,&quot;chatMessageMenu&quot;,&quot;chatsWithRequests&quot;,&quot;chatRequests&quot;,&quot;postSending&quot;,&quot;postFailed&quot;,&quot;composeUploading&quot;,&quot;composeUploadFailed&quot;,&quot;composeMentionSuggest&quot;,&quot;composeTagSuggest&quot;,&quot;chatSending&quot;,&quot;chatFailed&quot;,&quot;listMenu&quot;,&quot;editList&quot;,&quot;profileBlocked&quot;,&quot;profileBlockedBy&quot;,&quot;profileMuted&quot;,&quot;loginSheetError&quot;,&quot;settingsNotifsDenied&quot;,&quot;homeLoading&quot;,&quot;profileLoading&quot;,&quot;notifsLoading&quot;,&quot;homeGap&quot;,&quot;listLoadError&quot;,&quot;cardMedia&quot;,&quot;composeVideo&quot;,&quot;cardLink&quot;,&quot;detailHiddenReplies&quot;,&quot;profileMoved&quot;,&quot;profileSuspended&quot;,&quot;profileEmpty&quot;,&quot;sessionExpired&quot;,&quot;emptyBookmarks&quot;,&quot;emptyRequests&quot;,&quot;longNames&quot;,&quot;replyInheritCw&quot;,&quot;composeRestore&quot;,&quot;composeThread&quot;,&quot;composeSplitSuggest&quot;,&quot;mentionsSwipe&quot;,&quot;drawerThemeMenu&quot;,&quot;signupServer&quot;,&quot;signupPending&quot;,&quot;accountRemoveConfirm&quot;,&quot;signupUsernameTaken&quot;,&quot;profilePinned&quot;,&quot;emptyHomeSuggestions&quot;,&quot;altMissingConfirm&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;시작 화면&quot;}}">
+<script type="text/x-dc" data-dc-script data-props="{&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;White&quot;,&quot;options&quot;:[&quot;White&quot;,&quot;Dim&quot;,&quot;Black&quot;],&quot;tsType&quot;:&quot;'White'|'Dim'|'Black'&quot;,&quot;section&quot;:&quot;테마&quot;},&quot;textSize&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;작게 보기&quot;,&quot;options&quot;:[&quot;작게 보기&quot;,&quot;기본&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;글자 크기&quot;},&quot;screen&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;home&quot;,&quot;options&quot;:[&quot;home&quot;,&quot;homeScrolled&quot;,&quot;boostMenu&quot;,&quot;menu&quot;,&quot;drawer&quot;,&quot;accounts&quot;,&quot;accountsEdit&quot;,&quot;lists&quot;,&quot;newList&quot;,&quot;mentions&quot;,&quot;notifications&quot;,&quot;explore&quot;,&quot;chats&quot;,&quot;chatFilter&quot;,&quot;chat&quot;,&quot;chatGroup&quot;,&quot;newChat&quot;,&quot;newGroup&quot;,&quot;profile&quot;,&quot;me&quot;,&quot;follows&quot;,&quot;settings&quot;,&quot;login&quot;,&quot;loginSheet&quot;,&quot;compose&quot;,&quot;composeQuote&quot;,&quot;drafts&quot;,&quot;media&quot;,&quot;schedule&quot;,&quot;time&quot;,&quot;composeScheduled&quot;,&quot;reply&quot;,&quot;cardStates&quot;,&quot;quoteStates&quot;,&quot;boostMenuNoQuote&quot;,&quot;composeVisibility&quot;,&quot;emojiPicker&quot;,&quot;composeSensitive&quot;,&quot;editDiscard&quot;,&quot;reportDislike&quot;,&quot;reportRules&quot;,&quot;reportPosts&quot;,&quot;composePollDuration&quot;,&quot;chatGroupRecipients&quot;,&quot;replyContext&quot;,&quot;notifAllTypes&quot;,&quot;notifFollowRequest&quot;,&quot;chatMessageMenu&quot;,&quot;chatsWithRequests&quot;,&quot;chatRequests&quot;,&quot;postSending&quot;,&quot;postFailed&quot;,&quot;composeUploading&quot;,&quot;composeUploadFailed&quot;,&quot;composeMentionSuggest&quot;,&quot;composeKeyboard&quot;,&quot;composeMentionKeyboard&quot;,&quot;composeTagSuggest&quot;,&quot;chatSending&quot;,&quot;chatFailed&quot;,&quot;listMenu&quot;,&quot;editList&quot;,&quot;profileBlocked&quot;,&quot;profileBlockedBy&quot;,&quot;profileMuted&quot;,&quot;loginSheetError&quot;,&quot;settingsNotifsDenied&quot;,&quot;homeLoading&quot;,&quot;profileLoading&quot;,&quot;notifsLoading&quot;,&quot;homeGap&quot;,&quot;listLoadError&quot;,&quot;cardMedia&quot;,&quot;composeVideo&quot;,&quot;cardLink&quot;,&quot;detailHiddenReplies&quot;,&quot;profileMoved&quot;,&quot;profileSuspended&quot;,&quot;profileEmpty&quot;,&quot;sessionExpired&quot;,&quot;emptyBookmarks&quot;,&quot;emptyRequests&quot;,&quot;longNames&quot;,&quot;replyInheritCw&quot;,&quot;composeRestore&quot;,&quot;composeThread&quot;,&quot;composeSplitSuggest&quot;,&quot;mentionsSwipe&quot;,&quot;drawerThemeMenu&quot;,&quot;signupServer&quot;,&quot;signupPending&quot;,&quot;accountRemoveConfirm&quot;,&quot;signupUsernameTaken&quot;,&quot;profilePinned&quot;,&quot;emptyHomeSuggestions&quot;,&quot;altMissingConfirm&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;시작 화면&quot;}}">
 // Brand fill is theme-independent (NaldaTheme.brand / onBrand); it reaches markup only as --brand / --on-brand.
 const BRAND = '#8168F8', ON_BRAND = '#FFFFFF';
 const THEMES = {
-  White:{bg:'#FFFFFF',surface:'#F3F4F6',fg:'#0F1419',muted:'#536471',faint:'#8B98A5',border:'#E5E7EB',thread:'#CFD9DE',textBrand:'#7256F7',highlight:'rgba(129,104,248,.10)',boost:'#00996B',like:'#E0283C',warning:'#B26A00',alert:'#B3261E',onAlert:'#FFFFFF',success:'#1E8E3E',scrim:'rgba(0,0,0,.5)',el:'#FFFFFF',ol:'#808D9A',sw0:'#E9E9EA',pollBar:'#D1D5DB',pollBarMine:'#B9BFC7',inverseBg:'#0F1419',inverseFg:'#FFFFFF',inverseTextBrand:'#AF9FFB',tab:BRAND,brand:BRAND,onBrand:ON_BRAND,dark:false},
-  Dim:{bg:'#1B1C29',surface:'#242636',fg:'#E8E9F2',muted:'#9CA0B8',faint:'#6B6F87',border:'#33364A',thread:'#454862',textBrand:'#AF9FFB',highlight:'rgba(129,104,248,.16)',boost:'#00BA7C',like:'#FF5C5C',warning:'#FFB951',alert:'#F2B8B5',onAlert:'#601410',success:'#6DD58C',scrim:'rgba(0,0,0,.6)',el:'#242636',ol:'#6B6F87',sw0:'#39393D',pollBar:'#3C3F55',pollBarMine:'#4B4F6A',inverseBg:'#E7E9EA',inverseFg:'#0F1419',inverseTextBrand:'#7256F7',tab:'#AF9FFB',brand:BRAND,onBrand:ON_BRAND,dark:true},
-  Black:{bg:'#000000',surface:'#16181C',fg:'#E7E9EA',muted:'#8B98A5',faint:'#5B6670',border:'#2F3336',thread:'#3E4449',textBrand:'#AF9FFB',highlight:'rgba(129,104,248,.16)',boost:'#00BA7C',like:'#FF5C5C',warning:'#FFB951',alert:'#F2B8B5',onAlert:'#601410',success:'#6DD58C',scrim:'rgba(0,0,0,.6)',el:'#16181C',ol:'#5B6670',sw0:'#39393D',pollBar:'#33383D',pollBarMine:'#454B52',inverseBg:'#E7E9EA',inverseFg:'#0F1419',inverseTextBrand:'#7256F7',tab:'#AF9FFB',brand:BRAND,onBrand:ON_BRAND,dark:true},
+  White:{bg:'#FFFFFF',surface:'#F3F4F6',fg:'#0F1419',muted:'#536471',faint:'#7C8894',border:'#E5E7EB',thread:'#CFD9DE',textBrand:'#7256F7',highlight:'rgba(129,104,248,.10)',boost:'#00996B',like:'#E0283C',warning:'#B26A00',alert:'#B3261E',onAlert:'#FFFFFF',success:'#1E8E3E',scrim:'rgba(0,0,0,.5)',el:'#FFFFFF',ol:'#808D9A',sw0:'#E9E9EA',pollBar:'#D1D5DB',pollBarMine:'#E1DBFD',inverseBg:'#0F1419',inverseFg:'#FFFFFF',inverseTextBrand:'#AF9FFB',tab:BRAND,brand:BRAND,onBrand:ON_BRAND,dark:false},
+  Dim:{bg:'#1B1C29',surface:'#242636',fg:'#E8E9F2',muted:'#9CA0B8',faint:'#747890',border:'#33364A',thread:'#454862',textBrand:'#AF9FFB',highlight:'rgba(129,104,248,.16)',boost:'#00BA7C',like:'#FF5C5C',warning:'#FFB951',alert:'#F2B8B5',onAlert:'#601410',success:'#6DD58C',scrim:'rgba(0,0,0,.6)',el:'#242636',ol:'#6B6F87',sw0:'#39393D',pollBar:'#3C3F55',pollBarMine:'#443A7C',inverseBg:'#E7E9EA',inverseFg:'#0F1419',inverseTextBrand:'#7256F7',tab:'#AF9FFB',brand:BRAND,onBrand:ON_BRAND,dark:true},
+  Black:{bg:'#000000',surface:'#16181C',fg:'#E7E9EA',muted:'#8B98A5',faint:'#66717B',border:'#2F3336',thread:'#3E4449',textBrand:'#AF9FFB',highlight:'rgba(129,104,248,.16)',boost:'#00BA7C',like:'#FF5C5C',warning:'#FFB951',alert:'#F2B8B5',onAlert:'#601410',success:'#6DD58C',scrim:'rgba(0,0,0,.6)',el:'#16181C',ol:'#5B6670',sw0:'#39393D',pollBar:'#33383D',pollBarMine:'#342A63',inverseBg:'#E7E9EA',inverseFg:'#0F1419',inverseTextBrand:'#7256F7',tab:'#AF9FFB',brand:BRAND,onBrand:ON_BRAND,dark:true},
 };
 const P = {}, F = {};
 import('./nalda-icons.js').then(m=>{Object.assign(P,m.P);Object.assign(F,m.F);window.dispatchEvent(new Event('nalda-icons'));});
@@ -1987,26 +1996,26 @@ const NOTIFS_ALL = [
 ];
 // icon · tone (CSS modifier) · sentence. `verb` follows the actor names; `text` is a sentence without actors.
 const NOTIF_KINDS = {
-  favourite:{icon:'heart',fill:true,tone:'like',verb:' 내 게시물을 마음에 들어 합니다'},
-  reblog:{icon:'boost',tone:'boost',verb:' 내 게시물을 부스트했습니다'},
-  follow:{icon:'userPlus',tone:'brand',verb:' 나를 팔로우합니다'},
-  follow_request:{icon:'userPlus',tone:'brand',verb:' 팔로우를 요청했습니다'},
-  status:{icon:'bell',tone:'text-brand',verb:' 새 글을 올렸습니다'},
+  favourite:{icon:'heart',fill:true,tone:'like',verb:' 내 게시물을 마음에 들어 해요'},
+  reblog:{icon:'boost',tone:'boost',verb:' 내 게시물을 부스트했어요'},
+  follow:{icon:'userPlus',tone:'brand',verb:' 나를 팔로우했어요'},
+  follow_request:{icon:'userPlus',tone:'brand',verb:' 팔로우를 요청했어요'},
+  status:{icon:'bell',tone:'text-brand',verb:' 새 글을 올렸어요'},
   poll:{icon:'poll',tone:'muted'},
-  update:{icon:'pencil',tone:'muted',verb:' 부스트한 게시물을 수정했습니다'},
-  quote:{icon:'pencil',tone:'text-brand',verb:' 내 게시물을 인용했습니다'},
-  quoted_update:{icon:'pencil',tone:'muted',verb:' 내가 인용한 게시물을 수정했습니다'},
-  moderation_warning:{icon:'warn',tone:'warning',text:'운영자에게서 경고를 받았습니다',web:true,surface:true},
-  severed_relationships:{icon:'block',tone:'muted',text:'서버 차단으로 팔로우 관계가 끊어졌습니다',web:true},
-  'admin.sign_up':{icon:'server',tone:'muted',text:'새 가입자가 있습니다',web:true},
-  'admin.report':{icon:'server',tone:'muted',text:'새 신고가 있습니다',web:true},
+  update:{icon:'pencil',tone:'muted',verb:' 부스트한 게시물을 수정했어요'},
+  quote:{icon:'pencil',tone:'text-brand',verb:' 내 게시물을 인용했어요'},
+  quoted_update:{icon:'pencil',tone:'muted',verb:' 내가 인용한 게시물을 수정했어요'},
+  moderation_warning:{icon:'warn',tone:'warning',text:'운영자에게서 경고를 받았어요',web:true,surface:true},
+  severed_relationships:{icon:'block',tone:'muted',text:'서버 차단으로 팔로우 관계가 끊어졌어요',web:true},
+  'admin.sign_up':{icon:'server',tone:'muted',text:'새 가입자가 있어요',web:true},
+  'admin.report':{icon:'server',tone:'muted',text:'새 신고가 있어요',web:true},
 };
 const CHATS = [
   {id:'c1',u:'kazan',last:'프로필 확인했습니다. 내일 뵙겠습니다.',time:'3주',unread:true},
   {id:'c7',group:true,members:['rio','haru','seoyeon'],name:'리오, 하루, 서연',last:'서연: 토요일 8시로 옮길까요?',time:'1일',unread:true},
   {id:'c2',u:'yuzu',last:'넵 알겠습니다 ㅠㅠ 아쉽지만 다른 분 구해볼게요',time:'4주'},
   {id:'c3',u:'rio',last:'107900',time:'6주'},
-  {id:'c4',u:'seoyeon',last:'답글에 반응을 보냈습니다',time:'6주'},
+  {id:'c4',u:'seoyeon',last:'답글에 반응을 보냈어요',time:'6주'},
   {id:'c5',u:'haru',last:'감사합니다!!! 좋은 하루 되세요',time:'2달'},
   {id:'c6',u:'doyun',last:'지도 파일 보냈어요',time:'2달'},
 ];
@@ -2040,13 +2049,13 @@ const CHAT_MENU_DEMO_Y = 436;    // chatMessageMenu key: bottom edge of the pres
 const FOLLOWING = ['kazan','haru','rio','seoyeon','doyun','minjae'];
 const FOLLOWERS = ['yuzu','rio','doyun','minjae','bot'];
 const ACCOUNTS = [{u:'kazan',badge:3},{u:'bot',badge:6},{u:'me',badge:0}];
-const VIS = {public:{icon:'globe',label:'공개',desc:'누구나 볼 수 있고 타임라인과 검색에 나옵니다'},unlisted:{icon:'unlock',label:'미등재',desc:'누구나 볼 수 있지만 타임라인과 검색에는 나오지 않습니다'},private:{icon:'lock',label:'팔로워만',desc:'나를 팔로우하는 사람만 볼 수 있습니다'},direct:{icon:'mail',label:'멘션한 사람만',desc:'본문에서 멘션한 사람만 볼 수 있습니다'}};
+const VIS = {public:{icon:'globe',label:'공개',desc:'누구나 볼 수 있고 타임라인과 검색에 나와요'},unlisted:{icon:'unlock',label:'미등재',desc:'누구나 볼 수 있지만 타임라인과 검색에는 나오지 않아요'},private:{icon:'lock',label:'팔로워만',desc:'나를 팔로우하는 사람만 볼 수 있어요'},direct:{icon:'mail',label:'멘션한 사람만',desc:'본문에서 멘션한 사람만 볼 수 있어요'}};
 const VIS_ORDER = ['public','unlisted','private','direct'];
 const DRAFTS = [
-  {text:'이번 시즌 등대 설정 정리.\n1. 첫 번째 등대는 북쪽 해안, 2. 두 번째는 폐항구…'},
-  {reply:'@rio',text:'3장 결말 진짜 좋았어요. 편지 장면에서 한참 멈춰 있었음.'},
-  {reply:'@seoyeon',text:'셋이면 충분하다는 말에 동의. 근데 탐색은 남겨야 검색을 할 수 있으니까…'},
-  {text:'토요일 극 참가자 명단 (수정 중)\n1. 유즈 2. 리오 3. 하루'},
+  {text:'이번 시즌 등대 설정 정리.\n1. 첫 번째 등대는 북쪽 해안, 2. 두 번째는 폐항구…',saved:'어제'},
+  {reply:'@rio',text:'3장 결말 진짜 좋았어요. 편지 장면에서 한참 멈춰 있었음.',saved:'2일 전'},
+  {reply:'@seoyeon',text:'셋이면 충분하다는 말에 동의. 근데 탐색은 남겨야 검색을 할 수 있으니까…',saved:'3일 전'},
+  {text:'토요일 극 참가자 명단 (수정 중)\n1. 유즈 2. 리오 3. 하루',saved:'5일 전'},
 ];
 const SCHEDULED0 = [{text:'다음 주 극 공지: 10월 15일 오전 9시에 시트 오픈합니다.',when:'2026년 10월 15일 오전 9:00'}];
 const MEDIA_TINTS = ['#D9E7FB','#FCE7C8','#D4EFE3','#EAE4D6','#FBDADA','#DDEFF5','#E4DDFE','#F5DFC4','#E5E7EB','#D9E7FB','#D4EFE3','#FCE7C8'];
@@ -2064,7 +2073,7 @@ const SIGNUP_BADGE={approval:'승인제',open:'가입 열림'};
 const USERNAME_CHECK_MS=500,RESEND_COOLDOWN_S=60,USERNAME_RE=/^[A-Za-z0-9_]+$/;
 const SIGNUP0={step:'rules',server:'nalda.kr',approval:true,username:'',email:'',password:'',reason:'',resent:false,userCheck:null,showPw:false,cooldown:0};
 // P1-13 drawer theme menu (ThemeChoiceMenu): value = prefs.mode, or the dark theme when the mode is 다크.
-const THEME_CHOICES=[['system','시스템 설정 따르기'],['light','라이트'],['Dim','다크(Dim)'],['Black','다크(Black)']];
+const THEME_CHOICES=[['system','시스템 설정 따르기'],['light','라이트'],['Dim','다크 (Dim)'],['Black','다크 (Black)']];
 // P1-18 recent searches (device-local) · P2-11 suggested accounts for an empty home, SUGGEST_PAGE at a time · P2-22 recent CW chips.
 const RECENT_SEARCHES=['역극','@yuzu','등대'];
 const SUGGESTED=['kazan','yuzu','rio','seoyeon','doyun','haru','minjae','nari'],SUGGEST_PAGE=5;
@@ -2079,8 +2088,12 @@ POSTS.splice(2,0,{id:17,u:'me',time:'3시간',text:'다음 극 시작 시간, �
 const WEEK = ['일','월','화','수','목','금','토'];
 // custom emoji (server-provided images in the real app; tiles stand in for them here). code → [bg, icon, filled]
 const EMOJI = {nalda:['var(--brand)','pencil'],heart_red:['#E0283C','heart',true],ok:['#1E8E3E','check'],moon:['#4B36C2','moon'],sun:['#B26A00','sun'],letter:['#1F4B8A','email'],bell:['#7A3B00','bell'],flag:['#8A1F2B','flag'],lock:['#5A4A22','lock'],camera:['#155C6E','camera'],home:['#0F5A3C','home'],pin:['#7A4A00','pin'],chat:['#2F5A1A','msg'],poll:['#4B36C2','poll'],globe:['#1F4B8A','globe'],art:['#8A1F2B','image']};
+// D1 composeKeyboard (8y): new post being typed with the keyboard up.
+const KEYBOARD_DEMO = '오늘 극 9시에 시작해요. 참가자분들은 시트 한 번만 더 확인해 주세요.';
+// D1: iOS Korean 2-set (두벌식) keyboard mock rows.
+const KB_ROWS = [['ㅂ','ㅈ','ㄷ','ㄱ','ㅅ','ㅛ','ㅕ','ㅑ','ㅐ','ㅔ'],['ㅁ','ㄴ','ㅇ','ㄹ','ㅎ','ㅗ','ㅓ','ㅏ','ㅣ'],['ㅋ','ㅌ','ㅊ','ㅍ','ㅠ','ㅜ','ㅡ']];
 const QUOTE_POLICIES = {public:'모두',followers:'팔로워만',nobody:'나만'};
-const QUOTE_STATES = {pending:['clock','인용 승인을 기다리는 중입니다'],revoked:['eyeOff','원글 작성자가 인용을 해제했습니다'],rejected:['eyeOff','원글 작성자가 인용을 허용하지 않았습니다'],deleted:['trash','삭제된 게시물입니다'],unauthorized:['lock','볼 수 없는 게시물입니다'],muted:['mute','뮤트한 계정의 게시물입니다'],blocked:['block','차단한 계정의 게시물입니다']};
+const QUOTE_STATES = {pending:['clock','인용 승인을 기다리고 있어요'],revoked:['eyeOff','원글 작성자가 인용을 해제했어요'],rejected:['eyeOff','원글 작성자가 인용을 허용하지 않았어요'],deleted:['trash','삭제된 게시물이에요'],unauthorized:['lock','볼 수 없는 게시물이에요'],muted:['mute','뮤트한 계정의 게시물이에요'],blocked:['block','차단한 계정의 게시물이에요']};
 const FOLD_CHARS = 240;   // fold height is PostFold.maxLines → --nd-post-fold-lines in nalda-ios.css
 const SERVER_RULES = [['괴롭힘과 혐오 발언 금지','특정 개인·집단을 향한 공격, 차별적 표현은 즉시 제재합니다.'],['극 스포일러는 CW로','진행 중인 극의 결말·반전은 내용 경고를 달아주세요.'],['성인 콘텐츠는 민감함 표시','미디어에 민감함 표시를 하고, 공개 범위를 팔로워로 제한하는 것을 권합니다.'],['무단 홍보 금지','운영자 허가 없는 상업 홍보, 반복 멘션은 스팸으로 처리합니다.']];
 POSTS.push(
@@ -2187,7 +2200,7 @@ class Component extends DCLogic {
     const b={tab:'home',stack:[],drawer:false,sheet:false,modal:null,overlay:null,theme:null,liked:{},boosted:{},marked:{},cw:{},follow:{},feed:'home',ntab:'all',ftab:'following',ptab:'posts',account:'me',text:'',replyTo:null,vis:'public',chatText:'',posted:[],sent:{},headerHidden:false,
       pollSel:{},unfold:{},shownMedia:{},quoteReveal:{},quoteRevoked:{},quotePolicy:null,mediaSensitive:false,emojiQ:'',emojiRecent:['nalda','heart_red','moon','letter'],mentionSheet:false,mentionOff:[],drafts:[],net:'ok',refreshing:false,emptyDemo:null,signup:SIGNUP0,serverPurpose:'login',cacheCleared:false,unfiltered:{},newCount:0,cwOn:false,cwText:'',alts:{},altEdit:null,muteTarget:null,muteDur:'무기한',muteNotifs:true,muted:{},blocked:{},report:null,chatDecided:{},chatMute:{},chatMediaFor:null,chatRecipOff:{},chatAdded:{},recipSheet:null,replyPeople:[],editProfile:null,deleted:{},edits:{},editOf:null,toast:null,q:'',stab:'accounts',viewerPost:null,viewerIdx:0,viewerAltOpen:false,followTags:{},listMembers:JSON.parse(JSON.stringify(LIST_MEMBERS0)),memberQ:'',sharePost:null,textSize:null,prefs:{mode:'system',darkTheme:'Black',autoplay:'wifi',push:true,pushTypes:{mention:true,reply:true,boost:true,like:false,follow:true,request:true,chat:true,poll:true},quiet:false,defaultVis:'public',defaultQuote:'public',media:'hide',cwExpand:false,foldLong:true,confirmDelete:true,altCheck:true,readReceipts:true,chatSounds:true},menuPost:null,menuY:300,menuUserOpen:false,chatFilter:'all',accEdit:false,groupSel:[],groups:[],dtab:'drafts',mediaSel:[],media:[],schedStep:'date',schedY:2026,schedM:9,schedD:15,schedAp:'오전',schedH:9,schedMin:0,scheduled:null,scheduledPosts:SCHEDULED0,serverText:'',readAll:false,boostMenu:null,quoteOf:null,requests:REQUESTS0,poll:null,pollDur:3,pollMulti:false,voted:{},lists:LISTS0,listName:'',listReplies:'members',listHide:false,notifDemo:null,notifDecided:{},chatMenu:null,chatDeleted:{},chatLiked:{},outbox:[],uploads:{},editListId:null,swipeList:null,delListId:null,blockedBy:{},serverErr:null,serverChecking:false,osNotifsDenied:false,
       loading:null,gap:null,footer:null,playing:{},unmuted:{},viewerPaused:false,hiddenReveal:{},noPosts:false,expired:{},sessionExpired:false,thumbMenu:null,
-      cwInherited:false,autosave:null,restoreOffer:false,thread:[],activeField:0,mentionDone:{},mentionPeek:null,mentionLeaving:{},
+      cwInherited:false,autosave:null,restoreOffer:false,thread:[],activeField:0,mentionDone:{},mentionPeek:null,hiddenOpen:{},keyboard:false,mentionLeaving:{},
       themeMenu:false,removedAccounts:{},delAccount:null,recent:RECENT_SEARCHES,pinned:{},sugCount:SUGGEST_PAGE,sugFollow:{},cwRecent:CW_RECENT0,emojiFor:null};
     switch(s){
       case 'homeScrolled': b.headerHidden=true; break;
@@ -2269,7 +2282,7 @@ class Component extends DCLogic {
       case 'chatRequests': b.tab='chats'; b.stack=[{k:'chatRequests'}]; break;
       case 'chatMedia': b.tab='chats'; b.stack=[{k:'chat',id:'c1',u:'kazan'}]; b.overlay='media'; b.chatMediaFor='c1'; b.mediaSel=[2]; break;
       case 'editProfile': b.stack=[{k:'profile',u:'me'}]; b.modal='editProfile'; b.editProfile={name:U.me.name,bio:U.me.bio,fields:[['홈페이지','nalda.kr/@ahyeon/rules'],['진행','SF 위주'],['',''],['','']],locked:true}; break;
-      case 'toast': b.marked={1:true}; b.toast={text:'북마크에 저장했습니다',action:'보기',go:'bookmarks'}; break;
+      case 'toast': b.marked={1:true}; b.toast={text:'북마크에 저장했어요',action:'보기',go:'bookmarks'}; break;
       case 'settingsDisplay': b.stack=[{k:'settings'},{k:'settingsSub',sub:'display'}]; break;
       case 'settingsNotifs': b.stack=[{k:'settings'},{k:'settingsSub',sub:'notifs'}]; break;
       case 'settingsPosts': b.stack=[{k:'settings'},{k:'settingsSub',sub:'posts'}]; break;
@@ -2300,6 +2313,8 @@ class Component extends DCLogic {
       case 'composeUploading': b.modal='compose'; b.text='3막 삽화 올립니다. 등대 장면이에요.'; b.media=[1,4,6]; b.uploads={4:{st:'up',p:.6},6:{st:'proc',n:0}}; break;
       case 'composeUploadFailed': b.modal='compose'; b.text='3막 삽화 올립니다. 등대 장면이에요.'; b.media=[1,4]; b.uploads={4:{st:'fail'}}; break;
       case 'composeMentionSuggest': b.modal='compose'; b.text='토요일 극 같이 하실 분 @a'; break;
+      case 'composeKeyboard': b.modal='compose'; b.text=KEYBOARD_DEMO; b.keyboard=true; break;
+      case 'composeMentionKeyboard': b.modal='compose'; b.text='토요일 극 참가자분들 시트 확인 부탁드려요 @yu'; b.keyboard=true; break;
       case 'composeTagSuggest': b.modal='compose'; b.text='3막 프롤로그 공개했어요 #극'; break;
       case 'chatSending': b.tab='chats'; b.stack=[{k:'chat',id:'c1',u:'kazan'}]; b.outbox=[{id:'q-chat',kind:'chat',status:'sending',chatId:'c1',msg:DEMO_QUEUED_CHAT}]; break;
       case 'listMenu': b.stack=[{k:'lists'},{k:'timeline',list:'l1'}]; b.overlay='listMenu'; break;
@@ -2362,6 +2377,8 @@ class Component extends DCLogic {
     // P1-10: the app going to the background saves the open draft at once (the browser tab hiding stands in for it).
     this._onHide=()=>{if(document.visibilityState==='hidden')this.autosaveNow();}; document.addEventListener('visibilitychange',this._onHide);
   }
+  // D1: the keyboard mock belongs to one open composer; closing it (any path) drops the keyboard.
+  componentDidUpdate(){ const m=this.state.modal; if(this._kbModal&&!m&&this.state.keyboard)this.setState({keyboard:false}); this._kbModal=m; }
   componentWillUnmount(){ window.removeEventListener('nalda-icons',this._onIcons); document.removeEventListener('visibilitychange',this._onHide); clearInterval(this._upT); clearTimeout(this._toastT); clearTimeout(this._pageT); clearTimeout(this._thumbPress); clearTimeout(this._autoT); clearTimeout(this._mentionT); clearTimeout(this._leaveT); clearTimeout(this._userT); clearInterval(this._resendT); clearTimeout(this._osT); clearTimeout(this._serverT); }
   // Sent posts live only in state.posted (never pushed into POSTS), so the home timeline lists each one once.
   allPosts(){ return [...this.state.posted,...ALL_POSTS()]; }
@@ -2395,13 +2412,13 @@ class Component extends DCLogic {
   resendMail(){
     if(this.state.signup.cooldown>0)return;
     this.setState(st=>({signup:{...st.signup,resent:true,cooldown:RESEND_COOLDOWN_S}}));
-    this.showToast({text:'확인 메일을 다시 보냈습니다'});
+    this.showToast({text:'확인 메일을 다시 보냈어요'});
     clearInterval(this._resendT);
     this._resendT=setInterval(()=>{const c=Math.max(0,this.state.signup.cooldown-1);this.setState(st=>({signup:{...st.signup,cooldown:c}}));if(!c)clearInterval(this._resendT);},1000);
   }
   // Back from the mail app = the link was opened: approval servers wait for the moderator (P1-15), open ones continue to 알림 권한.
   openMailApp(){
-    this.showToast({text:'메일 앱을 엽니다'});
+    this.showToast({text:'메일 앱을 열어요'});
     clearTimeout(this._osT);
     this._osT=setTimeout(()=>{if(this.state.signup.approval){this.setState(st=>({signup:{...st.signup,step:'pending'}}));return;}this.setState({stack:[{k:'onboarding'},{k:'obStep',step:'perm'}]});},OS_RETURN_MS);
   }
@@ -2438,7 +2455,7 @@ class Component extends DCLogic {
     this.setState(st=>({outbox:st.outbox.map(x=>x.id===id?{...x,status:'failed',offline}:x)}));
     this.announceFailure(o);
   }
-  failToast(id){ return {text:'게시하지 못했습니다',action:'다시 시도',undo:()=>{this.setState({toast:null});this.retrySend(id);}}; }
+  failToast(id){ return {text:'게시하지 못했어요',action:'다시 시도',undo:()=>{this.setState({toast:null});this.retrySend(id);}}; }
   announceFailure(o){ if(o.kind==='post')this.showToast(this.failToast(o.id)); }
   /** Same item, same Idempotency-Key: failed uploads restart, finished ones are reused. */
   retrySend(id){
@@ -2456,7 +2473,7 @@ class Component extends DCLogic {
     if(idx<0)return;
     const o=this.state.outbox[idx];
     this.setState(st=>({outbox:st.outbox.filter(x=>x.id!==id),chatMenu:null}));
-    this.showToast({text:'삭제했습니다',action:'되돌리기',undo:()=>this.setState(st=>({toast:null,outbox:[...st.outbox.slice(0,idx),o,...st.outbox.slice(idx)]}))});
+    this.showToast({text:'삭제했어요',action:'되돌리기',undo:()=>this.setState(st=>({toast:null,outbox:[...st.outbox.slice(0,idx),o,...st.outbox.slice(idx)]}))});
   }
   commitSend(o){
     if(o.kind==='chat'){this.setState(st=>({outbox:st.outbox.filter(x=>x.id!==o.id),sent:{...st.sent,[o.chatId]:[...(st.sent[o.chatId]||[]),o.msg]}}));return;}
@@ -2465,7 +2482,7 @@ class Component extends DCLogic {
     // P1-11 thread: the next field goes out only after this one is posted, as its self-reply.
     const [next,...rest]=o.chain||[];
     if(next){this.enqueueSend({kind:'post',phase:'send',post:{...next,replyTo:np.id},chain:rest});return;}
-    if(np.replyTo&&!np.selfThread)this.showToast({text:'답글을 게시했습니다'});
+    if(np.replyTo&&!np.selfThread)this.showToast({text:'답글을 게시했어요'});
   }
   /** P0-04: simulated upload → processing (202) → done, for compose thumbs and for queued posts waiting on them. */
   ensureUploadTicker(){ if(!this._upT)this._upT=setInterval(this.tickUploads,UPLOAD_TICK_MS); }
@@ -2489,7 +2506,7 @@ class Component extends DCLogic {
     if(!o)return {isSending:false,isFailed:false,hasActions:true};
     const sending=o.status==='sending';
     return {isSending:sending,isFailed:!sending,hasActions:false,
-      sendText:o.phase==='upload'?'사진 올리는 중…':'게시하는 중…',failText:o.offline?'오프라인이라 게시하지 못했습니다':'게시하지 못했습니다',
+      sendText:o.phase==='upload'?'사진 올리는 중…':'게시하는 중…',failText:o.offline?'오프라인이라 게시하지 못했어요':'게시하지 못했어요',
       spinIcon:this.svg('spinner',16),failIcon:this.svg('warn',16),
       onRetry:()=>this.retrySend(o.id),onDrop:()=>this.dropSend(o.id),onOpen:()=>{},onMore:()=>{},onReplyCtx:()=>{}};
   }
@@ -2600,9 +2617,9 @@ class Component extends DCLogic {
     if(!ids.length)return;
     const put=done=>this.setState(st=>{const md={...st.mentionDone};ids.forEach(id=>{md[id]=done;});return {mentionDone:md,mentionPeek:null,mentionLeaving:{}};});
     put(true);
-    this.showToast({text:'완료했습니다',action:'되돌리기',undo:()=>{clearTimeout(this._mentionT);put(false);this.setState({toast:null});}});
+    this.showToast({text:'완료했어요',action:'되돌리기',undo:()=>{clearTimeout(this._mentionT);put(false);this.setState({toast:null});}});
     clearTimeout(this._mentionT);
-    this._mentionT=setTimeout(()=>{if(this.state.net!=='offline')return;put(false);this.showToast({text:'완료하지 못했습니다'});},MENTION_API_MS);
+    this._mentionT=setTimeout(()=>{if(this.state.net!=='offline')return;put(false);this.showToast({text:'완료하지 못했어요'});},MENTION_API_MS);
   }
   /** Full swipe left: the card slides out, then completes. */
   swipeMention(id){ this.setState(st=>({mentionLeaving:{...st.mentionLeaving,[id]:true},mentionPeek:null})); clearTimeout(this._leaveT); this._leaveT=setTimeout(()=>this.completeMentions([id]),SWIPE_OUT_MS); }
@@ -2643,7 +2660,7 @@ class Component extends DCLogic {
       nRe:f(p.c[0]),nBo:f(p.c[1]+(boosted?1:0)),nLi:f(p.c[2]+(liked?1:0)),liked,marked,boosted,
       boostCls:(boosted?'is-boosted':'')+(s.boostMenu===p.id?' is-active':''),likeCls:liked?'is-liked':'',markCls:marked?'is-marked':'',
       onProfile:()=>this.push({k:'profile',u:p.u}),
-      onLike:()=>this.toggle('liked',p.id),onBoost:()=>this.setState(st=>({boostMenu:st.boostMenu===p.id?null:p.id})),onMark:()=>{this.toggle('marked',p.id);this.showToast(marked?{text:'북마크에서 삭제했습니다'}:{text:'북마크에 저장했습니다',action:'보기',go:'bookmarks'});},onCw:()=>this.toggle('cw',p.id),
+      onLike:()=>this.toggle('liked',p.id),onBoost:()=>this.setState(st=>({boostMenu:st.boostMenu===p.id?null:p.id})),onMark:()=>{this.toggle('marked',p.id);this.showToast(marked?{text:'북마크에서 삭제했어요'}:{text:'북마크에 저장했어요',action:'보기',go:'bookmarks'});},onCw:()=>this.toggle('cw',p.id),
       onReply:()=>this.setState(this.replyState(p)),
       onShare:()=>this.setState({overlay:'share',sharePost:p}),
       onMore:(e)=>this.setState({overlay:'menu',menuPost:p,menuY:this.anchorY(e,300),menuUserOpen:false}),
@@ -2665,8 +2682,8 @@ class Component extends DCLogic {
     return {voted,showResult,pending:!showResult,showSubmit:!showResult,multi,canSubmit:sel.length>0,submitCls:sel.length>0?'':'is-disabled',
       submit:()=>{if(sel.length)this.setState(st=>({voted:{...st.voted,[p.id]:sel},pollSel:{...st.pollSel,[p.id]:[]}}));},
       meta:(mine?p.poll.total:total)+'명 참여 · '+p.poll.left,
-      opts:p.poll.opts.map((label,i)=>{const isPick=picks.includes(i);const n=p.poll.votes[i]+(isPick?1:0);const pct=total?Math.round(n*100/total):0;const on=sel.includes(i);
-        return {label,pct:pct+'%',w:pct+'%',mine:isPick,on,cls:showResult?(isPick?'is-mine':''):(on?'is-selected':''),
+      opts:p.poll.opts.map((label,i)=>{const isPick=picks.includes(i);const isLead=showResult&&p.poll.votes.every((x,j)=>x+(picks.includes(j)?1:0)<=p.poll.votes[i]+(isPick?1:0));const n=p.poll.votes[i]+(isPick?1:0);const pct=total?Math.round(n*100/total):0;const on=sel.includes(i);
+        return {label,pct:pct+'%',w:pct+'%',mine:isPick,on,checkIcon:this.svg('check',16),cls:showResult?[isPick?'is-mine':'',isLead?'is-lead':''].join(' '):(on?'is-selected':''),
           vote:()=>{if(showResult)return;this.setState(st=>{const cur=st.pollSel[p.id]||[];const next=cur.includes(i)?cur.filter(x=>x!==i):(multi?[...cur,i]:[i]);return {pollSel:{...st.pollSel,[p.id]:next}};});}};})};
   }
   quoteOf(id,state,pid){
@@ -2679,7 +2696,7 @@ class Component extends DCLogic {
     if(k==='muted'&&pid&&s.quoteReveal[pid])k=null;
     if(k){const [icon,text]=QUOTE_STATES[k];return {ok:false,unavailable:true,stateIcon:this.svg(icon,16),stateText:text,canReveal:k==='muted'&&!!q,reveal:()=>this.toggle('quoteReveal',pid)};}
     const u=U[q.u];const text=q.replyTo&&q.pre?this.splitLeading(q.pre+q.text,this.carriedOver(q))[1]:(q.pre||'')+q.text;
-    return {ok:true,unavailable:false,ini:u.ini,abg:u.bg,afg:u.fg,name:u.name,nameNode:this.nameNode(q.u),handle:u.handle,time:q.time,text,textNode:this.rich(text),imgs:(q.imgs||0)>0,onProfile:()=>this.openPost(q),onOpen:()=>this.openPost(q)};
+    return {ok:true,unavailable:false,ini:u.ini,abg:u.bg,afg:u.fg,name:u.name,nameNode:this.nameNode(q.u),handle:u.handle,time:q.time,text,textNode:this.rich(text),imgs:(q.imgs||0)>0,moreImgs:(q.imgs||0)>1,more:'+'+((q.imgs||1)-1),thumbCls:q.sensitive?'is-sensitive':'',thumbLabel:q.sensitive?'민감한 미디어':'이미지',onProfile:()=>this.openPost(q),onOpen:()=>this.openPost(q)};
   }
   emoji(code,size){
     const e=EMOJI[code];if(!e)return ':'+code+':';
@@ -2760,16 +2777,16 @@ class Component extends DCLogic {
     const icon=this.svg(kind.icon,24,kind.fill?{fill:true}:{});
     const iconCls=kind.tone==='brand'?'':'nd-notification__icon--'+kind.tone;
     const decided=n.type==='follow_request'?s.notifDecided[users[0]]:null;
-    if(decided)return {isPost:false,isRow:false,isDone:true,icon,iconCls,avatar:U[users[0]],doneText:decided==='accepted'?'승인했습니다':'거절했습니다',open:()=>this.push({k:'profile',u:users[0]})};
+    if(decided)return {isPost:false,isRow:false,isDone:true,icon,iconCls,avatar:U[users[0]],doneText:decided==='accepted'?'수락했어요':'거절했어요',open:()=>this.push({k:'profile',u:users[0]})};
     const who=kind.verb?this.notifNames(users,kind.verb):{names:'',lead:''};
     const names=who.names;
     const verb=kind.verb?who.lead+kind.verb
-      :n.type==='poll'?(src&&src.u===s.account?'내 투표가 끝났습니다':'참여한 투표가 끝났습니다'):kind.text;
+      :n.type==='poll'?(src&&src.u===s.account?'내 투표가 끝났어요':'참여한 투표가 끝났어요'):kind.text;
     const excerpt=n.type==='poll'?this.pollLeader(src):n.excerpt||(src?(src.cw||src.text).trim():'');
     const open=kind.web?()=>{}:n.type==='follow'||n.type==='follow_request'?()=>this.push({k:'profile',u:users[0]}):()=>src&&this.openPost(src);
     const fb=n.type==='follow'?this.followBtn(users[0],T):{};
     const decide=d=>e=>{e.stopPropagation();this.setState(st=>({notifDecided:{...st.notifDecided,[users[0]]:d},requests:st.requests.filter(x=>x!==users[0])}));};
-    return {isPost:false,isRow:true,isDone:false,icon,iconCls,cls:n.unread?(kind.surface?'is-surface':'is-unread'):'',open,
+    return {isPost:false,isRow:true,isDone:false,icon,iconCls,cls:n.unread?'is-unread':'',open,
       avatars:users.slice(0,6).map(k=>U[k]),hasAvatars:users.length>0,names,verb,time:n.time,excerpt,hasExcerpt:!!excerpt,
       isFollow:n.type==='follow',...fb,onFollow:e=>{e.stopPropagation();fb.onFollow();},
       isRequest:n.type==='follow_request',onAccept:decide('accepted'),onReject:decide('rejected')};
@@ -2797,7 +2814,7 @@ class Component extends DCLogic {
     const item=(label,icon,go,destructive)=>({label,icon:this.svg(icon,20,icon==='heart'&&this.state.chatLiked[cm.key]?{fill:true}:{}),go,cls:destructive?'is-destructive':''});
     const done=text=>()=>{this.setState({chatMenu:null});this.showToast({text});};
     if(cm.queued)return [{items:[item('다시 보내기','redo',()=>this.retrySend(cm.queued))]},{items:[item('삭제','trash',()=>this.dropSend(cm.queued),true)]}];
-    const first=[item('복사','copy',done('복사했습니다')),...(cm.img?[item('저장','download',done('사진 앱에 저장됨'))]:[])];
+    const first=[item('복사','copy',done('복사했어요')),...(cm.img?[item('저장','download',done('사진 앱에 저장했어요'))]:[])];
     if(cm.mine)return [{items:first},{items:[item('삭제','trash',()=>this.setState({chatMenu:null,overlay:'confirmDelete',delMode:'chatMessage',chatDelKey:cm.key}),true)]}];
     const like=item('마음에 들어요','heart',()=>this.setState(st=>({chatMenu:null,chatLiked:{...st.chatLiked,[cm.key]:!st.chatLiked[cm.key]}})));
     const report=item('신고하기','flag',()=>this.setState({chatMenu:null,modal:'report',report:{u:cm.u,msg:{id:cm.key,text:cm.text||'첨부 이미지',time:cm.ts},step:'reason',reason:null,comment:'',forward:true}}),true);
@@ -2817,10 +2834,10 @@ class Component extends DCLogic {
     const chatReqPending=s.emptyDemo==='chats'?[]:CHAT_REQUESTS.filter(c=>!s.chatDecided[c.id]);
     const chatAccepted=CHAT_REQUESTS.filter(c=>s.chatDecided[c.id]==='accepted').map(c=>({...c,request:false,unread:false}));
     const allChats=(s.emptyDemo==='chats'?[]:[...s.groups,...chatAccepted,...CHATS]).filter(c=>!(s.hiddenChats||{})[c.id]);
-    const chatDot=chatReqPending.length>0||(!s.readAll&&allChats.some(c=>c.unread));
+    // B6: in the demo only 알림 carries an unread dot, so the dot means something.
     const tabs=[['home','홈'],['mentions','멘션'],['notifs','알림'],['chats','채팅']].map(([k,label])=>{
       const active=s.tab===k&&!cur;
-      return {k,label,active,icon:tabIcon(k,active),cls:active?'is-selected':'',badge:(k==='notifs'||(k==='chats'&&chatDot)||k==='mentions')&&!active,
+      return {k,label,active,icon:tabIcon(k,active),cls:active?'is-selected':'',badge:k==='notifs'&&!active,
         go:()=>this.setState({tab:k,stack:[],drawer:false,sheet:false,overlay:null,boostMenu:null})};
     });
     const alive=p=>!s.deleted[p.id]&&!p.replyTo&&!s.muted[p.u]&&!s.blocked[p.u]&&s.emptyDemo!=='home';
@@ -2889,15 +2906,15 @@ class Component extends DCLogic {
     const profBlocked=profKey!=='me'&&!!s.blocked[profKey],profBlockedBy=profKey!=='me'&&!profBlocked&&!!s.blockedBy[profKey],profSuspended=profKey!=='me'&&!!U[profKey].suspended,profRestricted=profBlocked||profBlockedBy||profSuspended;
     const movedKey=U[profKey].movedTo,movedUser=movedKey?this.user(movedKey,T):null;
     const profFields=profRestricted?[]:(U[profKey].fields||[]).slice(0,4).map(f=>({label:f.label,value:f.value,verified:!!f.verified,valueCls:f.link?'nd-link':''}));
-    const prof={...this.user(profKey,T),isMe:profKey==='me',isBot:!profRestricted&&!!U[profKey].bot,isGroup:!profRestricted&&!!U[profKey].group,fields:profFields,hasFields:profFields.length>0,isOther:profKey!=='me',showActions:profKey!=='me'&&!profRestricted,showBody:!profRestricted,isRestricted:profRestricted,isBlocked:profBlocked,isMuted:profKey!=='me'&&!profRestricted&&!!s.muted[profKey],followsMe:!profRestricted&&!!U[profKey].followsMe,
-      restrictedTitle:profBlocked?'차단한 계정입니다':profSuspended?'운영자가 정지한 계정입니다':'이 계정의 게시물을 볼 수 없습니다',
-      isMoved:!!movedUser,showFollow:!movedUser,movedText:movedUser?'이 계정은 '+movedUser.full+'(으)로 옮겼습니다':'',openMoved:()=>this.push({k:'profile',u:movedKey}),
-      onUnblock:()=>{this.setState(st=>({blocked:{...st.blocked,[profKey]:false}}));this.showToast({text:'차단을 해제했습니다',action:'되돌리기',undo:()=>this.setState(st=>({blocked:{...st.blocked,[profKey]:true},toast:null}))});},
-      notifyOn,notifyIcon:this.svg(notifyOn?'bell':'bellPlus',20,{fill:notifyOn}),notifyCls:notifyOn?'is-selected':'',onNotify:()=>{this.setState(st=>({notifyUser:{...(st.notifyUser||{}),[profKey]:!notifyOn}}));this.showToast({text:notifyOn?'새 글 알림을 꺼습니다':U[profKey].name+' 님의 새 글 알림을 켰습니다'});},onShare:()=>this.setState({overlay:'share',sharePost:{u:profKey,id:'profile'}}),onMore:()=>this.setState({overlay:'profileMenu'}),
-      knownAvatars:known.map(k=>U[k]),knownText:known.map(k=>U[k].name+' 님').slice(0,2).join(', ')+(known.length>2?' 외 '+(known.length-2)+'명이 팔로우함':'이 팔로우함'),
+    const prof={...this.user(profKey,T),isMe:profKey==='me',isBot:!profRestricted&&!!U[profKey].bot,isGroup:!profRestricted&&!!U[profKey].group,fields:profFields,hasFields:profFields.length>0,hasLink:!!U[profKey].link&&!profRestricted&&profFields.length===0,isOther:profKey!=='me',showActions:profKey!=='me'&&!profRestricted,showBody:!profRestricted,isRestricted:profRestricted,isBlocked:profBlocked,isMuted:profKey!=='me'&&!profRestricted&&!!s.muted[profKey],followsMe:!profRestricted&&!!U[profKey].followsMe,
+      restrictedTitle:profBlocked?'차단한 계정이에요':profSuspended?'운영자가 정지한 계정이에요':'이 계정의 게시물을 볼 수 없어요',
+      isMoved:!!movedUser,showFollow:!movedUser,movedText:movedUser?'이 계정은 '+movedUser.full+'(으)로 옮겼어요':'',openMoved:()=>this.push({k:'profile',u:movedKey}),
+      onUnblock:()=>{this.setState(st=>({blocked:{...st.blocked,[profKey]:false}}));this.showToast({text:'차단을 해제했어요',action:'되돌리기',undo:()=>this.setState(st=>({blocked:{...st.blocked,[profKey]:true},toast:null}))});},
+      notifyOn,notifyIcon:this.svg(notifyOn?'bell':'bellPlus',20,{fill:notifyOn}),notifyCls:notifyOn?'is-selected':'',onNotify:()=>{this.setState(st=>({notifyUser:{...(st.notifyUser||{}),[profKey]:!notifyOn}}));this.showToast({text:notifyOn?'새 글 알림을 껐어요':U[profKey].name+' 님의 새 글 알림을 켰어요'});},onShare:()=>this.setState({overlay:'share',sharePost:{u:profKey,id:'profile'}}),onMore:()=>this.setState({overlay:'profileMenu'}),
+      knownAvatars:known.map(k=>U[k]),knownText:known.map(k=>U[k].name+' 님').slice(0,2).join(', ')+(known.length>2?' 외 '+(known.length-2)+'명이 팔로우해요':'이 팔로우해요'),
       onFollowing:()=>{this.setState({ftab:'following'});this.push({k:'follows',u:profKey});},
       onFollowers:()=>{this.setState({ftab:'followers'});this.push({k:'follows',u:profKey});}};
-    const ptabs=[['posts','게시물','list'],['replies','답글','reply'],['likes','좋아요','heart'],['media','미디어','image']].map(([k,label,ic])=>({label,active:s.ptab===k,icon:this.svg(ic,20),cls:s.ptab===k?'is-selected':'',go:()=>this.setState({ptab:k})}));
+    const ptabs=[['posts','게시물'],['replies','답글'],['media','미디어'],['likes','좋아요']].map(([k,label])=>({label,active:s.ptab===k,cls:s.ptab===k?'is-selected':'',go:()=>this.setState({ptab:k})}));
     const allProf=s.noPosts&&profKey===s.account?[]:PROFILE_POSTS[profKey]||[];
     const profRaw=s.ptab==='posts'?allProf:s.ptab==='media'?allProf.filter(p=>p.imgs):s.ptab==='likes'?(profKey===s.account?this.allPosts().filter(p=>s.liked[p.id]):[]):allProf.filter(p=>p.pre);
     const pinIds=s.ptab==='posts'&&allProf.length?(s.pinned[profKey]||[]):[],pinPosts=pinIds.map(id=>this.allPosts().find(p=>p.id===id)).filter(p=>p&&!s.deleted[p.id]);
@@ -2910,7 +2927,11 @@ class Component extends DCLogic {
       const anc=[];let cursor=detRaw;while(cursor&&cursor.replyTo){const par=this.allPosts().find(p=>p.id===cursor.replyTo);if(!par)break;anc.unshift(par);cursor=par;}
       const replies=this.allPosts().filter(p=>p.replyTo===detRaw.id&&!s.deleted[p.id]);
       const queuedReplies=s.outbox.filter(o=>o.kind==='post'&&o.post.replyTo===detRaw.id).map(o=>this.dec({...o.post,queued:o},T));
-      det={...d,...fb,showFollow:detRaw.u!==s.account&&!fb.following,ancestors:anc.map(p=>this.threadItem(p,T,true)),replies:[...replies.map(p=>this.threadItem(p,T,false)),...queuedReplies],noReplies:replies.length===0&&queuedReplies.length===0,
+      // C3: blocked / muted / unavailable replies collapse into one "숨겨진 답글 N개" row after the visible ones.
+      const hiddenReplies=replies.filter(p=>this.hiddenOf(p)),hiddenOpen=!!s.hiddenOpen[detRaw.id];
+      det={...d,...fb,showFollow:detRaw.u!==s.account&&!fb.following,ancestors:anc.map(p=>this.threadItem(p,T,true)),replies:[...replies.filter(p=>!this.hiddenOf(p)).map(p=>this.threadItem(p,T,false)),...queuedReplies],
+        showHiddenRow:hiddenReplies.length>0&&!hiddenOpen,hiddenLabel:'숨겨진 답글 '+hiddenReplies.length+'개',hiddenOpen,hiddenRows:hiddenOpen?hiddenReplies.map(p=>this.threadItem(p,T,false)):[],
+        hiddenIcon:this.svg('eyeOff',16),hiddenChevron:this.svg('chevD',16),toggleHidden:()=>this.toggle('hiddenOpen',detRaw.id),noReplies:replies.length===0&&queuedReplies.length===0,
         fullTime:'오후 9:'+String(10+(detRaw.id%50)).padStart(2,'0')+' · 2026년 9월 '+(27-(detRaw.id%5))+'일',visLabel:VIS[detRaw.vis||'public'].label,
         replyIcon24:this.svg('reply',24),boostIcon24:this.svg('boost',24),likeIcon24:this.svg('heart',24,{fill:!!s.liked[detRaw.id]}),markIcon24:this.svg('mark',24,{fill:!!s.marked[detRaw.id]}),shareIcon24:this.svg('share',24),
         openBoosters:()=>this.push({k:'people',kind:'boosters',id:detRaw.id}),openLikers:()=>this.push({k:'people',kind:'likers',id:detRaw.id}),openHistory:()=>this.setState({overlay:'history',menuPost:detRaw}),
@@ -2919,13 +2940,13 @@ class Component extends DCLogic {
     // ---- people
     const pk=cur&&cur.k==='people'?cur:null;let people={rows:[],suggest:[],title:'',sub:'',hasSub:false,isMembers:false,showFollow:true,hasSuggest:false,empty:false,emptyText:'',count:''};
     if(pk){
-      if(pk.kind==='members'){const list=s.lists.find(l=>l.id===pk.id)||{name:''};const mem=s.listMembers[pk.id]||[];const rows=mem.map((k,i)=>({...this.user(k,T),removeLabel:U[k].name+' 삭제',remove:()=>{this.setState(st=>({listMembers:{...st.listMembers,[pk.id]:(st.listMembers[pk.id]||[]).filter(x=>x!==k)}}));
-          this.showToast({text:U[k].name+' 님을 뺐습니다',action:'되돌리기',undo:()=>this.setState(st=>{const cur=(st.listMembers[pk.id]||[]).filter(x=>x!==k);cur.splice(Math.min(i,cur.length),0,k);return {toast:null,listMembers:{...st.listMembers,[pk.id]:cur}};})});}}));
+      if(pk.kind==='members'){const list=s.lists.find(l=>l.id===pk.id)||{name:''};const mem=s.listMembers[pk.id]||[];const rows=mem.map((k,i)=>({...this.user(k,T),removeLabel:U[k].name+' 빼기',remove:()=>{this.setState(st=>({listMembers:{...st.listMembers,[pk.id]:(st.listMembers[pk.id]||[]).filter(x=>x!==k)}}));
+          this.showToast({text:U[k].name+' 님을 뺐어요',action:'되돌리기',undo:()=>this.setState(st=>{const cur=(st.listMembers[pk.id]||[]).filter(x=>x!==k);cur.splice(Math.min(i,cur.length),0,k);return {toast:null,listMembers:{...st.listMembers,[pk.id]:cur}};})});}}));
         const qq=s.memberQ.trim();const suggest=qq?FOLLOWING.filter(k=>!mem.includes(k)&&(U[k].name.includes(qq)||U[k].handle.includes(qq))).map(k=>({...this.user(k,T),add:()=>this.setState(st=>({listMembers:{...st.listMembers,[pk.id]:[...(st.listMembers[pk.id]||[]),k]},memberQ:''}))})):[];
-        people={title:'멤버',sub:list.name,hasSub:true,isMembers:true,showFollow:false,rows,suggest,hasSuggest:suggest.length>0,showCount:suggest.length===0&&mem.length>0,count:String(mem.length),empty:mem.length===0&&!qq,emptyText:'아직 멤버가 없습니다. 위에서 팔로우 중인 사람을 검색해 추가하세요.'};}
+        people={title:'멤버',sub:list.name,hasSub:true,isMembers:true,showFollow:false,rows,suggest,hasSuggest:suggest.length>0,showCount:suggest.length===0&&mem.length>0,count:String(mem.length),empty:mem.length===0&&!qq,emptyText:'아직 멤버가 없어요. 위에서 팔로우 중인 사람을 검색해 추가하세요.'};}
       else {const src=this.allPosts().find(p=>p.id===pk.id);const n=src?(pk.kind==='likers'?src.c[2]+(s.liked[src.id]?1:0):src.c[1]+(s.boosted[src.id]?1:0)):0;const pool=(pk.kind==='likers'?['haru','minjae','rio','doyun','kazan','seoyeon']:['seoyeon','kazan','rio','haru']).filter(k=>k!==src.u).slice(0,Math.min(n,6));const mine=pk.kind==='likers'?!!s.liked[pk.id]:!!s.boosted[pk.id];
         const rows=[...(mine?[this.user(s.account,T)]:[]),...pool.map(k=>this.user(k,T))];
-        people={title:pk.kind==='likers'?'좋아요한 사람':'부스트한 사람',sub:n+'명',hasSub:true,isMembers:false,showFollow:true,rows:rows.map(u=>({...u,...(u.key===s.account?{flabel:'나',fcls:'is-self',onFollow:()=>{}}:{})})),suggest:[],hasSuggest:false,count:'',empty:rows.length===0,emptyText:pk.kind==='likers'?'아직 좋아요한 사람이 없습니다':'아직 부스트한 사람이 없습니다'};}
+        people={title:pk.kind==='likers'?'좋아요한 사람':'부스트한 사람',sub:n+'명',hasSub:true,isMembers:false,showFollow:true,rows:rows.map(u=>({...u,...(u.key===s.account?{flabel:'나',fcls:'is-self',onFollow:()=>{}}:{})})),suggest:[],hasSuggest:false,count:'',empty:rows.length===0,emptyText:pk.kind==='likers'?'아직 좋아요한 사람이 없어요':'아직 부스트한 사람이 없어요'};}
     }
     // ---- search
     const q=s.q.trim();const qs=(t)=>t.toLowerCase().includes(q.toLowerCase());
@@ -2942,13 +2963,13 @@ class Component extends DCLogic {
         tl={title:d.title,sub:d.sub,isTag:false,isList:false,posts:ps.map(p=>this.dec(p,T)),empty:ps.length===0,emptyText:'',
           hasSections:!!d.notifs,notifs:(d.notifs||[]).map(n=>this.notifRow(n,T)),people:(d.people||[]).map(k=>this.user(k,T))};}
       else if(tk.tag){const t=TAGS.find(x=>x.tag===tk.tag)||{tag:tk.tag,meta:'',posts:[]};const on=!!s.followTags[t.tag];const ps=this.allPosts().filter(p=>t.posts.includes(p.id)&&!s.deleted[p.id]);
-        tl={title:'#'+t.tag,sub:t.meta,isTag:true,isList:false,posts:ps.map(p=>this.dec(p,T)),empty:ps.length===0,emptyText:'이 해시태그가 붙은 게시물이 아직 없습니다',flabel:on?'팔로잉':'팔로우',fcls:on?'is-following':'',toggleFollowTag:()=>this.setState(st=>({followTags:{...st.followTags,[t.tag]:!on}}))};}
+        tl={title:'#'+t.tag,sub:t.meta,isTag:true,isList:false,posts:ps.map(p=>this.dec(p,T)),empty:ps.length===0,emptyText:'이 해시태그가 붙은 게시물이 아직 없어요',flabel:on?'팔로잉':'팔로우',fcls:on?'is-following':'',toggleFollowTag:()=>this.setState(st=>({followTags:{...st.followTags,[t.tag]:!on}}))};}
       else {const list=s.lists.find(l=>l.id===tk.list)||{name:'리스트'};const mem=s.listMembers[tk.list]||[];const ps=this.allPosts().filter(p=>mem.includes(p.u)&&!p.replyTo&&!s.deleted[p.id]);
-        tl={title:list.name,sub:'멤버 '+mem.length+'명',isList:true,isTag:false,posts:ps.map(p=>this.dec(p,T)),empty:ps.length===0,emptyText:mem.length?'멤버들의 새 게시물이 아직 없습니다':'멤버를 추가하면 그 사람들의 게시물만 여기에 모입니다',openMembers:()=>this.push({k:'people',kind:'members',id:tk.list}),openMenu:()=>this.setState({overlay:'listMenu'})};}
+        tl={title:list.name,sub:'멤버 '+mem.length+'명',isList:true,isTag:false,posts:ps.map(p=>this.dec(p,T)),empty:ps.length===0,emptyText:mem.length?'멤버들의 새 게시물이 아직 없어요':'멤버를 추가하면 그 사람들의 게시물만 여기에 모여요',openMembers:()=>this.push({k:'people',kind:'members',id:tk.list}),openMenu:()=>this.setState({overlay:'listMenu'})};}
     }
     // ---- viewer
     const vp=s.viewerPost;const vn=vp?(vp.imgs||1):1;const vi=Math.min(s.viewerIdx,vn-1);const alts=vp&&vp.alt?vp.alt:[];const alt=alts[vi]||'';
-    const viewer=vp?{counter:vn>1?(vi+1)+' / '+vn:'',ratio:vp.imgs===2?'4 / 5':'16 / 9',label:'이미지 '+(vi+1),hasPrev:vi>0,hasNext:vi<vn-1,prev:()=>this.setState({viewerIdx:vi-1,viewerAltOpen:false}),next:()=>this.setState({viewerIdx:vi+1,viewerAltOpen:false}),hasDots:vn>1,dots:Array.from({length:vn},(_,i)=>({cls:i===vi?'is-active':''})),hasAlt:!!alt,alt,altOpen:!!s.viewerAltOpen,altCls:s.viewerAltOpen?'is-open':'',toggleAlt:()=>this.setState({viewerAltOpen:!s.viewerAltOpen}),by:U[vp.u].name+' '+U[vp.u].handle,save:()=>{this.setState({overlay:null});this.showToast({text:'사진 앱에 저장됨'});},share:()=>this.setState({overlay:'share',sharePost:vp}),...this.viewerVideo(vp)}:{};
+    const viewer=vp?{counter:vn>1?(vi+1)+' / '+vn:'',ratio:vp.imgs===2?'4 / 5':'16 / 9',label:'이미지 '+(vi+1),hasPrev:vi>0,hasNext:vi<vn-1,prev:()=>this.setState({viewerIdx:vi-1,viewerAltOpen:false}),next:()=>this.setState({viewerIdx:vi+1,viewerAltOpen:false}),hasDots:vn>1,dots:Array.from({length:vn},(_,i)=>({cls:i===vi?'is-active':''})),hasAlt:!!alt,alt,altOpen:!!s.viewerAltOpen,altCls:s.viewerAltOpen?'is-open':'',toggleAlt:()=>this.setState({viewerAltOpen:!s.viewerAltOpen}),by:U[vp.u].name+' '+U[vp.u].handle,save:()=>{this.setState({overlay:null});this.showToast({text:'사진 앱에 저장했어요'});},share:()=>this.setState({overlay:'share',sharePost:vp}),...this.viewerVideo(vp)}:{};
     // ---- delete / history
     const dp=s.menuPost;const delIsReply=!!(dp&&dp.replyTo);
     const history=dp&&s.edits[dp.id]?[{tag:'현재',tagCls:'nd-link',when:s.edits[dp.id].when,text:s.edits[dp.id].text},{tag:'원본',tagCls:'',when:dp.time,text:dp.text}]:[];
@@ -2959,7 +2980,7 @@ class Component extends DCLogic {
     const signedIn=ACCOUNTS.filter(a=>!s.removedAccounts[a.u]),lastAccount=signedIn.length<=1;
     const delAccFull=this.user(s.delAccount&&U[s.delAccount]?s.delAccount:s.account,T).full;
     const askRemove=k=>this.setState({overlay:'confirmDelete',delMode:lastAccount?'logout':'removeAccount',delAccount:k});
-    const accounts=signedIn.map(a=>{const current=a.u===s.account,expired=!!s.expired[a.u];return {...this.user(a.u,T),rowLabel:s.accEdit?this.user(a.u,T).full+' 계정 빼기':undefined,badge:a.badge,hasBadge:a.badge>0&&!current,showBadge:a.badge>0&&!current&&!s.accEdit&&!expired,showRelogin:expired&&!s.accEdit,showCheck:current&&!s.accEdit&&!expired,current,switchTo:()=>{if(s.accEdit){askRemove(a.u);return;}if(expired){this.reLogin(a.u);return;}this.setState({account:a.u,sheet:false,drawer:false,stack:[],overlay:null});}};});
+    const accounts=signedIn.map(a=>{const current=a.u===s.account,expired=!!s.expired[a.u];return {...this.user(a.u,T),rowLabel:s.accEdit?this.user(a.u,T).full+' 로그아웃':undefined,badge:a.badge,hasBadge:a.badge>0&&!current,showBadge:a.badge>0&&!current&&!s.accEdit&&!expired,showRelogin:expired&&!s.accEdit,showCheck:current&&!s.accEdit&&!expired,current,switchTo:()=>{if(s.accEdit){askRemove(a.u);return;}if(expired){this.reLogin(a.u);return;}this.setState({account:a.u,sheet:false,drawer:false,stack:[],overlay:null});}};});
     const otherAccounts=accounts.filter(a=>!a.current);
     const openSettings=()=>{this.setState({overlay:null});this.push({k:'settings'});};
     const menu=[
@@ -2976,7 +2997,7 @@ class Component extends DCLogic {
     const activeIdx=Math.min(s.activeField,s.thread.length),alen=fieldLen(activeIdx);
     const len=fieldLen(0),remain=POST_LIMIT-alen,hasThread=s.thread.length>0,threadTyped=s.thread.some(f=>f.text.trim());
     const overLimit=fieldIds.some(i=>fieldLen(i)>POST_LIMIT);
-    const fieldCounter=i=>{const r=POST_LIMIT-fieldLen(i);return {remain:String(r),remainCls:r<20?'is-over':'',isOver:r<0,split:()=>this.splitField(i),focus:()=>this.setState({activeField:i})};};
+    const fieldCounter=i=>{const r=POST_LIMIT-fieldLen(i);return {remain:String(r),remainCls:r<20?'is-over':'',isOver:r<0,split:()=>this.splitField(i),focus:()=>this.setState({activeField:i,keyboard:true})};};
     const threadFields=s.thread.map((f,k)=>{const i=k+1,cw=this.fieldCw(f);return {...fieldCounter(i),n:String(i),text:f.text,onText:e=>this.setThreadText(i,e.target.value),remove:()=>this.removeField(i),hasLine:i<s.thread.length,
       cwOn:cw.on,cwChipLabel:cw.on&&cw.text?cw.text:'내용 경고',cwChipCls:cw.on?'is-selected':'nd-chip--muted',toggleCw:()=>this.toggleFieldCw(i),
       cwEditable:cw.on&&cw.own,cwText:f.cw?f.cw.text:'',onCwText:e=>this.setFieldCwText(i,e.target.value)};});
@@ -2997,7 +3018,7 @@ class Component extends DCLogic {
     const replyMentions=activeMentions.map((u,i)=>({handle:u.handle,sep:i<activeMentions.length-1?',\u00a0':''}));
     // Icon maps are named by their real size: ic (24, IconSize.md), ic20, ic16, ic32 (empty-state disc), ic40 (onboarding hero).
     const ic={},ic20={},ic16={},ic32={},ic40={};
-    ['gear','back','more','plus','image','poll','warn','search','share','send','cal','calSched','clock','chevD','chevL','chevR','lock','check','checkAll','close','users','userPlus','camera','filter','handle','trash','server','pencil','minus','link','at','bell','bellPlus','smile','eyeOff','info','edit','mail'].forEach(k=>{ic[k]=this.svg(k,24);ic20[k]=this.svg(k,20);ic16[k]=this.svg(k,16);});
+    ['gear','back','more','plus','image','poll','warn','search','share','send','cal','calSched','clock','chevD','chevL','chevR','lock','check','checkAll','close','users','userPlus','camera','filter','handle','trash','server','pencil','minus','link','at','bell','bellPlus','smile','eyeOff','info','edit','mail','threadAdd','listPlus'].forEach(k=>{ic[k]=this.svg(k,24);ic20[k]=this.svg(k,20);ic16[k]=this.svg(k,16);});
     ['warn','home','at','lock','check','block','mark','userPlus'].forEach(k=>{ic32[k]=this.svg(k,32);});
     // iOS nav bar back = system chevron (icons/INDEX.md `back`); Android keeps Tabler arrow-left.
     ic.back=ic.chevL;ic20.back=ic20.chevL;
@@ -3013,8 +3034,8 @@ class Component extends DCLogic {
     const saveDraft=()=>{clearTimeout(this._autoT);this.setState(st=>({autosave:null,drafts:[{text:[st.text,...st.thread.map(f=>f.text)].filter(t=>t.trim()).join('\n\n'),reply:st.replyTo&&st.modal==='reply'?U[st.replyTo.u].handle:null},...st.drafts]}));discardModal();};
     // drafts
     const draftList=s.dtab==='drafts'
-      ?[...s.drafts,...DRAFTS].map(d=>({text:d.text,hasMeta:!!d.reply,meta:d.reply+' 님에게 보내는 답글',metaIcon:this.svg('reply',16),load:()=>this.setState({text:d.text,overlay:null,modal:'compose'})}))
-      :s.scheduledPosts.map(d=>({text:d.text,hasMeta:true,meta:d.when,metaIcon:this.svg('clock',16),load:()=>this.setState({text:d.text,scheduled:d.when,overlay:null})}));
+      ?[...s.drafts,...DRAFTS].map(d=>({text:d.text,hasIcon:!!d.reply,meta:(d.reply?d.reply+' 님에게 보내는 답글 · ':'')+(d.saved||'방금'),metaIcon:this.svg('reply',16),load:()=>this.setState({text:d.text,overlay:null,modal:'compose'})}))
+      :s.scheduledPosts.map(d=>({text:d.text,hasIcon:true,meta:d.when,metaIcon:this.svg('clock',16),load:()=>this.setState({text:d.text,scheduled:d.when,overlay:null})}));
     // media
     const mediaGrid=MEDIA_TINTS.map((t,i)=>{const idx=s.mediaSel.indexOf(i);const sel=idx>=0;const off=!s.chatMediaFor&&oneVideo(s.mediaSel,i);return {label:MEDIA_VIDEOS[i]?'동영상':'사진 '+(i+1),bg:T.dark?'#2A2D3A':t,selected:sel,num:String(idx+1),cls:(sel?'is-selected':'')+(off?' is-disabled':''),
       isVideo:!!MEDIA_VIDEOS[i],dur:MEDIA_VIDEOS[i]||'',
@@ -3032,9 +3053,9 @@ class Component extends DCLogic {
     const mm=String(s.schedM+1);
     const schedFullText=`${s.schedY}년 ${mm}월 ${s.schedD}일 ${s.schedAp} ${s.schedH}:${String(s.schedMin).padStart(2,'0')}`;
     const wrap=(v,n)=>((v%n)+n)%n;
-    const col=(vals,curIdx,pickFn,width)=>({width,items:[-2,-1,0,1,2].map(o=>{const i=wrap(curIdx+o,vals.length);const label=vals[i];const c=o===0;return {label,pick:()=>pickFn(i),cls:c?'is-current':(Math.abs(o)===1?'is-near':'')};})});
+    const col=(vals,curIdx,pickFn,width,noWrap)=>({width,items:[-2,-1,0,1,2].map(o=>{const raw=curIdx+o;const out=noWrap&&(raw<0||raw>=vals.length);const i=wrap(raw,vals.length);const c=o===0;return {label:out?'':vals[i],pick:out?()=>{}:()=>pickFn(i),cls:c?'is-current':(Math.abs(o)===1?'is-near':'')};})});
     const hours=Array.from({length:12},(_,i)=>String(i+1)),mins=Array.from({length:60},(_,i)=>String(i).padStart(2,'0'));
-    const timeCols=[col(['오전','오후','오전','오후'],s.schedAp==='오전'?0:1,i=>this.setState({schedAp:['오전','오후'][i%2]}),'64px'),col(hours,s.schedH-1,i=>this.setState({schedH:i+1}),'56px'),col(mins,s.schedMin,i=>this.setState({schedMin:i}),'56px')];
+    const timeCols=[col(['오전','오후'],s.schedAp==='오전'?0:1,i=>this.setState({schedAp:['오전','오후'][i]}),'64px',true),col(hours,s.schedH-1,i=>this.setState({schedH:i+1}),'56px'),col(mins,s.schedMin,i=>this.setState({schedMin:i}),'56px')];
     // post menu
     const mp=s.menuPost,mpMine=mp&&mp.u===s.account;
     const mi=(label,icon,go,destructive)=>({label,icon:this.svg(icon,20),go,cls:destructive?'is-destructive':''});
@@ -3042,8 +3063,10 @@ class Component extends DCLogic {
       {items:[mi('링크 복사','link',closeOverlay),mi('공유','share',()=>this.setState({overlay:'share',sharePost:mp})),mi('본문 텍스트 선택','textSel',closeOverlay),mi('고정','pin',closeOverlay),mi('수정','edit',()=>this.setState({overlay:null,modal:'compose',editOf:mp,text:(s.edits[mp.id]?s.edits[mp.id].text:mp.text),replyTo:null,quoteOf:null,media:[],poll:null,scheduled:null}))]},
       {items:[mi('삭제 후 재작성','redo',()=>this.setState({overlay:'confirmDelete',delMode:'redraft'}),true),mi('삭제','trash',()=>this.setState({overlay:'confirmDelete',delMode:'delete'}),true)]},
     ]:[
+      // E3: in the 멘션 tab the ⋯ menu leads with 완료 (same as the swipe), like Android.
+      ...(view==='mentions'&&mentionList.some(p=>p.id===mp.id)?[{items:[mi('완료','check',()=>{closeOverlay();this.completeMentions([mp.id]);})]}]:[]),
       {items:[mi('링크 복사','link',closeOverlay),mi('공유','share',()=>this.setState({overlay:'share',sharePost:mp})),mi('브라우저에서 보기','browser',closeOverlay),mi('본문 텍스트 선택','textSel',closeOverlay)]},
-      {items:[...(mp.quote&&!s.quoteRevoked[mp.id]&&(this.allPosts().find(x=>x.id===mp.quote)||{}).u===s.account?[mi('내 글 인용 해제','eyeOff',()=>{this.setState(st=>({quoteRevoked:{...st.quoteRevoked,[mp.id]:true},overlay:null}));this.showToast({text:'인용을 해제했습니다'});},true)]:[]),mi('신고하기','flag',()=>this.setState({overlay:null,modal:'report',report:{u:mp.u,postId:mp.id,step:'reason',reason:null,comment:'',forward:true}}),true)]},
+      {items:[...(mp.quote&&!s.quoteRevoked[mp.id]&&(this.allPosts().find(x=>x.id===mp.quote)||{}).u===s.account?[mi('내 글 인용 해제','eyeOff',()=>{this.setState(st=>({quoteRevoked:{...st.quoteRevoked,[mp.id]:true},overlay:null}));this.showToast({text:'인용을 해제했어요'});},true)]:[]),mi('신고하기','flag',()=>this.setState({overlay:null,modal:'report',report:{u:mp.u,postId:mp.id,step:'reason',reason:null,comment:'',forward:true}}),true)]},
     ];
     const mpF=mp&&!mpMine?this.followBtn(mp.u,T):null;
     const menuUserGroups=mp&&!mpMine?[
@@ -3056,8 +3079,8 @@ class Component extends DCLogic {
     // ---- profile menu
     const pmF=profKey!==s.account?this.followBtn(profKey,T):null;
     const shareProfile=()=>this.setState({overlay:'share',sharePost:{u:profKey,id:'profile'}});
-    const profileMenuGroups=profKey===s.account?[{items:[mi('프로필 공유','share',shareProfile),mi('링크 복사','link',()=>{closeOverlay();this.showToast({text:'링크가 복사되었습니다'});}),mi('프로필 편집','edit',()=>this.setState({overlay:null,modal:'editProfile',editProfile:{name:U.me.name,bio:U.me.bio,fields:[['홈페이지','nalda.kr/@ahyeon/rules'],['진행','SF 위주'],['',''],['','']],locked:true}}))]}]
-      :[{items:[mi('프로필 공유','share',shareProfile),mi('리스트에 추가/삭제','list',closeOverlay),mi(s.notifyUser&&s.notifyUser[profKey]?'새 글 알림 끄기':'새 글 알림 켜기','bellPlus',()=>{this.setState(st=>({notifyUser:{...(st.notifyUser||{}),[profKey]:!(st.notifyUser||{})[profKey]},overlay:null}));this.showToast({text:'새 글 알림 설정이 바뀌었습니다'});}),mi(s.muted[profKey]?'뮤트 해제':'뮤트하기','mute',()=>s.muted[profKey]?this.setState(st=>({muted:{...st.muted,[profKey]:false},overlay:null})):this.setState({overlay:'muteSheet',muteTarget:profKey,muteDur:'무기한',muteNotifs:true}))]},
+    const profileMenuGroups=profKey===s.account?[{items:[mi('프로필 공유','share',shareProfile),mi('링크 복사','link',()=>{closeOverlay();this.showToast({text:'링크를 복사했어요'});}),mi('프로필 편집','edit',()=>this.setState({overlay:null,modal:'editProfile',editProfile:{name:U.me.name,bio:U.me.bio,fields:[['홈페이지','nalda.kr/@ahyeon/rules'],['진행','SF 위주'],['',''],['','']],locked:true}}))]}]
+      :[{items:[mi('프로필 공유','share',shareProfile),mi('리스트에 추가/삭제','list',closeOverlay),mi(s.muted[profKey]?'뮤트 해제':'뮤트하기','mute',()=>s.muted[profKey]?this.setState(st=>({muted:{...st.muted,[profKey]:false},overlay:null})):this.setState({overlay:'muteSheet',muteTarget:profKey,muteDur:'무기한',muteNotifs:true}))]},
         {items:[mi(s.blocked[profKey]?'차단 해제':'차단하기','block',()=>this.setState(st=>({blocked:{...st.blocked,[profKey]:!st.blocked[profKey]},overlay:null})),true),mi('신고하기','flag',()=>this.setState({overlay:null,modal:'report',report:{u:profKey,step:'reason',reason:null,comment:'',forward:true}}),true)]}];
     // ---- mute sheet
     const MUTE_DURS=['5분','30분','1시간','6시간','1일','3일','7일','무기한'];
@@ -3104,17 +3127,17 @@ class Component extends DCLogic {
     const setDarkTheme=(d)=>this.setState(st=>({prefs:{...st.prefs,darkTheme:d},theme:T.dark?d:st.theme}));
     // P1-13 ThemeChoiceMenu writes the same prefs as 설정 › 화면 (모드 / 다크 테마).
     const themeChoice=pf.mode==='dark'?pf.darkTheme:pf.mode;
-    const MODE_L={system:'시스템 설정',light:'라이트',dark:'다크'},VIS_L={public:'공개',unlisted:'미등재',private:'팔로워만'};
+    const VIS_L={public:'공개',unlisted:'미등재',private:'팔로워만'};
     const ext=this.svg('external',20),chev=this.svg('chevR',20);
     const openWeb=()=>{};
     const row=(icon,label,value,go,o={})=>({icon:this.svg(icon,24),label,value:value||'',go,trail:o.external?ext:chev,cls:(o.last?'':'nd-list-row--divided')+(o.alert?' nd-list-row--destructive':''),desc:o.desc||'',hasDesc:!!o.desc});
     const settingsGroups=[
       {title:'앱',rows:[
-        row('display','화면',MODE_L[pf.mode]+(pf.mode!=='light'?' · '+pf.darkTheme:''),()=>this.push({k:'settingsSub',sub:'display'})),
+        row('display','화면',THEME_CHOICES.find(([k])=>k===(pf.mode==='dark'?pf.darkTheme:pf.mode))[1],()=>this.push({k:'settingsSub',sub:'display'})),
         row('bell','푸시 알림',pf.push&&!s.osNotifsDenied?'켜짐':'꺼짐',()=>this.push({k:'settingsSub',sub:'notifs'})),
         row('pencil','게시물과 미디어',VIS_L[pf.defaultVis],()=>this.push({k:'settingsSub',sub:'posts'}),{last:true}),
       ]},
-      {title:'서버에서 관리 · nalda.kr',note:'이메일, 암호, 2단계 인증, 뮤트한 단어처럼 서버가 가진 설정은 브라우저의 마스토돈 설정 페이지에서 바꿉니다.',rows:[
+      {title:'서버에서 관리 · nalda.kr',note:'이메일, 암호, 2단계 인증, 뮤트한 단어처럼 서버가 가진 설정은 브라우저의 마스토돈 설정 페이지에서 바꿔요.',rows:[
         row('user','프로필 편집','',openWeb,{external:true}),
         row('lock','계정 설정','',openWeb,{external:true,desc:'이메일 · 암호 · 2단계 인증 · 로그인 기록'}),
         row('filter','뮤트한 단어와 필터','',openWeb,{external:true}),
@@ -3125,30 +3148,31 @@ class Component extends DCLogic {
       {title:'정보',rows:[
         row('server','서버 정보','nalda.kr',()=>this.push({k:'serverInfo'})),
         row('info','Nalda 정보','0.1',()=>this.push({k:'about'})),
-        row('trash','캐시 비우기',s.cacheCleared?'0 MB':'128 MB',()=>{this.setState({cacheCleared:true});this.showToast({text:'캐시를 비웠습니다 · 128 MB'});}),
+        row('trash','캐시 비우기',s.cacheCleared?'0 MB':'128 MB',()=>{this.setState({cacheCleared:true});this.showToast({text:'캐시를 비웠어요 · 128 MB'});}),
         row('logout','로그아웃',me.full,()=>this.setState({overlay:'confirmDelete',delMode:'logout',delAccount:s.account}),{alert:true,last:true}),
       ]},
     ].map(g=>({...g,hasNote:!!g.note,note:g.note||''}));
     const sub=cur&&cur.k==='settingsSub'?cur.sub:null;
     const osOff=!!s.osNotifsDenied,pushDim=!pf.push||osOff;
-    const tg=(label,key,desc,o={})=>{const on=!!(o.obj?pf[o.obj][key]:pf[key]);return {label,desc:desc||'',hasDesc:!!desc,isToggle:true,isSeg:false,isChoice:false,on,sw:on?'is-on':'',itemCls:o.dim?'is-disabled':'',cls:o.last?'':'nd-list-row--divided',toggle:()=>{if(o.dim)return;if(o.obj)this.setState(st=>({prefs:{...st.prefs,[o.obj]:{...st.prefs[o.obj],[key]:!st.prefs[o.obj][key]}}}));else setPref(key,!on);}};};
+    // H3: with OS notifications off every push toggle renders OFF + disabled (stored values come back with the permission).
+    const tg=(label,key,desc,o={})=>{const on=!(osOff&&sub==='notifs')&&!!(o.obj?pf[o.obj][key]:pf[key]);return {label,desc:desc||'',hasDesc:!!desc,isToggle:true,isSeg:false,isChoice:false,on,sw:on?'is-on':'',itemCls:o.dim?'is-disabled':'',cls:o.last?'':'nd-list-row--divided',toggle:()=>{if(o.dim)return;if(o.obj)this.setState(st=>({prefs:{...st.prefs,[o.obj]:{...st.prefs[o.obj],[key]:!st.prefs[o.obj][key]}}}));else setPref(key,!on);}};};
     const seg=(label,key,opts,desc,o={})=>({label,desc:desc||'',hasDesc:!!desc,isToggle:false,isSeg:true,isChoice:false,itemCls:o.dim?'is-disabled':'',cls:o.last?'':'nd-list-row--divided',opts:opts.map(([k,l])=>{const on=(o.get?o.get():pf[key])===k;return {label:l,pick:()=>{if(o.dim)return;o.set?o.set(k):setPref(key,k);},cls:on?'is-selected':''};})});
-    const choice=(label,key,opts,desc)=>({label,desc:desc||'',hasDesc:!!desc,isToggle:false,isSeg:false,isChoice:true,itemCls:'',cls:'',opts:opts.map(([k,l])=>({label:l,pick:()=>setPref(key,k),on:pf[key]===k,cls:pf[key]===k?'is-on':''}))});
+    const choice=(label,key,opts,desc,o={})=>({label,desc:desc||'',hasDesc:!!desc,isToggle:false,isSeg:false,isChoice:true,itemCls:o.dim?'is-disabled':'',cls:'',opts:opts.map(([k,l])=>{const on=(o.get?o.get():pf[key])===k;return {label:l,pick:()=>{if(o.dim)return;o.set?o.set(k):setPref(key,k);},on,cls:on?'is-on':''};})});
     const SUBS={
       display:{title:'화면',groups:[
-        {title:'테마',rows:[seg('모드','mode',[['system','시스템'],['light','라이트'],['dark','다크']],'',{set:setMode}),seg('다크 테마','darkTheme',[['Dim','Dim'],['Black','Black']],pf.mode==='system'?'휴대폰이 다크 모드로 바뀔 때 이 테마를 씁니다. 지금은 '+(T.dark?'다크':'라이트')+' 모드입니다.':pf.mode==='dark'?'지금 적용 중인 다크 테마입니다.':'라이트 모드에서는 쓰이지 않습니다.',{set:setDarkTheme,dim:pf.mode==='light',last:true})]},
-        {title:'글자',rows:[seg('본문 크기','textSize',[['기본','기본 17'],['작게 보기','작게 15']],'휴대폰의 글자 크기 설정도 함께 따릅니다.',{get:()=>s.textSize??this.props.textSize??'작게 보기',set:v=>this.setState({textSize:v}),last:true})]},
+        {title:'테마',rows:[choice('모드','mode',[['system','시스템 설정 따르기'],['light','라이트'],['dark','다크']],'',{set:setMode}),choice('다크 테마','darkTheme',[['Dim','다크 (Dim)'],['Black','다크 (Black)']],pf.mode==='system'?'휴대폰이 다크 모드로 바뀔 때 이 테마를 써요. 지금은 '+(T.dark?'다크':'라이트')+' 모드예요.':pf.mode==='dark'?'지금 적용 중인 다크 테마예요.':'라이트 모드에서는 쓰이지 않아요.',{set:setDarkTheme,dim:pf.mode==='light',last:true})]},
+        {title:'글자',rows:[seg('본문 크기','textSize',[['기본','기본 17'],['작게 보기','작게 15']],'기기의 글자 크기 설정을 따라가요. 여기서 한 단계 더 작게 볼 수 있어요.',{get:()=>s.textSize??this.props.textSize??'작게 보기',set:v=>this.setState({textSize:v}),last:true})]},
         {title:'움직임',rows:[seg('GIF · 동영상 자동 재생','autoplay',[['always','항상'],['wifi','Wi-Fi'],['off','끄기']],'',{last:true})]},
       ]},
       notifs:{title:'푸시 알림',groups:[
-        {title:'',rows:[tg('푸시 알림','push','끄면 앱 안의 알림 탭에서만 확인합니다.',{last:true,dim:osOff})]},
-        {title:'알림 종류',rows:[tg('멘션','mention','',{obj:'pushTypes',dim:pushDim}),tg('답글','reply','',{obj:'pushTypes',dim:pushDim}),tg('부스트','boost','',{obj:'pushTypes',dim:pushDim}),tg('좋아요','like','',{obj:'pushTypes',dim:pushDim}),tg('새 팔로워','follow','',{obj:'pushTypes',dim:pushDim}),tg('팔로우 요청','request','',{obj:'pushTypes',dim:pushDim}),tg('채팅','chat','',{obj:'pushTypes',dim:pushDim}),tg('투표 종료','poll','',{obj:'pushTypes',dim:pushDim,last:true})],note:'모르는 사람의 알림을 받을지는 서버 설정(알림)에서 정합니다.'},
+        {title:'',rows:[tg('푸시 알림','push','끄면 앱 안의 알림 탭에서만 확인해요.',{last:true,dim:osOff})]},
+        {title:'알림 종류',rows:[tg('멘션','mention','',{obj:'pushTypes',dim:pushDim}),tg('답글','reply','',{obj:'pushTypes',dim:pushDim}),tg('부스트','boost','',{obj:'pushTypes',dim:pushDim}),tg('좋아요','like','',{obj:'pushTypes',dim:pushDim}),tg('새 팔로워','follow','',{obj:'pushTypes',dim:pushDim}),tg('팔로우 요청','request','',{obj:'pushTypes',dim:pushDim}),tg('채팅','chat','',{obj:'pushTypes',dim:pushDim}),tg('투표 종료','poll','',{obj:'pushTypes',dim:pushDim,last:true})],note:'모르는 사람의 알림을 받을지는 서버 설정(알림)에서 정해요.'},
         {title:'채팅',rows:[tg('소리','chatSounds','',{dim:pushDim,last:true})]},
       ]},
       posts:{title:'게시물과 미디어',groups:[
-        {title:'작성',rows:[choice('기본 공개 범위','defaultVis',[['public','공개'],['unlisted','미등재'],['private','팔로워만']],'새 글을 쓸 때 미리 선택되는 범위입니다. 글마다 바꿀 수 있습니다.'),choice('기본 인용 허용','defaultQuote',[['public','모두'],['followers','팔로워만'],['nobody','나만']],'새 글에 미리 선택되는 인용 허용 범위입니다. 팔로워만 · 멘션한 사람만 글은 항상 나만 인용할 수 있습니다.'),tg('삭제 전 확인','confirmDelete',''),tg('게시 전 ALT 확인','altCheck','',{last:true})]},
-        {title:'보기',rows:[choice('미디어 표시','media',[['hide','민감함으로 표시된 미디어 가리기'],['show','모든 미디어 보이기'],['hideAll','모든 미디어 가리기']]),tg('내용 경고 항상 펼치기','cwExpand',''),tg('긴 글 접기','foldLong','타임라인에서 10줄이 넘는 글을 접고 "더 보기"로 펼칩니다.',{last:true})]},
-        {title:'채팅',rows:[tg('읽음 표시','readReceipts','끄면 내 읽음이 상대에게 보이지 않는 대신, 상대가 읽었는지도 볼 수 없습니다.',{last:true})]},
+        {title:'작성',rows:[choice('기본 공개 범위','defaultVis',[['public','공개'],['unlisted','미등재'],['private','팔로워만']],'새 글을 쓸 때 미리 선택되는 범위예요. 글마다 바꿀 수 있어요.'),choice('기본 인용 허용','defaultQuote',[['public','모두'],['followers','팔로워만'],['nobody','나만']],'새 글에 미리 선택되는 인용 허용 범위예요. 팔로워만 · 멘션한 사람만 글은 항상 나만 인용할 수 있어요.'),tg('삭제 전 확인','confirmDelete',''),tg('게시 전 ALT 확인','altCheck','',{last:true})]},
+        {title:'보기',rows:[choice('미디어 표시','media',[['hide','민감함으로 표시된 미디어 가리기'],['show','모든 미디어 보이기'],['hideAll','모든 미디어 가리기']]),tg('내용 경고 항상 펼치기','cwExpand',''),tg('긴 글 접기','foldLong','타임라인에서 10줄이 넘는 글을 접고 "더 보기"로 펼쳐요.',{last:true})]},
+        {title:'채팅',rows:[tg('읽음 표시','readReceipts','끄면 내 읽음이 상대에게 보이지 않는 대신, 상대가 읽었는지도 볼 수 없어요.',{last:true})]},
       ]},
     };
     const subDef=sub?SUBS[sub]:{title:'',groups:[]};
@@ -3180,18 +3204,22 @@ class Component extends DCLogic {
     if(s.gap&&s.feed==='home'&&homeItems.length>1)homeItems.splice(1,0,{isPost:false,isGap:true,post:{}});
     const pageLoad=key=>{clearTimeout(this._pageT);this.setState({[key]:'loading'});this._pageT=setTimeout(()=>this.setState({[key]:null}),PAGE_MS);};
     const profLoading=s.loading==='profile',profNone=!profRestricted&&profPosts.length===0&&!(prof.locked&&prof.isOther&&!(prof.following&&!prof.requested));
-    const overlayLabel={pollDur:'투표 기간',drafts:'임시 보관함',media:'사진 선택',schedule:s.schedStep==='date'?'게시물 예약':'시간 선택',menu:'게시물 메뉴',discard:'작성 취소 확인',viewer:'이미지 뷰어',confirmDelete:{cancelRequest:'팔로우 요청 취소 확인',removeAccount:'계정 빼기 확인',deleteAccount:'계정 삭제 확인',logout:'로그아웃 확인'}[s.delMode]||'삭제 확인',history:'수정 기록',profileMenu:'프로필 메뉴',altEdit:'대체 텍스트',muteSheet:'뮤트 옵션',chatFilter:'채팅 필터',loginSheet:s.serverPurpose==='signup'?'가입 서버 선택':'서버 선택',visMenu:'공개 범위 · 인용 허용',emoji:'커스텀 이모지',editDiscard:'수정 취소 확인',listMenu:'리스트 메뉴',altMissing:'ALT 없이 게시 확인'}[s.overlay];
+    const overlayLabel={pollDur:'투표 기간',drafts:'임시 보관함',media:'사진 선택',schedule:s.schedStep==='date'?'게시물 예약':'시간 선택',menu:'게시물 메뉴',discard:'작성 취소 확인',viewer:'이미지 뷰어',confirmDelete:{cancelRequest:'팔로우 요청 취소 확인',removeAccount:'계정 로그아웃 확인',deleteAccount:'계정 삭제 확인',logout:'로그아웃 확인'}[s.delMode]||'삭제 확인',history:'수정 기록',profileMenu:'프로필 메뉴',altEdit:'대체 텍스트',muteSheet:'뮤트 옵션',chatFilter:'채팅 필터',loginSheet:s.serverPurpose==='signup'?'가입 서버 선택':'서버 선택',visMenu:'공개 범위 · 인용 허용',emoji:'커스텀 이모지',editDiscard:'수정 취소 확인',listMenu:'리스트 메뉴',altMissing:'ALT 없이 게시 확인'}[s.overlay];
+    // B1: the compose FAB lives on the home timeline only (plus the chat list's new-chat FAB).
+    const showFab=!s.modal&&((view==='home'&&!s.loading)||view==='chats')&&s.boostMenu===null&&!s.overlay&&s.net!=='error';
     const vals={
-      th:T,ty,frameDark:T.dark||s.overlay==='media'||s.overlay==='viewer',themeCls:T.dark?'is-dark':'',themeName,themeIcon:this.svg(T.dark?'moon':'sun',24),rootRef:this.rootRef,homeRef:this.homeRef,chatLogRef:this.chatLogRef,
+      th:T,ty,frameDark:T.dark||s.overlay==='viewer',themeCls:T.dark?'is-dark':'',themeName,themeIcon:this.svg(T.dark?'moon':'sun',24),rootRef:this.rootRef,homeRef:this.homeRef,chatLogRef:this.chatLogRef,
       themeMenuOpen:!!s.themeMenu&&s.drawer,openThemeMenu:()=>this.setState({themeMenu:true}),closeThemeMenu:()=>this.setState({themeMenu:false}),
       themeChoiceLabel:THEME_CHOICES.find(([k])=>k===themeChoice)[1],
       themeChoices:THEME_CHOICES.map(([k,label])=>({label,on:k===themeChoice,cls:k===themeChoice?'is-on':'',
         pick:()=>{this.setState({themeMenu:false});if(k==='system'||k==='light'){setMode(k);return;}this.setState(st=>({prefs:{...st.prefs,mode:'dark',darkTheme:k},theme:k}));}})),
       screenLabel:overlayLabel||(s.boostMenu!==null?'부스트/인용 선택':s.modal==='newList'?(s.editListId?'리스트 수정':'새 리스트'):s.modal==='report'?({dislike:'신고 대신 숨기기',rules:'신고 · 규칙 선택',posts:'신고 · 게시물 첨부',detail:'신고 · 추가 설명',done:'신고 완료'}[s.report&&s.report.step]||'신고'):s.modal==='editProfile'?'프로필 편집':s.modal==='compose'?(s.quoteOf?'인용 작성창':'툿 작성창'):s.modal==='reply'?'답글 작성창':s.modal==='newChat'?'새 채팅':s.modal==='newGroup'?'새 그룹 채팅':relogin.open?'로그인 만료':s.sheet?(s.accEdit?'계정 편집':'계정 전환'):s.drawer?'메뉴':labels[view]),
-      v,me,tabs,showTabs:!s.modal&&!['login','onboarding','obStep','signup'].includes(view),showFab:!s.modal&&!['chat','chatInfo','chatRequests','login','settings','settingsSub','bookmarks','requests','detail','search','people','onboarding','obStep','signup','serverInfo','about'].includes(view)&&s.boostMenu===null&&!s.overlay&&s.net!=='error',
-      fabLabel:view==='chats'?'새 채팅':view==='lists'?'새 리스트':'글쓰기',
-      fabAction:()=>view==='chats'?this.setState({modal:'newChat',groupSel:[]}):view==='lists'?this.setState({modal:'newList',listName:'',listHide:false,listReplies:'members'}):this.setState({modal:'compose',replyTo:null,text:tk&&tk.tag?'#'+tk.tag+' ':'',drawer:false,scheduled:null,media:[],quoteOf:null,thread:[],activeField:0,cwInherited:false,restoreOffer:this.offerRestore(null)}),
-      fabIcon:view==='chats'?this.svg('pencil',24):view==='lists'?this.svg('listPlus',24):this.svg('plus',24),
+      v,me,tabs,showTabs:!s.modal&&!['login','onboarding','obStep','signup'].includes(view),showFab,
+      fabLabel:view==='chats'?'새 채팅':'글쓰기',
+      toastCls:showFab?'nd-toast--above-fab':'',
+      openNewList:()=>this.setState({modal:'newList',listName:'',listHide:false,listReplies:'members'}),
+      fabAction:()=>view==='chats'?this.setState({modal:'newChat',groupSel:[]}):this.setState({modal:'compose',replyTo:null,text:'',drawer:false,scheduled:null,media:[],quoteOf:null,thread:[],activeField:0,cwInherited:false,restoreOffer:this.offerRestore(null)}),
+      fabIcon:view==='chats'?this.svg('pencil',24):this.svg('plus',24),
       closeBoostMenu:()=>this.setState({boostMenu:null}),boostMenuOpen:!!boostRaw,boostPost,
       hasPoll:!!s.poll,pollToolCls:s.poll?'is-on':'',
       togglePoll:()=>this.setState({poll:s.poll?null:['','']}),
@@ -3213,7 +3241,7 @@ class Component extends DCLogic {
         open:()=>{if(this._swiped){this._swiped=false;return;}if(s.swipeList){this.setState({swipeList:null});return;}this.push({k:'timeline',list:l.id});}})),
       listName:s.listName,onListName:e=>this.setState({listName:e.target.value}),listHide:s.listHide,toggleListHide:()=>this.setState({listHide:!s.listHide}),
       listReplyOpts:[['members','리스트 멤버'],['followed','팔로우 중 모두'],['none','없음']].map(([k,label])=>({label,on:s.listReplies===k,cls:s.listReplies===k?'is-selected':'',go:()=>this.setState({listReplies:k})})),
-      listCreateCls:s.listName.trim()?'':'is-disabled',listCreating:!s.editListId,listSheetTitle:s.editListId?'리스트 수정':'내 리스트 만들기',listSubmitLabel:s.editListId?'저장':'만들기',
+      listCreateCls:s.listName.trim()?'':'is-disabled',listCreating:!s.editListId,listSheetTitle:s.editListId?'리스트 수정':'내 리스트 만들기',listSubmitLabel:'저장',
       createList:()=>{if(!s.listName.trim())return;if(s.editListId){this.setState(st=>({lists:st.lists.map(l=>l.id===st.editListId?{...l,name:st.listName.trim(),locked:st.listHide,replies:st.listReplies}:l),modal:null,editListId:null,listName:'',listHide:false,listReplies:'members'}));return;}this.setState(st=>({lists:[{id:'l'+Date.now(),name:st.listName.trim(),members:0,locked:st.listHide,color:'#D4EFE3',fg:'#0F5A3C'},...st.lists],modal:null,listName:'',listHide:false,listReplies:'members'}));},
       listHideSw:s.listHide?'is-on':'',
       homeHeaderCls:s.headerHidden?'is-hidden':'',newPillCls:s.headerHidden?'is-raised':'',
@@ -3235,7 +3263,7 @@ class Component extends DCLogic {
       ntabAllCls:s.ntab==='all'?'is-selected':'',ntabMentionCls:s.ntab==='mention'?'is-selected':'',
       ntabAll:()=>this.setState({ntab:'all'}),ntabMention:()=>this.setState({ntab:'mention'}),notifs,
       chats,chatsEmpty:chats.length===0,chatRequestRows,chatRequestsEmpty:chatRequestRows.length===0,hasChatRequests:chatReqPending.length>0,chatRequestsLabel:'채팅 요청 '+chatReqPending.length+'개',openChatRequests:()=>this.push({k:'chatRequests'}),
-      chatRequestsEmptyTitle:'대기 중인 요청이 없어요',chatRequestsEmptyText:'팔로우하지 않는 사람이 보낸 채팅은 여기서 먼저 확인하고 수락할 수 있어요.',chatsEmptyText:s.chatFilter==='unread'?'새 메시지가 오면 여기에 모입니다.':'팔로우 중인 사람에게 쪽지를 보내거나, 여러 명을 모아 그룹 채팅을 시작해 보세요.',
+      chatRequestsEmptyTitle:'대기 중인 요청이 없어요',chatRequestsEmptyText:'팔로우하지 않는 사람이 보낸 채팅은 여기서 먼저 확인하고 수락할 수 있어요.',chatsEmptyText:s.chatFilter==='unread'?'새 메시지가 오면 여기에 모여요.':'팔로우 중인 사람에게 쪽지를 보내거나, 여러 명을 모아 그룹 채팅을 시작해 보세요.',
       chatFilterLabel:chatFilterDefs.find(d=>d[0]===s.chatFilter)[1],openChatFilter:()=>this.setState({overlay:'chatFilter'}),
       chatFilterItems:chatFilterDefs.map(([k,label,ic])=>({label,icon:this.svg(ic,20),active:s.chatFilter===k,cls:s.chatFilter===k?'is-on':'',go:()=>this.setState({chatFilter:k,overlay:null})})),
       markAllRead:()=>this.setState({readAll:true,overlay:null}),
@@ -3244,25 +3272,27 @@ class Component extends DCLogic {
       chatSugg:v.chat&&!chatIsRequest&&!s.chatMenu?this.suggestFor(s.chatText,t=>this.setState({chatText:t})):{open:false,rows:[],announce:''},
       peopleList:folks.map(u=>({...u,onChat:()=>{this.setState({modal:null});u.onChat();}})),openNewGroup:()=>this.setState({modal:'newGroup'}),backToNewChat:()=>this.setState({modal:'newChat'}),chatModalOpen:s.modal==='newChat'||s.modal==='newGroup',
       groupPeople,groupSelList,hasGroupSel:s.groupSel.length>0,createGroupCls:canCreate?'':'is-disabled',
-      createGroup:()=>{if(!canCreate)return;const id='g'+Date.now();const name=s.groupSel.map(k=>U[k].name).join(', ');this.setState(st=>({groups:[{id,group:true,members:st.groupSel,name,last:'그룹을 만들었습니다',time:'지금'},...st.groups],groupSel:[],modal:null,stack:[{k:'chat',id}]}));},
+      createGroup:()=>{if(!canCreate)return;const id='g'+Date.now();const name=s.groupSel.map(k=>U[k].name).join(', ');this.setState(st=>({groups:[{id,group:true,members:st.groupSel,name,last:'그룹을 만들었어요',time:'지금'},...st.groups],groupSel:[],modal:null,stack:[{k:'chat',id}]}));},
       prof,ptabs,profPosts:prof.locked&&prof.isOther&&!(prof.following&&!prof.requested)?[]:profPosts,profLockedEmpty:prof.locked&&prof.isOther&&!(prof.following&&!prof.requested),profLockedText:prof.requested?'팔로우 요청이 승인되면 게시물을 볼 수 있어요.':'팔로우를 요청하고 승인되면 게시물을 볼 수 있어요.',profEmpty:profNone&&s.ptab!=='posts',profNoPosts:profNone&&s.ptab==='posts',profLoading,profReady:!profLoading,
       composeFirst:()=>this.setState({modal:'compose',replyTo:null,text:'',scheduled:null,media:[],quoteOf:null,thread:[],activeField:0,cwInherited:false,restoreOffer:this.offerRestore(null)}),
       ftabFollowersCls:s.ftab==='followers'?'is-selected':'',ftabFollowingCls:s.ftab==='following'?'is-selected':'',
       ftabFollowers:()=>this.setState({ftab:'followers'}),ftabFollowing:()=>this.setState({ftab:'following'}),followList,followHidden,
       profileMenuGroups,muteUser,muteDurs,muteNotifs:!!s.muteNotifs,muteNotifsSw:s.muteNotifs?'is-on':'',toggleMuteNotifs:()=>this.setState({muteNotifs:!s.muteNotifs}),muteDurLabel:s.muteDur,
-      doMute:()=>{const k=s.muteTarget;this.setState(st=>({muted:{...st.muted,[k]:true},overlay:null}));this.showToast({text:U[k].name+' 님을 뮤트했습니다'+(s.muteDur==='무기한'?'':' · '+s.muteDur),action:'취소',go:null,undo:()=>this.setState(st=>({muted:{...st.muted,[k]:false},toast:null}))});},
+      doMute:()=>{const k=s.muteTarget;this.setState(st=>({muted:{...st.muted,[k]:true},overlay:null}));this.showToast({text:U[k].name+' 님을 뮤트했어요'+(s.muteDur==='무기한'?'':' · '+s.muteDur),action:'취소',go:null,undo:()=>this.setState(st=>({muted:{...st.muted,[k]:false},toast:null}))});},
       rpUser,rpRemote,reportReasons,rpIsReason:rpStep==='reason',rpIsDetail:rpStep==='detail',rpIsDone:rpStep==='done',rpIsDislike:rpStep==='dislike',rpIsRules:rpStep==='rules',rpIsPosts:rpStep==='posts',
       rpShowBack:['dislike','rules','posts','detail'].includes(rpStep),rpShowNext:['reason','rules','posts'].includes(rpStep),rpShowClose:rpStep==='done'||rpStep==='dislike',rpRuleRows,rpPostRows,rpPostsEmpty:rpStep==='posts'&&rpPostRows.length===0,rpComment:rp.comment||'',onRpComment:e=>this.setState(st=>({report:{...st.report,comment:e.target.value}})),rpForward:!!rp.forward,rpForwardSw:rp.forward?'is-on':'',toggleRpForward:()=>this.setState(st=>({report:{...st.report,forward:!st.report.forward}})),
       rpNextCls:(rpStep==='reason'&&!rp.reason)||(rpStep==='rules'&&!rpRulesSel.length)?'is-disabled':'',rpNext:()=>{if(rpStep==='reason'&&!rp.reason)return;if(rpStep==='rules'&&!rpRulesSel.length)return;rpGo(rpFlow[Math.min(rpFlow.length-1,rpIdx+1)]);},rpBack:()=>rpGo(rpFlow[Math.max(0,rpIdx-1)]),rpSubmit:()=>this.setState(st=>({report:{...st.report,step:'done'}})),closeReport:()=>this.setState({modal:null,report:null}),
-      rpDoneMute:()=>{this.setState(st=>({muted:{...st.muted,[rp.u]:true},modal:null,report:null}));this.showToast({text:rpUser.name+' 님을 뮤트했습니다'});},rpDoneBlock:()=>{this.setState(st=>({blocked:{...st.blocked,[rp.u]:true},modal:null,report:null}));this.showToast({text:rpUser.name+' 님을 차단했습니다'});},rpDoneUnfollow:()=>{this.setState(st=>({follow:{...st.follow,[rp.u]:false},modal:null,report:null}));},
+      rpDoneMute:()=>{this.setState(st=>({muted:{...st.muted,[rp.u]:true},modal:null,report:null}));this.showToast({text:rpUser.name+' 님을 뮤트했어요'});},rpDoneBlock:()=>{this.setState(st=>({blocked:{...st.blocked,[rp.u]:true},modal:null,report:null}));this.showToast({text:rpUser.name+' 님을 차단했어요'});},rpDoneUnfollow:()=>{this.setState(st=>({follow:{...st.follow,[rp.u]:false},modal:null,report:null}));},
       // P2-12: the pill's appearance is announced (iOS AccessibilityNotification.Announcement → an aria-live region here).
       liveAnnounce:s.newCount>0&&view==='home'&&!s.refreshing?'새 게시물 '+s.newCount+'개':'',
       suggestRows,suggestHasMore:s.sugCount<SUGGESTED.length,suggestMore:()=>this.setState({sugCount:SUGGESTED.length}),
       hasNewPill:s.newCount>0&&view==='home'&&!s.refreshing,newCount:String(s.newCount),newPillLabel:'새 게시물 '+s.newCount+'개',loadNew:()=>{this.setState({newCount:0,headerHidden:false});if(this._home)this._home.scrollTop=0;},
       cwOn:s.cwOn,cwText:s.cwText,onCwText:e=>{this.setState({cwText:e.target.value});this.scheduleAutosave();},toggleCw:()=>{this.setState({cwOn:!s.cwOn,cwInherited:s.cwOn?false:s.cwInherited});this.scheduleAutosave();},cwInheritedNote:s.cwOn&&s.cwInherited,hasCwRecent:s.cwOn&&s.cwRecent.length>0,
       cwRecent:s.cwRecent.slice(0,CW_RECENT_MAX).map(t=>{const on=s.cwText.trim()===t;return {label:t,on,cls:on?'is-selected':'',pick:()=>{this.setState({cwText:t});this.scheduleAutosave();}};}),cwToolCls:s.cwOn?'is-on':'',
-      altText:s.altEdit!=null?(s.alts[s.altEdit]||''):'',onAltText:e=>this.setState(st=>({alts:{...st.alts,[st.altEdit]:e.target.value}})),altCount:String((s.altEdit!=null?(s.alts[s.altEdit]||''):'').length),altBg:T.dark?'#2A2D3A':MEDIA_TINTS[s.altEdit||0],saveAlt:()=>this.setState({overlay:null,altEdit:null}),
-      chatIsRequest,chatNotRequest:!chatIsRequest,acceptChat:()=>{this.setState(st=>({chatDecided:{...st.chatDecided,[chatRec.id]:'accepted'}}));this.showToast({text:'채팅 요청을 수락했습니다'});},rejectChat:()=>{this.setState(st=>({chatDecided:{...st.chatDecided,[chatRec.id]:'rejected'},stack:st.stack.slice(0,-1)}));this.showToast({text:'채팅 요청을 거절했습니다'});},
+      altText:s.altEdit!=null?(s.alts[s.altEdit]||''):'',onAltText:e=>{const v=e.target.value;this.setState(st=>({altOrig:st.altOrig&&st.altOrig.i===st.altEdit?st.altOrig:{i:st.altEdit,v:st.alts[st.altEdit]||''},alts:{...st.alts,[st.altEdit]:v}}));},altCount:String((s.altEdit!=null?(s.alts[s.altEdit]||''):'').length),altBg:T.dark?'#2A2D3A':MEDIA_TINTS[s.altEdit||0],saveAlt:()=>this.setState({overlay:null,altEdit:null,altOrig:null}),
+      // B4: 취소 restores the ALT text as it was when the sheet opened.
+      cancelAlt:()=>this.setState(st=>({overlay:null,altEdit:null,altOrig:null,alts:st.altOrig&&st.altOrig.i===st.altEdit?{...st.alts,[st.altEdit]:st.altOrig.v}:st.alts})),
+      chatIsRequest,chatNotRequest:!chatIsRequest,acceptChat:()=>{this.setState(st=>({chatDecided:{...st.chatDecided,[chatRec.id]:'accepted'}}));this.showToast({text:'채팅 요청을 수락했어요'});},rejectChat:()=>{this.setState(st=>({chatDecided:{...st.chatDecided,[chatRec.id]:'rejected'},stack:st.stack.slice(0,-1)}));this.showToast({text:'채팅 요청을 거절했어요'});},
       openChatInfo:()=>this.push({k:'chatInfo',id:chatRec.id,u:chatRec.u}),chatMembers,chatMemberCount:String(chatMembers.length),openAddMember:()=>this.setState({recipSheet:'add'}),
       chatRecipNames:chatRecipLine.names,chatRecipSuffix:chatRecipLine.suffix,chatRecipLabel:'받는 사람 '+chatRecipLine.names,openChatRecipients:()=>this.setState({recipSheet:'list'}),
       recipRows,recipAddRows,msReply:!recip,msChatList:recip==='list',msChatAdd:recip==='add',msNoBack:recip!=='add',msTitle:recip==='add'?'사람 추가':recip?'받는 사람':'답글 보내기',
@@ -3271,39 +3301,40 @@ class Component extends DCLogic {
       reportChat:()=>this.setState({modal:'report',report:{u:chatRec.u||chatRec.members[0],step:'reason',reason:null,comment:'',forward:true}}),chatLeaveLabel:chatIsGroup?'대화 숨기기':'대화 삭제',leaveChat:()=>this.setState({overlay:'confirmDelete',delMode:chatIsGroup?'hideChat':'deleteChat'}),
       openChatMedia:()=>this.setState({overlay:'media',chatMediaFor:chatRec.id,mediaSel:[]}),
       epName:ep.name,epBio:ep.bio,epFields,epLocked:!!ep.locked,epLockedSw:ep.locked?'is-on':'',toggleEpLocked:()=>this.setState(st=>({editProfile:{...st.editProfile,locked:!st.editProfile.locked}})),onEpName:e=>this.setState(st=>({editProfile:{...st.editProfile,name:e.target.value}})),onEpBio:e=>this.setState(st=>({editProfile:{...st.editProfile,bio:e.target.value}})),
-      epOpen:s.modal==='editProfile',openEditProfile:()=>this.setState({modal:'editProfile',editProfile:{name:U.me.name,bio:U.me.bio,fields:[['홈페이지','nalda.kr/@ahyeon/rules'],['진행','SF 위주'],['',''],['','']],locked:!!U.me.locked}}),closeEditProfile:()=>this.setState({modal:null,editProfile:null}),saveEditProfile:()=>{U.me.name=ep.name;U.me.bio=ep.bio;U.me.locked=ep.locked;this.setState({modal:null,editProfile:null});this.showToast({text:'프로필이 저장되었습니다'});},
+      epOpen:s.modal==='editProfile',openEditProfile:()=>this.setState({modal:'editProfile',editProfile:{name:U.me.name,bio:U.me.bio,fields:[['홈페이지','nalda.kr/@ahyeon/rules'],['진행','SF 위주'],['',''],['','']],locked:!!U.me.locked}}),closeEditProfile:()=>this.setState({modal:null,editProfile:null}),saveEditProfile:()=>{U.me.name=ep.name;U.me.bio=ep.bio;U.me.locked=ep.locked;this.setState({modal:null,editProfile:null});this.showToast({text:'프로필을 저장했어요'});},
       reportOpen:s.modal==='report',
-      ob,obStart:()=>this.push({k:'login'}),obSignup:()=>this.openSignupServer(),obAuthorize:()=>{const r=cur&&cur.k==='obStep'&&cur.relogin;if(r){this.setState(st=>({expired:{...st.expired,[r]:false},account:r,stack:[],tab:'home'}));return;}this.push({k:'obStep',step:'perm'});},obDeny:()=>{const r=cur&&cur.k==='obStep'&&cur.relogin;this.setState(st=>({stack:st.stack.slice(0,-1),sessionExpired:!!r&&!!st.expired[st.account]}));this.showToast({text:'로그인하지 못했습니다'});},obAllowPush:()=>{this.setState(st=>({prefs:{...st.prefs,push:true},stack:[],tab:'home'}));this.showToast({text:'푸시 알림을 켰습니다'});},obFinish:()=>this.setState(st=>({prefs:{...st.prefs,push:false},stack:[],tab:'home'})),
+      ob,obStart:()=>this.push({k:'login'}),obSignup:()=>this.openSignupServer(),obAuthorize:()=>{const r=cur&&cur.k==='obStep'&&cur.relogin;if(r){this.setState(st=>({expired:{...st.expired,[r]:false},account:r,stack:[],tab:'home'}));return;}this.push({k:'obStep',step:'perm'});},obDeny:()=>{const r=cur&&cur.k==='obStep'&&cur.relogin;this.setState(st=>({stack:st.stack.slice(0,-1),sessionExpired:!!r&&!!st.expired[st.account]}));this.showToast({text:'로그인하지 못했어요'});},obAllowPush:()=>{this.setState(st=>({prefs:{...st.prefs,push:true},stack:[],tab:'home'}));this.showToast({text:'푸시 알림을 켰어요'});},obFinish:()=>this.setState(st=>({prefs:{...st.prefs,push:false},stack:[],tab:'home'})),
       su,serverRules,onSuUsername:e=>this.setSuUsername(e.target.value),suTogglePw:()=>this.setState(st=>({signup:{...st.signup,showPw:!st.signup.showPw}})),suBrowseServers:()=>{this.setState({stack:[{k:'onboarding'}]});this.openSignupServer();},onSuEmail:setSu('email'),onSuPassword:setSu('password'),onSuReason:setSu('reason'),suNext:()=>{if(sg.step==='rules'){this.setState(st=>({signup:{...st.signup,step:'form'}}));return;}if(!suReady)return;this.setState(st=>({signup:{...st.signup,step:'verify'}}));},suOpenMail:()=>this.openMailApp(),suResend:()=>this.resendMail(),openSignup:()=>this.openSignupServer(),
       adminUser,aboutRows,licenses,openServerInfo:()=>this.push({k:'serverInfo'}),
       homeScrollCls:s.net==='offline'?'is-offline':'',netOffline:s.net==='offline',netError:s.net==='error',retryNet:()=>{this.setState({refreshing:true});setTimeout(()=>this.setState({net:'ok',refreshing:false}),900);},refreshing:s.refreshing,
       homeEmpty:s.net!=='error'&&homePosts.length===0&&!homeLoading,homeHasPosts:s.net!=='error'&&homePosts.length>0,homeLoading,homeItems,skeletonRows:Array.from({length:SKELETON_COUNT},(_,i)=>i),skeletonProfileRows:Array.from({length:SKELETON_PROFILE_ROWS},(_,i)=>i),
       gapIdle:s.gap==='idle',gapLoading:s.gap==='loading',loadGap:()=>pageLoad('gap'),footerLoading:s.footer==='loading'&&homePosts.length>0,footerError:s.footer==='error'&&homePosts.length>0,retryFooter:()=>pageLoad('footer'),
       relogin,mentionsEmpty:mentionPosts.length===0,mentionsHas:mentionPosts.length>0,
-      notifsEmpty:notifs.length===0&&s.loading!=='notifs',notifsLoading:s.loading==='notifs',notifsEmptyTitle:s.ntab==='mention'?'멘션 알림이 없어요':'아직 알림이 없어요',notifsEmptyText:s.ntab==='mention'?'누군가 나를 멘션하면 여기에 표시됩니다.':'좋아요, 부스트, 새 팔로워가 생기면 여기에 모입니다. 푸시 알림은 설정에서 종류별로 고를 수 있어요.',
+      notifsEmpty:notifs.length===0&&s.loading!=='notifs',notifsLoading:s.loading==='notifs',notifsEmptyTitle:s.ntab==='mention'?'멘션 알림이 없어요':'아직 알림이 없어요',notifsEmptyText:s.ntab==='mention'?'누군가 나를 멘션하면 여기에 표시돼요.':'좋아요, 부스트, 새 팔로워가 생기면 여기에 모여요. 푸시 알림은 설정에서 종류별로 고를 수 있어요.',
       chatsEmptyTitle:s.chatFilter==='unread'?'모두 읽었어요':'아직 채팅이 없어요',chatsEmptyCta:s.chatFilter==='all',
       det,people,memberQ:s.memberQ,onMemberQ:e=>this.setState({memberQ:e.target.value}),
       q:s.q,onQ:e=>this.setState({q:e.target.value}),clearQ:()=>this.setState({q:''}),hasQ:!!q,noQ:!q,stabs,srAccounts:!!q&&s.stab==='accounts',srPosts:!!q&&s.stab==='posts',srTags:!!q&&s.stab==='tags',srUsers,srPostList,srTagList,srEmpty:!!q&&srCur.length===0,
       // P1-18: ⓧ removes one entry; 모두 지우기 clears at once (no confirm) with an undo toast.
       recentSearches:s.recent.map(r=>({label:r,go:()=>this.setState({q:r.replace('@',''),stab:r.startsWith('@')?'accounts':'posts'}),removeLabel:r+' 삭제',remove:()=>this.setState(st=>({recent:st.recent.filter(x=>x!==r)}))})),hasRecent:s.recent.length>0,
-      clearRecent:()=>{const was=s.recent;this.setState({recent:[]});this.showToast({text:'모두 지웠습니다',action:'되돌리기',undo:()=>this.setState({recent:was,toast:null})});},trendTitleCls:s.recent.length?'':'nd-section-title--first',trendTags:TAGS.map(tagRow),openSearch:()=>{this.setState({q:'',stab:'accounts'});this.push({k:'search'});},
+      clearRecent:()=>{const was=s.recent;this.setState({recent:[]});this.showToast({text:'모두 지웠어요',action:'되돌리기',undo:()=>this.setState({recent:was,toast:null})});},trendTitleCls:s.recent.length?'':'nd-section-title--first',trendTags:TAGS.map(tagRow),openSearch:()=>{this.setState({q:'',stab:'accounts'});this.push({k:'search'});},
       tl,viewer,history,hasToast:!!s.toast,toastText:s.toast?s.toast.text:'',toastHasAction:!!(s.toast&&s.toast.action),toastAction:s.toast?s.toast.action||'':'',toastGo:()=>{if(s.toast&&s.toast.undo){s.toast.undo();return;}const g=s.toast&&s.toast.go;this.setState({toast:null});if(g)this.push({k:g});},
-      delTitle:s.delMode==='cancelRequest'?'팔로우 요청을 취소할까요?':s.delMode==='deleteAccount'?'계정을 삭제하러 가요':s.delMode==='removeAccount'?'이 기기에서 '+delAccFull+' 계정을 뺄까요?':s.delMode==='list'?'리스트를 삭제할까요?':s.delMode==='chatMessage'?'메시지를 삭제할까요?':s.delMode==='logout'?delAccFull+'에서 로그아웃할까요?':s.delMode==='hideChat'?'대화를 숨길까요?':s.delMode==='deleteChat'?'대화를 삭제할까요?':s.delMode==='redraft'?'삭제 후 다시 작성할까요?':(delIsReply?'답글을 삭제할까요?':'게시물을 삭제할까요?'),delSub:s.delMode==='deleteAccount'?'브라우저에서 진행하며, 삭제하면 되돌릴 수 없습니다.':s.delMode==='removeAccount'?'서버의 계정은 그대로 남습니다.':s.delMode==='list'?'멤버와 게시물은 그대로 남습니다.':s.delMode==='chatMessage'?'상대의 화면에서도 사라집니다.':s.delMode==='logout'?(lastAccount?'로그아웃하면 첫 화면으로 돌아갑니다. 임시 보관함의 글은 이 기기에 남습니다.':'임시 보관함의 글은 이 기기에 남습니다. 다시 로그인하면 이어서 쓸 수 있어요.'):s.delMode==='hideChat'?'새 메시지가 와도 알리지 않고, 목록에서 사라집니다.':s.delMode==='deleteChat'?'내 기기에서만 지워지고 상대에게는 남습니다.':s.delMode==='redraft'?'부스트와 좋아요는 사라지고, 내용은 작성창에 다시 채워집니다.':'삭제한 게시물은 되돌릴 수 없습니다.',delLabel:s.delMode==='cancelRequest'?'요청 취소':s.delMode==='deleteAccount'?'계속':s.delMode==='removeAccount'?'빼기':s.delMode==='chatMessage'?'삭제':s.delMode==='logout'?'로그아웃':s.delMode==='hideChat'?'숨기기':s.delMode==='deleteChat'?'삭제':s.delMode==='redraft'?'삭제 후 재작성':'삭제',
+      delTitle:s.delMode==='cancelRequest'?'팔로우 요청을 취소할까요?':s.delMode==='deleteAccount'?'계정을 삭제하러 가요':s.delMode==='removeAccount'?'이 기기에서 '+delAccFull+' 계정을 로그아웃할까요?':s.delMode==='list'?'리스트를 삭제할까요?':s.delMode==='chatMessage'?'메시지를 삭제할까요?':s.delMode==='logout'?delAccFull+'에서 로그아웃할까요?':s.delMode==='hideChat'?'대화를 숨길까요?':s.delMode==='deleteChat'?'대화를 삭제할까요?':s.delMode==='redraft'?'삭제 후 다시 작성할까요?':(delIsReply?'답글을 삭제할까요?':'게시물을 삭제할까요?'),delSub:s.delMode==='deleteAccount'?'브라우저에서 진행해요. 삭제하면 되돌릴 수 없어요.':s.delMode==='removeAccount'?'서버의 계정은 그대로 남아요.':s.delMode==='list'?'멤버와 게시물은 그대로 남아요.':s.delMode==='chatMessage'?'상대의 화면에서도 사라져요.':s.delMode==='logout'?(lastAccount?'로그아웃하면 첫 화면으로 돌아가요. 임시 보관함의 글은 이 기기에 남아요.':'임시 보관함의 글은 이 기기에 남아요. 다시 로그인하면 이어서 쓸 수 있어요.'):s.delMode==='hideChat'?'새 메시지가 와도 알리지 않고, 목록에서 사라져요.':s.delMode==='deleteChat'?'내 기기에서만 지워지고 상대에게는 남아요.':s.delMode==='redraft'?'부스트와 좋아요는 사라지고, 내용은 작성창에 다시 채워져요.':'삭제한 게시물은 되돌릴 수 없어요.',delLabel:s.delMode==='cancelRequest'?'요청 취소':s.delMode==='deleteAccount'?'계속':s.delMode==='removeAccount'?'로그아웃':s.delMode==='chatMessage'?'삭제':s.delMode==='logout'?'로그아웃':s.delMode==='hideChat'?'숨기기':s.delMode==='deleteChat'?'삭제':s.delMode==='redraft'?'삭제 후 재작성':'삭제',
       delHasSub:s.delMode!=='cancelRequest',delOverCls:s.sheet||s.drawer?'is-over-sheet':'',
       doDelete:()=>{if(s.delMode==='cancelRequest'){const k=s.delAccount;this.setState(st=>({overlay:null,delAccount:null,follow:{...st.follow,[k]:false}}));return;}
         if(s.delMode==='deleteAccount'){closeOverlay();openWeb();return;}
         if(s.delMode==='removeAccount'){const k=s.delAccount,rest=signedIn.filter(a=>a.u!==k);this.setState(st=>({overlay:null,delAccount:null,removedAccounts:{...st.removedAccounts,[k]:true},...(k===st.account?{account:rest[0].u,stack:[]}:{})}));return;}
-        if(s.delMode==='list'){const id=s.delListId;this.setState(st=>({overlay:null,swipeList:null,delListId:null,lists:st.lists.filter(l=>l.id!==id),stack:st.stack.filter(x=>!(x.k==='timeline'&&x.list===id)&&!(x.k==='people'&&x.kind==='members'&&x.id===id))}));return;}if(s.delMode==='chatMessage'){this.setState(st=>({overlay:null,chatDeleted:{...st.chatDeleted,[st.chatDelKey]:true}}));this.showToast({text:'메시지를 삭제했습니다'});return;}if(s.delMode==='logout'){this.setState({overlay:null,stack:[{k:'onboarding'}],drawer:false,sheet:false,accEdit:false,delAccount:null});return;}if(s.delMode==='hideChat'||s.delMode==='deleteChat'){const hide=s.delMode==='hideChat';this.setState(st=>({overlay:null,chatMute:hide?{...st.chatMute,[chatRec.id]:true}:st.chatMute,stack:st.stack.filter(x=>x.k!=='chat'&&x.k!=='chatInfo'),groups:st.groups.filter(g=>g.id!==chatRec.id),hiddenChats:{...(st.hiddenChats||{}),[chatRec.id]:true}}));this.showToast({text:hide?'대화를 숨겼습니다':'대화를 삭제했습니다'});return;}if(!dp)return;const redraft=s.delMode==='redraft';const top=s.stack[s.stack.length-1];const popDetail=top&&top.k==='detail'&&top.id===dp.id;this.setState(st=>({deleted:{...st.deleted,[dp.id]:true},overlay:null,stack:popDetail?st.stack.slice(0,-1):st.stack,...(redraft?{modal:'compose',text:(st.edits[dp.id]?st.edits[dp.id].text:dp.text),editOf:null,replyTo:null,quoteOf:null,media:[],poll:null,scheduled:null}:{})}));if(!redraft)this.showToast({text:'게시물이 삭제되었습니다'});},
+        if(s.delMode==='list'){const id=s.delListId;this.setState(st=>({overlay:null,swipeList:null,delListId:null,lists:st.lists.filter(l=>l.id!==id),stack:st.stack.filter(x=>!(x.k==='timeline'&&x.list===id)&&!(x.k==='people'&&x.kind==='members'&&x.id===id))}));return;}if(s.delMode==='chatMessage'){this.setState(st=>({overlay:null,chatDeleted:{...st.chatDeleted,[st.chatDelKey]:true}}));this.showToast({text:'메시지를 삭제했어요'});return;}if(s.delMode==='logout'){this.setState({overlay:null,stack:[{k:'onboarding'}],drawer:false,sheet:false,accEdit:false,delAccount:null});return;}if(s.delMode==='hideChat'||s.delMode==='deleteChat'){const hide=s.delMode==='hideChat';this.setState(st=>({overlay:null,chatMute:hide?{...st.chatMute,[chatRec.id]:true}:st.chatMute,stack:st.stack.filter(x=>x.k!=='chat'&&x.k!=='chatInfo'),groups:st.groups.filter(g=>g.id!==chatRec.id),hiddenChats:{...(st.hiddenChats||{}),[chatRec.id]:true}}));this.showToast({text:hide?'대화를 숨겼어요':'대화를 삭제했어요'});return;}if(!dp)return;const redraft=s.delMode==='redraft';const top=s.stack[s.stack.length-1];const popDetail=top&&top.k==='detail'&&top.id===dp.id;this.setState(st=>({deleted:{...st.deleted,[dp.id]:true},overlay:null,stack:popDetail?st.stack.slice(0,-1):st.stack,...(redraft?{modal:'compose',text:(st.edits[dp.id]?st.edits[dp.id].text:dp.text),editOf:null,replyTo:null,quoteOf:null,media:[],poll:null,scheduled:null}:{})}));if(!redraft)this.showToast({text:'게시물을 삭제했어요'});},
       settingsGroups,subTitle:subDef.title,subGroups,subDenied:sub==='notifs'&&osOff,openOsNotifs:()=>{clearTimeout(this._osT);this._osT=setTimeout(()=>this.setState({osNotifsDenied:false}),OS_RETURN_MS);},listMenuGroups,openMyProfile:()=>this.push({k:'profile',u:s.account}),back:this.back,ic,ic20,ic16,ic32,ic40,ov,closeOverlay,
       replyMentions,mentionMain,mentionOthers,hasMentionOthers:mentionOthers.length>0,mentionSheetOpen:!!s.mentionSheet||!!recip,replyPeopleRows:(s.replyPeople||[]).map(k=>this.user(k,T)),openMentionSheet:()=>this.setState({mentionSheet:true}),closeMentionSheet:()=>this.setState({mentionSheet:false,recipSheet:null}),
-      modalOpen:s.modal==='compose'||s.modal==='reply',isReply,isCompose,avCls:isReply||hasThread?'nd-avatar--md':'nd-avatar--lg',hasQuote:!!s.quoteOf,quote:this.quoteOf(s.quoteOf?s.quoteOf.id:null),replyTo,closeModal:()=>{if(s.editOf&&s.text!==(s.edits[s.editOf.id]?s.edits[s.editOf.id].text:s.editOf.text)){this.setState({overlay:'editDiscard'});return;}if((s.modal==='compose'||s.modal==='reply')&&!s.editOf&&(len||threadTyped||s.media.length||(s.poll&&s.poll.some(x=>x.trim())))){this.setState({overlay:'discard'});return;}clearTimeout(this._autoT);discardModal();},
+      modalOpen:s.modal==='compose'||s.modal==='reply',showKeyboard:!!s.keyboard&&(s.modal==='compose'||s.modal==='reply')&&!s.overlay,toolbarCls:s.keyboard&&(s.modal==='compose'||s.modal==='reply')&&!s.overlay?'nd-compose__toolbar--keyboard':'',kbRow1:KB_ROWS[0].map(l=>({l})),kbRow2:KB_ROWS[1].map(l=>({l})),kbRow3:KB_ROWS[2].map(l=>({l})),kbGlobe:this.svg('globe',24),kbEmoji:this.svg('smile',24),
+isReply,isCompose,avCls:isReply||hasThread?'nd-avatar--md':'nd-avatar--lg',hasQuote:!!s.quoteOf,quote:this.quoteOf(s.quoteOf?s.quoteOf.id:null),replyTo,closeModal:()=>{if(s.editOf&&s.text!==(s.edits[s.editOf.id]?s.edits[s.editOf.id].text:s.editOf.text)){this.setState({overlay:'editDiscard'});return;}if((s.modal==='compose'||s.modal==='reply')&&!s.editOf&&(len||threadTyped||s.media.length||(s.poll&&s.poll.some(x=>x.trim())))){this.setState({overlay:'discard'});return;}clearTimeout(this._autoT);discardModal();},
       showDrafts:isCompose&&!s.editOf,showVis:isCompose&&!s.editOf,submitLabel:s.editOf?'저장':(isReply?'답글':(s.scheduled?'예약':(s.quoteOf?'인용':'게시하기'))),isEdit:!!s.editOf,postCls:(len||s.media.length)&&!uploadFailed&&!overLimit?'':'is-disabled',hasUploadFailed:uploadFailed,
       composeSugg:(isCompose||isReply)&&!s.overlay?this.suggestFor(this.fieldText(activeIdx),t=>this.setThreadText(activeIdx,t)):{open:false,rows:[],announce:''},placeholder:s.poll?'질문을 입력하세요…':(isReply?'답글 게시하기':'지금 무슨 생각을 하고 있나요?'),textRows:isReply||hasThread?4:(s.media.length||s.quoteOf||s.poll?2:6),
       submitPost:()=>{if(!len&&!s.media.length)return;if(uploadFailed||overLimit)return;
         // P2-21: attachments without ALT → one confirmation before posting (off via 설정 › 게시 전 ALT 확인). P2-22: remember the CW used.
         if(!s.editOf&&!this._altSkip&&s.prefs.altCheck&&altMissing.length){this.setState({overlay:'altMissing'});return;}
         this._altSkip=false;const cwUsed=s.cwOn&&s.cwText.trim()?s.cwText.trim():'';if(cwUsed)this.setState(st=>({cwRecent:[cwUsed,...st.cwRecent.filter(x=>x!==cwUsed)].slice(0,CW_RECENT_MAX)}));
-        if(s.editOf){const id=s.editOf.id;this.setState(st=>({edits:{...st.edits,[id]:{text:st.text,when:'지금'}},modal:null,text:'',editOf:null}));this.showToast({text:'게시물이 수정되었습니다'});return;}if(s.scheduled){this.setState(st=>({scheduledPosts:[{text:st.text,when:st.scheduled},...st.scheduledPosts],modal:null,text:'',scheduled:null,media:[]}));return;}const pollOpts=(s.poll||[]).filter(x=>x.trim());const np={id:Date.now(),u:s.account,time:'지금',text:isReply?' '+s.text:s.text,vis:s.vis,c:[0,0,0],pre:isReply?activeMentions.map(u=>u.handle).join(' '):'',replyTo:isReply?s.replyTo.id:undefined,imgs:s.media.filter(i=>!MEDIA_VIDEOS[i]).length,media:mediaLocked?{kind:'video',dur:MEDIA_VIDEOS[s.media.find(i=>MEDIA_VIDEOS[i])]}:undefined,sensitive:sensOn&&s.media.length>0,quotePolicy:qpEff,cw:s.cwOn&&s.cwText.trim()?s.cwText.trim():undefined,quote:s.quoteOf?s.quoteOf.id:undefined,poll:pollOpts.length>=2?{opts:pollOpts,votes:pollOpts.map(()=>0),left:POLL_DURS[s.pollDur][0]+' 남음',total:0,multi:!!s.pollMulti}:undefined};const uploads=uploadPending?Object.fromEntries(s.media.map(i=>[i,s.uploads[i]||{st:'done'}])):null;
+        if(s.editOf){const id=s.editOf.id;this.setState(st=>({edits:{...st.edits,[id]:{text:st.text,when:'지금'}},modal:null,text:'',editOf:null}));this.showToast({text:'게시물을 수정했어요'});return;}if(s.scheduled){this.setState(st=>({scheduledPosts:[{text:st.text,when:st.scheduled},...st.scheduledPosts],modal:null,text:'',scheduled:null,media:[]}));return;}const pollOpts=(s.poll||[]).filter(x=>x.trim());const np={id:Date.now(),u:s.account,time:'지금',text:isReply?' '+s.text:s.text,vis:s.vis,c:[0,0,0],pre:isReply?activeMentions.map(u=>u.handle).join(' '):'',replyTo:isReply?s.replyTo.id:undefined,imgs:s.media.filter(i=>!MEDIA_VIDEOS[i]).length,media:mediaLocked?{kind:'video',dur:MEDIA_VIDEOS[s.media.find(i=>MEDIA_VIDEOS[i])]}:undefined,sensitive:sensOn&&s.media.length>0,quotePolicy:qpEff,cw:s.cwOn&&s.cwText.trim()?s.cwText.trim():undefined,quote:s.quoteOf?s.quoteOf.id:undefined,poll:pollOpts.length>=2?{opts:pollOpts,votes:pollOpts.map(()=>0),left:POLL_DURS[s.pollDur][0]+' 남음',total:0,multi:!!s.pollMulti}:undefined};const uploads=uploadPending?Object.fromEntries(s.media.map(i=>[i,s.uploads[i]||{st:'done'}])):null;
         // P1-11: later fields (empty ones skipped) share the first field's visibility and quote policy; each keeps its effective CW.
         const chain=s.thread.filter(f=>f.text.trim()).map((f,k)=>{const cw=this.fieldCw(f);return {id:np.id+k+1,u:s.account,time:'지금',text:f.text,vis:s.vis,c:[0,0,0],quotePolicy:qpEff,cw:cw.on&&cw.text?cw.text:undefined,selfThread:true};});
         clearTimeout(this._autoT);
@@ -3312,23 +3343,25 @@ class Component extends DCLogic {
       visIcon:this.svg(VIS[s.vis].icon,16),visLabel:VIS[s.vis].label+(qpEff!=='public'&&!quoteLocked?' · 인용 '+QUOTE_POLICIES[qpEff]:''),openVisMenu:()=>this.setState({overlay:'visMenu'}),
       visOptions:VIS_ORDER.map(k=>({label:VIS[k].label,desc:VIS[k].desc,icon:this.svg(VIS[k].icon,20),on:s.vis===k,cls:s.vis===k?'is-on':'',pick:()=>this.setState({vis:k})})),
       quoteOptions:Object.keys(QUOTE_POLICIES).map(k=>({label:QUOTE_POLICIES[k],on:qpEff===k,cls:qpEff===k?'is-on':'',itemCls:quoteLocked?'is-disabled':'',pick:()=>{if(!quoteLocked)this.setState({quotePolicy:k});}})),quoteLocked,
-      openEmoji:()=>this.setState({overlay:'emoji',emojiQ:'',emojiFor:null}),openChatEmoji:()=>this.setState({overlay:'emoji',emojiQ:'',emojiFor:'chat'}),emojiToolCls:s.overlay==='emoji'?'is-on':'',emojiQ:s.emojiQ,onEmojiQ:e=>this.setState({emojiQ:e.target.value}),emojiSections,emojiEmpty:emojiSections.length===0,emojiEmptyText:'"'+s.emojiQ.trim()+'"와 일치하는 이모지가 없습니다',
+      openEmoji:()=>this.setState({overlay:'emoji',emojiQ:'',emojiFor:null}),openChatEmoji:()=>this.setState({overlay:'emoji',emojiQ:'',emojiFor:'chat'}),emojiToolCls:s.overlay==='emoji'?'is-on':'',emojiQ:s.emojiQ,onEmojiQ:e=>this.setState({emojiQ:e.target.value}),emojiSections,emojiEmpty:emojiSections.length===0,emojiEmptyText:'"'+s.emojiQ.trim()+'"와 일치하는 이모지가 없어요',
       sensOn,sensCls:sensOn?'is-selected':'nd-chip--muted',toggleSensitive:()=>{if(!s.cwOn)this.setState({mediaSensitive:!s.mediaSensitive});},
       remain:String(remain),remainPct:Math.max(0,Math.min(100,alen*100/POST_LIMIT))+'%',remainCls:remain<20?'is-over':'',
       // P2-15: past the limit the count goes negative and a 12 alert "{n}자 초과" label sits to its left.
       isOverLimit:remain<0,overText:(-remain)+'자 초과',remainLabel:remain<0?(-remain)+'자 초과':remain+'자 남음',
-      canAddField:!s.editOf&&!s.scheduled,addField:()=>this.addField(),showScheduleTool:isCompose&&!hasThread,hasThread,threadFields,field0:fieldCounter(0),field0Line:hasThread,field0Foot:hasThread||fieldLen(0)>POST_LIMIT,editorCls:hasThread?'nd-thread-composer__editor':'',
-      restoreOffer:s.restoreOffer&&!!s.autosave,restoreDraft:this.restoreDraft,discardDraft,
-      openDrafts:()=>this.setState({overlay:'drafts'}),discardModal,saveDraft,discardTitle:isReply?'답글을 삭제할까요?':'게시물을 삭제할까요?',dtabDrafts:()=>this.setState({dtab:'drafts'}),dtabSched:()=>this.setState({dtab:'sched'}),
+      canAddField:!s.editOf&&!s.scheduled,addField:()=>this.addField(),showScheduleTool:isCompose&&!hasThread&&!s.editOf,hasThread,threadFields,field0:fieldCounter(0),field0Line:hasThread,field0Foot:hasThread||fieldLen(0)>POST_LIMIT,editorCls:hasThread?'nd-thread-composer__editor':'',
+      restoreOffer:s.restoreOffer&&!!s.autosave,restoreDraft:this.restoreDraft,
+      // D9: dismissing the offer keeps the text — it moves into 임시 보관함 (never silently lost).
+      dismissRestore:()=>this.setState(st=>({drafts:st.autosave?[this.draftOf(st.autosave),...st.drafts]:st.drafts,autosave:null,restoreOffer:false})),discardDraft,
+      openDrafts:()=>this.setState({overlay:'drafts'}),discardModal,saveDraft,dtabDrafts:()=>this.setState({dtab:'drafts'}),dtabSched:()=>this.setState({dtab:'sched'}),
       dtabDraftsCls:s.dtab==='drafts'?'is-selected':'',dtabSchedCls:s.dtab==='sched'?'is-selected':'',
       draftList,draftsEmpty:draftList.length===0,altAddFirst:()=>{if(altMissing.length)this.setState({overlay:'altEdit',altEdit:altMissing[0]});else this.setState({overlay:null});},
-      openMedia:()=>{if(mediaLocked)return;this.setState({overlay:'media',mediaSel:[...s.media],thumbMenu:null});},mediaLocked,mediaToolCls:mediaLocked?'is-disabled':'',thumbMenu,closeThumbMenu:e=>{if(e&&e.type==='contextmenu')e.preventDefault();this.setState({thumbMenu:null});},cancelThumbPress:()=>clearTimeout(this._thumbPress),mediaGrid,mediaTitle:s.mediaSel.length?`${s.mediaSel.length}개 선택됨`:'항목 선택',mediaHint:s.chatMediaFor?'보낼 사진을 선택합니다 · 한 번에 최대 4개':'최대 4개의 항목을 선택합니다.',
-      confirmMedia:()=>{if(!s.mediaSel.length)return;if(s.chatMediaFor){const id=s.chatMediaFor;s.mediaSel.forEach(()=>this.enqueueSend({kind:'chat',chatId:id,msg:{me:true,img:true}}));this.setState({overlay:null,chatMediaFor:null,mediaSel:[]});return;}this.setState(st=>({media:[...st.mediaSel],uploads:Object.fromEntries(st.mediaSel.map(i=>[i,st.media.includes(i)?st.uploads[i]||{st:'done'}:{st:'up',p:0}])),overlay:null}));this.ensureUploadTicker();},hasMedia:s.media.length>0,mediaAttached,mediaConfirmLabel:s.chatMediaFor?'보내기'+(s.mediaSel.length?' ('+s.mediaSel.length+')':''):'추가'+(s.mediaSel.length?' ('+s.mediaSel.length+')':''),mediaConfirmCls:s.mediaSel.length?'':'is-disabled',
+      openMedia:()=>{if(mediaLocked)return;this.setState({overlay:'media',mediaSel:[...s.media],thumbMenu:null});},mediaLocked,mediaToolCls:mediaLocked?'is-disabled':'',thumbMenu,closeThumbMenu:e=>{if(e&&e.type==='contextmenu')e.preventDefault();this.setState({thumbMenu:null});},cancelThumbPress:()=>clearTimeout(this._thumbPress),mediaGrid,mediaTitle:s.mediaSel.length?`${s.mediaSel.length}개 선택됨`:'사진',mediaNone:!s.mediaSel.length,
+      confirmMedia:()=>{if(!s.mediaSel.length)return;if(s.chatMediaFor){const id=s.chatMediaFor;s.mediaSel.forEach(()=>this.enqueueSend({kind:'chat',chatId:id,msg:{me:true,img:true}}));this.setState({overlay:null,chatMediaFor:null,mediaSel:[]});return;}this.setState(st=>({media:[...st.mediaSel],uploads:Object.fromEntries(st.mediaSel.map(i=>[i,st.media.includes(i)?st.uploads[i]||{st:'done'}:{st:'up',p:0}])),overlay:null}));this.ensureUploadTicker();},hasMedia:s.media.length>0,mediaAttached,mediaConfirmCls:s.mediaSel.length?'':'is-disabled',
       openSchedule:()=>this.setState({overlay:'schedule',schedStep:'date'}),schedIsDate:s.schedStep==='date',schedIsTime:s.schedStep==='time',
       schedMonthLabel:`${s.schedY}년 ${mm}월`,schedCells,schedFullText,
       schedPrev:()=>this.setState(st=>{const m=st.schedM-1;return m<0?{schedM:11,schedY:st.schedY-1,schedD:1}:{schedM:m,schedD:1};}),
       schedNext:()=>this.setState(st=>{const m=st.schedM+1;return m>11?{schedM:0,schedY:st.schedY+1,schedD:1}:{schedM:m,schedD:1};}),
-      schedClearLabel:s.scheduled?'예약 삭제':'취소',schedClear:()=>this.setState({scheduled:null,overlay:null}),
+      schedClear:()=>this.setState({scheduled:null,overlay:null}),
       schedToTime:()=>this.setState({schedStep:'time'}),schedToDate:()=>this.setState({schedStep:'date'}),timeCols,
       schedConfirm:()=>this.setState({scheduled:schedFullText,overlay:null}),
       hasScheduled:!!s.scheduled,scheduledText:s.scheduled||'',scheduleToolCls:s.scheduled?'is-on':'',scheduleToolIcon:this.svg(s.scheduled?'calSched':'calPlus',24),
