@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><link rel="stylesheet" href="./nalda-ios.css"></helmet>
+<div class="nd-post {{ post.postCls }}">
+  <sc-if value="{{ post.isPlaceholder }}" hint-placeholder-val="{{ false }}">
+    <div class="nd-post__row">
+      <div class="nd-post__rail"><sc-if value="{{ post.threadThrough }}" hint-placeholder-val="{{ false }}"><div class="nd-post__thread nd-post__thread--through"></div></sc-if></div>
+      <div class="nd-post__main">
+        <div class="nd-quote nd-quote--unavailable nd-post__placeholder"><span class="nd-glyph">{{ post.ph.icon }}</span><span class="nd-quote__state">{{ post.ph.text }}</span><sc-if value="{{ post.ph.canReveal }}" hint-placeholder-val="{{ false }}"><button onClick="{{ post.ph.reveal }}" class="nd-button nd-button--xs nd-button--plain">보기</button></sc-if></div>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ post.filtered }}" hint-placeholder-val="{{ false }}">
+    <div class="nd-post__filtered"><span>필터됨: {{ post.filterWord }}</span><button onClick="{{ post.showFiltered }}" class="nd-button nd-button--xs nd-button--plain">보기</button></div>
+  </sc-if>
+  <sc-if value="{{ post.notFiltered }}" hint-placeholder-val="{{ true }}">
+  <sc-if value="{{ post.hasBoost }}" hint-placeholder-val="{{ false }}">
+    <div class="nd-post__boost">{{ post.boostIcon16 }}<span>{{ post.boostedBy }} 님이 부스트함</span></div>
+  </sc-if>
+  <sc-if value="{{ post.isPinned }}" hint-placeholder-val="{{ false }}">
+    <div class="nd-post__boost">{{ post.pinIcon16 }}<span>고정됨</span></div>
+  </sc-if>
+  <div class="nd-post__row">
+    <div class="nd-post__rail">
+      <sc-if value="{{ post.threadUp }}" hint-placeholder-val="{{ false }}"><div class="nd-post__thread nd-post__thread--up"></div></sc-if>
+      <button onClick="{{ post.onProfile }}" class="nd-avatar nd-avatar--lg" style="background:{{ post.abg }};color:{{ post.afg }}">{{ post.ini }}</button>
+      <sc-if value="{{ post.threadDown }}" hint-placeholder-val="{{ false }}"><div class="nd-post__thread nd-post__thread--down"></div></sc-if>
+    </div>
+    <div class="nd-post__main">
+      <div class="nd-post__header">
+        <button onClick="{{ post.onProfile }}" aria-label="{{ post.name }}" class="nd-post__name"><span class="nd-post__name-prefix">{{ post.namePrefix }}</span><sc-if value="{{ post.hasNameRest }}" hint-placeholder-val="{{ false }}"><span class="nd-post__name-rest">{{ post.nameRest }}</span></sc-if><sc-if value="{{ post.hasNameEmoji }}" hint-placeholder-val="{{ false }}"><span class="nd-post__name-emoji">{{ post.nameEmoji }}</span></sc-if><sc-if value="{{ post.hasNameExtra }}" hint-placeholder-val="{{ false }}"><span class="nd-post__name-extra">{{ post.nameExtra }}</span></sc-if></button>
+        <button onClick="{{ post.onOpen }}" class="nd-post__handle-slot"><span class="nd-post__handle">{{ post.handle }}</span></button>
+        <button onClick="{{ post.onOpen }}" class="nd-post__time">· {{ post.time }}</button>
+        <span class="nd-post__vis">{{ post.vis }}</span>
+        <button onClick="{{ post.onMore }}" aria-label="더 보기" aria-haspopup="menu" class="nd-icon-button nd-post__more">{{ post.moreIcon }}</button>
+      </div>
+      <sc-if value="{{ post.hasReplyCtx }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ post.onReplyCtx }}" aria-label="{{ post.rcLabel }}" aria-haspopup="dialog" class="nd-reply-context"><span class="nd-reply-context__names">{{ post.rcNames }}</span>{{ post.rcSuffix }}</button>
+      </sc-if>
+      <sc-if value="{{ post.hasCw }}" hint-placeholder-val="{{ false }}">
+        <div class="nd-cw">
+          <span class="nd-cw__icon">{{ post.warnIcon }}</span>
+          <span class="nd-cw__text">{{ post.cw }}</span>
+          <button onClick="{{ post.onCw }}" class="nd-button nd-button--xs nd-button--plain">{{ post.cwLabel }}</button>
+        </div>
+      </sc-if>
+      <sc-if value="{{ post.showText }}" hint-placeholder-val="{{ true }}">
+        <p onClick="{{ post.onOpen }}" class="nd-post__text nd-body {{ post.textCls }}"><sc-if value="{{ post.hasPre }}" hint-placeholder-val="{{ false }}"><span class="nd-link">{{ post.pre }}</span></sc-if>{{ post.textNode }}<sc-if value="{{ post.hasLink }}" hint-placeholder-val="{{ false }}"> <span class="nd-link">{{ post.link }}</span></sc-if></p>
+        <sc-if value="{{ post.foldable }}" hint-placeholder-val="{{ false }}"><button onClick="{{ post.onFold }}" aria-expanded="{{ post.foldExpanded }}" class="nd-post__fold">{{ post.foldLabel }}</button></sc-if>
+      </sc-if>
+      <sc-if value="{{ post.imgs }}" hint-placeholder-val="{{ false }}">
+        <div class="nd-media {{ post.mediaCls }}">
+        <div class="nd-media__grid">
+          <button onClick="{{ post.openImage0 }}" class="nd-media__tile nd-stripes">이미지</button>
+          <sc-if value="{{ post.img2 }}" hint-placeholder-val="{{ false }}"><button onClick="{{ post.openImage1 }}" class="nd-media__tile nd-stripes">이미지</button></sc-if>
+        </div>
+        <sc-if value="{{ post.mediaHidden }}" hint-placeholder-val="{{ false }}"><button onClick="{{ post.revealMedia }}" aria-label="민감한 미디어 보기" class="nd-media__cover">{{ post.eyeOffIcon }}<span class="nd-media__cover-title">민감한 미디어</span><span class="nd-media__cover-sub">탭해서 보기</span></button></sc-if>
+        <sc-if value="{{ post.mediaCanHide }}" hint-placeholder-val="{{ false }}"><button onClick="{{ post.hideMedia }}" aria-label="미디어 가리기" class="nd-icon-button nd-icon-button--overlay nd-media__hide">{{ post.eyeOffIcon16 }}</button></sc-if>
+        </div>
+      </sc-if>
+      <sc-if value="{{ post.hasVideo }}" hint-placeholder-val="{{ false }}">
+        <div class="nd-media"><button onClick="{{ post.onVideo }}" aria-label="{{ post.videoLabel }}" class="nd-media__tile nd-media__tile--video nd-stripes"><sc-if value="{{ post.showPlay }}" hint-placeholder-val="{{ true }}"><span class="nd-media__play">{{ post.playIcon }}</span></sc-if><span class="nd-badge nd-badge--media nd-media__badge">{{ post.videoBadge }}</span></button><sc-if value="{{ post.hasTileMute }}" hint-placeholder-val="{{ false }}"><button onClick="{{ post.toggleMute }}" aria-label="{{ post.muteLabel }}" class="nd-icon-button nd-icon-button--overlay nd-media__mute">{{ post.muteIcon }}</button></sc-if></div>
+      </sc-if>
+      <sc-if value="{{ post.hasAudio }}" hint-placeholder-val="{{ false }}">
+        <div class="nd-audio">
+          <button onClick="{{ post.audio.toggle }}" aria-label="{{ post.audio.playLabel }}" class="nd-icon-button nd-icon-button--filled">{{ post.audio.playIcon }}</button>
+          <div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ post.audio.pctNum }}" class="nd-audio__progress"><span class="nd-audio__fill" style="width:{{ post.audio.pct }}"></span></div>
+          <span class="nd-audio__time">{{ post.audio.time }}</span>
+          <button onClick="{{ post.audio.toggleMute }}" aria-label="{{ post.audio.muteLabel }}" class="nd-icon-button nd-icon-button--overlay">{{ post.audio.muteIcon }}</button>
+        </div>
+      </sc-if>
+      <sc-if value="{{ post.hasCard }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ post.card.open }}" aria-label="{{ post.card.label }}" class="nd-link-card {{ post.card.cls }}"><sc-if value="{{ post.card.hasImage }}" hint-placeholder-val="{{ true }}"><span class="nd-link-card__image nd-stripes nd-stripes--link"></span></sc-if><span class="nd-link-card__body"><span class="nd-link-card__title">{{ post.card.title }}</span><span class="nd-link-card__domain">{{ post.card.domain }}</span></span></button>
+      </sc-if>
+      <sc-if value="{{ post.hasQuote }}" hint-placeholder-val="{{ false }}">
+        <sc-if value="{{ post.q.unavailable }}" hint-placeholder-val="{{ false }}">
+          <div class="nd-quote nd-quote--unavailable"><span class="nd-glyph">{{ post.q.stateIcon }}</span><span class="nd-quote__state">{{ post.q.stateText }}</span><sc-if value="{{ post.q.canReveal }}" hint-placeholder-val="{{ false }}"><button onClick="{{ post.q.reveal }}" class="nd-button nd-button--xs nd-button--plain">보기</button></sc-if></div>
+        </sc-if>
+        <sc-if value="{{ post.q.ok }}" hint-placeholder-val="{{ true }}">
+        <button onClick="{{ post.q.onOpen }}" class="nd-quote">
+          <div class="nd-quote__head">
+            <span class="nd-avatar nd-avatar--xs" style="background:{{ post.q.abg }};color:{{ post.q.afg }}">{{ post.q.ini }}</span>
+            <span class="nd-quote__name">{{ post.q.nameNode }}</span>
+            <span class="nd-quote__meta">{{ post.q.handle }} · {{ post.q.time }}</span>
+          </div>
+          <p class="nd-quote__text">{{ post.q.textNode }}</p>
+          <sc-if value="{{ post.q.imgs }}" hint-placeholder-val="{{ false }}"><div class="nd-quote__media nd-stripes">이미지</div></sc-if>
+        </button>
+        </sc-if>
+      </sc-if>
+      <sc-if value="{{ post.hasPoll }}" hint-placeholder-val="{{ false }}">
+        <div class="nd-poll">
+          <sc-if value="{{ post.poll.pending }}" hint-placeholder-val="{{ true }}">
+            <sc-for list="{{ post.poll.opts }}" as="o" hint-placeholder-count="2">
+              <button onClick="{{ o.vote }}" aria-pressed="{{ o.on }}" class="nd-poll__option {{ o.cls }}">{{ o.label }}</button>
+            </sc-for>
+            <sc-if value="{{ post.poll.showSubmit }}" hint-placeholder-val="{{ false }}">
+              <button onClick="{{ post.poll.submit }}" class="nd-button nd-button--xs nd-button--filled {{ post.poll.submitCls }}" style="align-self:flex-start">투표하기</button>
+            </sc-if>
+          </sc-if>
+          <sc-if value="{{ post.poll.showResult }}" hint-placeholder-val="{{ false }}">
+            <sc-for list="{{ post.poll.opts }}" as="o" hint-placeholder-count="2">
+              <div class="nd-poll__result {{ o.cls }}"><span class="nd-poll__bar" style="width:{{ o.w }}"></span><span class="nd-poll__line"><span class="nd-poll__label">{{ o.label }}<sc-if value="{{ o.mine }}" hint-placeholder-val="{{ false }}"><span class="nd-poll__mine">✓</span></sc-if></span><span class="nd-poll__pct">{{ o.pct }}</span></span></div>
+            </sc-for>
+          </sc-if>
+          <div class="nd-poll__meta">{{ post.poll.meta }}</div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ post.isSending }}" hint-placeholder-val="{{ false }}">
+        <div role="status" class="nd-send-status"><span class="nd-spinner">{{ post.spinIcon }}</span><span>{{ post.sendText }}</span></div>
+      </sc-if>
+      <sc-if value="{{ post.isFailed }}" hint-placeholder-val="{{ false }}">
+        <div role="alert" class="nd-send-status nd-send-status--failed">{{ post.failIcon }}<span class="nd-send-status__text">{{ post.failText }}</span><span class="nd-send-status__actions"><button onClick="{{ post.onRetry }}" class="nd-button nd-button--xs nd-button--plain">다시 시도</button><button onClick="{{ post.onDrop }}" class="nd-button nd-button--xs nd-button--plain-destructive">삭제</button></span></div>
+      </sc-if>
+      <sc-if value="{{ post.hasActions }}" hint-placeholder-val="{{ true }}">
+      <div class="nd-actions">
+        <button onClick="{{ post.onReply }}" aria-label="답글" class="nd-reaction">{{ post.replyIcon }}<span>{{ post.nRe }}</span></button>
+        <button onClick="{{ post.onBoost }}" aria-label="부스트" aria-haspopup="dialog" class="nd-reaction {{ post.boostCls }}">{{ post.boostIcon }}<span>{{ post.nBo }}</span></button>
+        <button onClick="{{ post.onLike }}" aria-label="좋아요" aria-pressed="{{ post.liked }}" class="nd-reaction {{ post.likeCls }}">{{ post.likeIcon }}<span>{{ post.nLi }}</span></button>
+        <button onClick="{{ post.onMark }}" aria-label="북마크" aria-pressed="{{ post.marked }}" class="nd-reaction {{ post.markCls }}">{{ post.markIcon }}</button>
+        <button onClick="{{ post.onShare }}" aria-label="공유" class="nd-reaction">{{ post.shareIcon }}</button>
+      </div>
+      </sc-if>
+    </div>
+  </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:402,&quot;height&quot;:200},&quot;post&quot;:{&quot;editor&quot;:null,&quot;default&quot;:null,&quot;tsType&quot;:&quot;object&quot;}}"></script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><style>body{margin:0;background:#FFFFFF}</style></helmet>
+<div style="max-width:1040px;margin:0 auto;padding:48px 32px 96px;font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo',Pretendard,'Noto Sans KR',sans-serif;color:#0F1419">
+  <div style="display:flex;align-items:baseline;gap:16px;flex-wrap:wrap">
+    <h1 style="margin:0;font-size:28px;font-weight:700;letter-spacing:-0.01em">Nalda 아이콘</h1>
+    <span style="font-size:15px;color:#536471">{{ total }}개 · Tabler · 24×24 viewBox · stroke 2 · round cap/join · currentColor</span>
+  </div>
+  <div style="display:flex;gap:8px;margin-top:20px;flex-wrap:wrap">
+    <sc-for list="{{ themes }}" as="t" hint-placeholder-count="3">
+      <button onClick="{{ t.pick }}" style="height:32px;padding:0 14px;border-radius:16px;font-size:14px;font-weight:600;border:1px solid {{ t.bd }};background:{{ t.bg }};color:{{ t.fg }}">{{ t.label }}</button>
+    </sc-for>
+    <span style="width:1px;background:#E5E7EB;margin:4px 8px"></span>
+    <button onClick="{{ copyAll }}" style="height:32px;padding:0 14px;border-radius:16px;font-size:14px;font-weight:600;border:1px solid #E5E7EB;color:#0F1419">{{ copyLabel }}</button>
+  </div>
+  <p style="margin:24px 0 0;max-width:640px;font-size:15px;line-height:22px;color:#536471;word-break:keep-all">모든 아이콘은 <code style="font:600 12px ui-monospace,Menlo,monospace">icons/</code>의 Tabler 파일입니다. 디자인 시안, iOS 에셋, 안드로이드 벡터 드로어블이 같은 파일을 씁니다. 오른쪽 아이콘은 켜짐 상태(<code style="font:600 12px ui-monospace,Menlo,monospace">*-fill.svg</code>)입니다. 카드를 누르면 해당 SVG 코드가 복사됩니다.</p>
+  <sc-for list="{{ groups }}" as="g" hint-placeholder-count="4">
+    <section style="margin-top:48px">
+      <div style="display:flex;align-items:baseline;gap:12px;padding-bottom:12px;border-bottom:1px solid #E5E7EB">
+        <h2 style="margin:0;font-size:17px;font-weight:600">{{ g.group }}</h2>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-top:16px">
+        <sc-for list="{{ g.items }}" as="it" hint-placeholder-count="6">
+          <button onClick="{{ it.copy }}" title="{{ it.svgText }}" style="display:flex;flex-direction:column;align-items:flex-start;gap:12px;padding:16px;border-radius:12px;background:{{ bg }};color:{{ fg }};border:1px solid {{ bd }};text-align:left;min-height:124px" style-hover="border-color:#8168F8">
+            <div style="display:flex;align-items:center;gap:12px;height:28px">{{ it.el }}<sc-if value="{{ it.hasActive }}" hint-placeholder-val="{{ false }}">{{ it.elActive }}</sc-if></div>
+            <div style="min-width:0;width:100%">
+              <div style="font:600 13px ui-monospace,Menlo,monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ it.key }}</div>
+              <div style="font:12px ui-monospace,Menlo,monospace;color:{{ mu }};margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ it.file }}</div>
+              <div style="font-size:12px;line-height:16px;color:{{ mu }};margin-top:2px;word-break:keep-all">{{ it.label }}</div>
+            </div>
+          </button>
+        </sc-for>
+      </div>
+    </section>
+  </sc-for>
+  <section style="margin-top:56px">
+    <div style="display:flex;align-items:baseline;gap:12px;padding-bottom:12px;border-bottom:1px solid #E5E7EB">
+      <h2 style="margin:0;font-size:17px;font-weight:600">그리기 규칙</h2>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px;margin-top:16px;font-size:14px;line-height:21px;color:#0F1419;word-break:keep-all">
+      <div><b style="font-weight:600">크기</b><br>하단 탭·상단 바·메뉴 24 · 게시물 반응 20 · 메타(공개 범위, 링크) 16. 아이콘이 작아도 터치 영역은 44×44.</div>
+      <div><b style="font-weight:600">선</b><br>모두 2 (Tabler). 끝과 꺾임은 모두 round. 켜짐 상태(활성 탭·좋아요·북마크·고정)는 선을 굵게 하지 않고 <code style="font:600 12px ui-monospace,Menlo,monospace">*-fill</code> 파일로 바꿉니다.</div>
+      <div><b style="font-weight:600">색</b><br>기본 foreground, 보조 정보는 muted, 선택된 탭은 라이트 color-brand / 다크 text-brand. 삭제·신고·차단은 alert, CW는 warning.</div>
+      <div><b style="font-weight:600">파일</b><br>원본은 <code style="font:600 12px ui-monospace,Menlo,monospace">icons/*.svg</code> + <code style="font:600 12px ui-monospace,Menlo,monospace">icons/INDEX.md</code>. <code style="font:600 12px ui-monospace,Menlo,monospace">nalda-icons.js</code>는 <code style="font:600 12px ui-monospace,Menlo,monospace">python tools/build-icons.py</code>로 생성되며 시안과 이 페이지가 같이 읽습니다.</div>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { theme:'White', icons:null, copied:'' };
+  async componentDidMount(){ const m = await import('./nalda-icons.js'); this.setState({icons:m}); }
+  svgText(key,size,on){
+    const {P,F}=this.state.icons;
+    return on
+      ?`<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="currentColor"><path d="${F[key]}"/></svg>`
+      :`<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="${P[key]}"/></svg>`;
+  }
+  el(key,size,on,color){
+    const {P,F}=this.state.icons;
+    return React.createElement('svg',{width:size,height:size,viewBox:'0 0 24 24',fill:on?'currentColor':'none',stroke:on?'none':'currentColor',strokeWidth:2,strokeLinecap:'round',strokeLinejoin:'round',style:{display:'block',color}},
+      React.createElement('path',{d:on?F[key]:P[key]}));
+  }
+  copy(t,label){ try{navigator.clipboard.writeText(t);}catch(e){} this.setState({copied:label}); clearTimeout(this._t); this._t=setTimeout(()=>this.setState({copied:''}),1200); }
+  renderVals(){
+    const TH={White:{bg:'#FFFFFF',fg:'#0F1419',mu:'#536471',bd:'#E5E7EB',tab:'#8168F8'},Dim:{bg:'#1B1C29',fg:'#E8E9F2',mu:'#9CA0B8',bd:'#33364A',tab:'#AF9FFB'},Black:{bg:'#000000',fg:'#E7E9EA',mu:'#8B98A5',bd:'#2F3336',tab:'#AF9FFB'}};
+    const T=TH[this.state.theme];
+    const themes=Object.keys(TH).map(k=>({label:k,pick:()=>this.setState({theme:k}),bg:k===this.state.theme?'#8168F8':'transparent',fg:k===this.state.theme?'#fff':'#0F1419',bd:k===this.state.theme?'#8168F8':'#E5E7EB'}));
+    const ic=this.state.icons;
+    if(!ic) return {themes,groups:[],total:'',bg:T.bg,fg:T.fg,mu:T.mu,bd:T.bd,copyLabel:'전체 SVG 복사'};
+    let total=0;
+    const groups=ic.ICONS.map(g=>({group:g.group,items:g.items.map(([key,label,file,filled])=>{
+      total++;
+      const size=g.group==='하단 탭'?24:(g.group==='게시물 반응'||g.group.includes('⋯')?20:(g.group.includes('공개 범위')?16:24));
+      const text=this.svgText(key,size,false);
+      const hasActive=!!filled;
+      return {key,label,file:filled?`${file} / ${filled}`:file,svgText:text,el:this.el(key,size,false),hasActive,
+        elActive:hasActive?this.el(key,size,true,T.tab):null,
+        copy:()=>this.copy(text,key)};
+    })}));
+    const all=ic.ICONS.flatMap(g=>g.items).map(([key,,file,filled])=>`<!-- ${key}: ${file} -->\n${this.svgText(key,24,false)}`+(filled?`\n<!-- ${key} on: ${filled} -->\n${this.svgText(key,24,true)}`:'')).join('\n');
+    return {themes,groups,total:String(total),bg:T.bg,fg:T.fg,mu:T.mu,bd:T.bd,
+      copyLabel:this.state.copied==='__all'?'복사됨':(this.state.copied?`${this.state.copied} 복사됨`:'전체 SVG 복사'),copyAll:()=>this.copy(all,'__all')};
+  }
+}
+</script>
+</body>
+</html>

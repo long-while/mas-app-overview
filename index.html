@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nalda 화면 미리보기</title>
+<meta name="description" content="Nalda(마스토돈 앱) iOS · Android 프로토타입 — 플랫폼, 테마, 화면을 골라 보기">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+:root {
+  --bg: #EDEBF3; --panel: #FFFFFF; --text: #0F1419; --muted: #536471; --line: #DCD8E6;
+  --brand: #7256F7; --brand-soft: #EEEAFE; --on-brand: #FFFFFF;
+  --space-xs: 4px; --space-sm: 8px; --space-md: 12px; --space-lg: 16px; --space-xl: 24px;
+  --radius-sm: 8px; --radius-full: 999px; --control-h: 36px; --bar-h: 64px;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #15171C; --panel: #1E2128; --text: #E7E9EA; --muted: #8B98A5; --line: #2F3440; --brand: #9B87FF; --brand-soft: #2A2548; --on-brand: #0F1419; }
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { height: 100%; margin: 0; }
+body {
+  overflow-x: hidden;
+  display: flex; flex-direction: column; background: var(--bg); color: var(--text);
+  font: 14px/20px -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard Variable", Pretendard, "Noto Sans KR", sans-serif;
+  word-break: keep-all;
+}
+.bar {
+  display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-md) var(--space-xl);
+  padding: var(--space-md) var(--space-lg); min-height: var(--bar-h);
+  background: var(--panel); border-bottom: 1px solid var(--line);
+}
+.bar__brand { display: flex; align-items: baseline; gap: var(--space-sm); margin-right: auto; }
+.bar__logo { font-size: 22px; line-height: 28px; font-weight: 700; color: var(--brand); letter-spacing: -0.02em; }
+.bar__sub { color: var(--muted); }
+.field { display: flex; align-items: center; gap: var(--space-sm); }
+.field__label { color: var(--muted); font-size: 13px; }
+.seg { display: inline-flex; padding: 2px; border-radius: var(--radius-full); background: var(--bg); border: 1px solid var(--line); }
+.seg button {
+  height: calc(var(--control-h) - 6px); padding: 0 var(--space-md); border: 0; border-radius: var(--radius-full);
+  background: transparent; color: var(--muted); font: inherit; font-weight: 600; cursor: pointer;
+}
+.seg button[aria-pressed="true"] { background: var(--brand); color: var(--on-brand); }
+.seg button:disabled { opacity: .4; cursor: not-allowed; }
+.picker { display: flex; align-items: center; gap: var(--space-xs); }
+.picker select {
+  height: var(--control-h); max-width: 320px; padding: 0 var(--space-md); border: 1px solid var(--line);
+  border-radius: var(--radius-sm); background: var(--panel); color: var(--text); font: inherit;
+}
+.icon-btn {
+  width: var(--control-h); height: var(--control-h); border: 1px solid var(--line); border-radius: var(--radius-sm);
+  background: var(--panel); color: var(--text); font: inherit; font-size: 16px; cursor: pointer;
+}
+.stage { position: relative; flex: 1; min-height: 0; overflow: auto; }
+.stage--screen { display: flex; justify-content: center; align-items: flex-start; gap: var(--space-xl); padding: var(--space-xl) var(--space-lg); }
+.phone { flex: none; display: flex; flex-direction: column; align-items: center; gap: var(--space-sm); }
+.phone__label { font-weight: 600; color: var(--muted); }
+.phone__box { position: relative; overflow: hidden; }
+.phone__box iframe { position: absolute; top: 0; left: 0; width: 412px; height: 922px; border: 0; transform-origin: 0 0; background: transparent; }
+.stage--all iframe { display: block; width: 100%; height: 100%; border: 0; }
+.loading {
+  position: absolute; top: var(--space-lg); left: 50%; transform: translateX(-50%); z-index: 1;
+  padding: var(--space-sm) var(--space-lg); border-radius: var(--radius-full); background: var(--panel); color: var(--muted);
+  border: 1px solid var(--line); pointer-events: none;
+}
+.loading[hidden] { display: none; }
+@media (max-width: 720px) {
+  .bar { gap: var(--space-sm); padding: var(--space-sm) var(--space-lg); }
+  .bar__brand { width: 100%; }
+  .field { width: 100%; justify-content: space-between; }
+  .field__label { flex: none; width: 40px; }
+  .seg { flex: 1; min-width: 0; }
+  .seg button { flex: 1; padding: 0 var(--space-sm); white-space: nowrap; }
+  .picker { width: 100%; }
+  .picker select { flex: 1; min-width: 0; max-width: none; }
+  .stage--screen { padding: var(--space-lg) var(--space-sm); gap: var(--space-sm); }
+}
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="bar__brand"><span class="bar__logo">Nalda</span><span class="bar__sub">화면 미리보기 v0.7</span></div>
+  <div class="field"><span class="field__label">플랫폼</span><div class="seg" data-key="p">
+    <button data-v="ios">iOS</button><button data-v="android">Android</button><button data-v="both">나란히</button></div></div>
+  <div class="field"><span class="field__label">테마</span><div class="seg" data-key="theme">
+    <button data-v="White">White</button><button data-v="Dim">Dim</button><button data-v="Black">Black</button></div></div>
+  <div class="field"><span class="field__label">보기</span><div class="seg" data-key="view">
+    <button data-v="all">전체 화면</button><button data-v="screen">한 화면</button></div></div>
+  <div class="field" id="sizeField"><span class="field__label">글자</span><div class="seg" data-key="size">
+    <button data-v="auto">플랫폼 기본</button><button data-v="작게 보기">작게</button><button data-v="기본">기본</button></div></div>
+  <div class="picker" id="picker">
+    <button class="icon-btn" id="prev" aria-label="이전 화면">‹</button>
+    <select id="screen" aria-label="화면"></select>
+    <button class="icon-btn" id="next" aria-label="다음 화면">›</button>
+  </div>
+</header>
+<main class="stage" id="stage"><div class="loading" id="loading">불러오는 중…</div></main>
+<script>
+(() => {
+  const DEFAULTS = { p: 'ios', theme: 'White', view: 'all', size: 'auto', screen: 'home' };
+  const FRAME_W = 412, FRAME_H = 922;
+  const q = new URLSearchParams(location.search);
+  const state = Object.fromEntries(Object.entries(DEFAULTS).map(([k, v]) => [k, q.get(k) || v]));
+  let screens = [];
+  const $ = id => document.getElementById(id);
+
+  const platforms = () => state.p === 'both' ? ['ios', 'android'] : [state.p];
+  const textSize = p => state.size !== 'auto' ? state.size : (p === 'ios' ? '작게 보기' : '기본');
+  const viewUrl = p => `view-${p}.dc.html?` + new URLSearchParams({ screen: state.screen, theme: state.theme, textSize: textSize(p) });
+  const overviewUrl = p => `overview-${p}.dc.html?` + new URLSearchParams({ theme: state.theme });
+
+  function syncUrl() {
+    const out = new URLSearchParams();
+    for (const [k, v] of Object.entries(state)) if (v !== DEFAULTS[k]) out.set(k, v);
+    history.replaceState(null, '', out.toString() ? '?' + out : location.pathname);
+  }
+
+  function syncControls() {
+    if (state.view === 'all' && state.p === 'both') state.p = 'ios';
+    document.querySelectorAll('.seg').forEach(seg => {
+      seg.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(state[seg.dataset.key] === b.dataset.v)));
+    });
+    document.querySelector('[data-key="p"] [data-v="both"]').disabled = state.view === 'all';
+    $('picker').hidden = state.view !== 'screen';
+    $('sizeField').hidden = state.view !== 'screen';
+    $('screen').value = state.screen;
+  }
+
+  function fitScale() {
+    const stage = $('stage');
+    const n = platforms().length;
+    const availW = (stage.clientWidth - 32 - (n - 1) * 24) / n;
+    const availH = stage.clientHeight - 48 - 28;
+    return Math.min(1, availW / FRAME_W, Math.max(availH, 480) / FRAME_H);
+  }
+
+  function frame(src) {
+    const f = document.createElement('iframe');
+    f.src = src;
+    f.title = 'Nalda 프로토타입';
+    f.addEventListener('load', () => { $('loading').hidden = true; });
+    return f;
+  }
+
+  function renderScreen(stage) {
+    stage.className = 'stage stage--screen';
+    const s = fitScale();
+    for (const p of platforms()) {
+      const box = document.createElement('div');
+      box.className = 'phone__box';
+      box.style.width = FRAME_W * s + 'px';
+      box.style.height = FRAME_H * s + 'px';
+      const f = frame(viewUrl(p));
+      f.style.transform = `scale(${s})`;
+      box.append(f);
+      const wrap = document.createElement('div');
+      wrap.className = 'phone';
+      const label = document.createElement('div');
+      label.className = 'phone__label';
+      label.textContent = p === 'ios' ? 'iOS' : 'Android';
+      wrap.append(label, box);
+      stage.append(wrap);
+    }
+  }
+
+  function render() {
+    syncControls();
+    syncUrl();
+    const stage = $('stage');
+    stage.querySelectorAll('.phone, iframe').forEach(el => el.remove());
+    $('loading').hidden = false;
+    if (state.view === 'all') {
+      stage.className = 'stage stage--all';
+      stage.append(frame(overviewUrl(state.p)));
+      return;
+    }
+    renderScreen(stage);
+  }
+
+  function step(delta) {
+    const i = screens.findIndex(s => s.key === state.screen);
+    const next = screens[(i + delta + screens.length) % screens.length];
+    if (next) { state.screen = next.key; render(); }
+  }
+
+  function fillScreens() {
+    const sel = $('screen');
+    const groups = new Map();
+    for (const s of screens) {
+      if (!groups.has(s.group)) groups.set(s.group, []);
+      groups.get(s.group).push(s);
+    }
+    for (const [group, list] of groups) {
+      const og = document.createElement('optgroup');
+      og.label = group;
+      for (const s of list) og.append(new Option(`${s.id} · ${s.label}`, s.key));
+      sel.append(og);
+    }
+  }
+
+  document.querySelectorAll('.seg').forEach(seg => seg.addEventListener('click', e => {
+    const b = e.target.closest('button');
+    if (!b || b.disabled || state[seg.dataset.key] === b.dataset.v) return;
+    state[seg.dataset.key] = b.dataset.v;
+    render();
+  }));
+  $('screen').addEventListener('change', e => { state.screen = e.target.value; render(); });
+  $('prev').addEventListener('click', () => step(-1));
+  $('next').addEventListener('click', () => step(1));
+  document.addEventListener('keydown', e => {
+    if (state.view !== 'screen' || e.target.tagName === 'SELECT') return;
+    if (e.key === 'ArrowLeft') step(-1);
+    if (e.key === 'ArrowRight') step(1);
+  });
+  let resizeT;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeT);
+    resizeT = setTimeout(() => { if (state.view === 'screen') render(); }, 200);
+  });
+
+  fetch('screens.json').then(r => r.json()).then(list => { screens = list; fillScreens(); render(); })
+    .catch(() => { render(); });
+})();
+</script>
+</body>
+</html>
