@@ -8,7 +8,7 @@
 
   // ---------- Cards ----------
 
-  function card(ctx, s, pool) {
+  function card(ctx, s, pool, compact = false) {
     const { el } = ctx;
     const node = el('article', 'card');
     node.id = `card-${s.key}`;
@@ -21,8 +21,13 @@
     open.append(box);
     open.addEventListener('click', () => ctx.go({ view: 'screen', screen: s.key }));
     pool.observe(box);
-    node.append(open, cardMeta(ctx, s), cardTitle(ctx, s));
-    if (s.detail) node.append(cardDetail(ctx, s));
+    if (compact) {
+      node.classList.add('card--compact');
+      node.append(open, cardTitle(ctx, s));
+    } else {
+      node.append(open, cardMeta(ctx, s), cardTitle(ctx, s));
+      if (s.detail) node.append(cardDetail(ctx, s));
+    }
     node.dataset.search = norm([s.code, s.title, s.key, s.id, s.detail].join(' '));
     return node;
   }
@@ -307,14 +312,13 @@
     const node = el('section', 'flow');
     node.id = `flow-${flow.id}`;
     const head = el('header', 'flow__head');
-    head.append(el('span', 'flow__num', String(index + 1)), el('h2', 'flow__title', flow.title),
-      el('span', 'flow__count', `${flow.steps.length}단계`), el('p', 'flow__summary', flow.summary));
+    head.append(el('span', 'flow__num', String(index + 1)), el('h2', 'flow__title', flow.title));
     const list = el('ol', 'flow__steps');
     list.setAttribute('aria-label', `${flow.title} 단계`);
-    flow.steps.forEach((key, i) => {
+    flow.steps.forEach((key) => {
       const s = ctx.data.byKey.get(key);
       const li = el('li', 'flow__step');
-      li.append(el('span', 'flow__stepnum', `${i + 1}단계`), card(ctx, s, pool));
+      li.append(card(ctx, s, pool, true));
       list.append(li);
     });
     node.append(head, list);
@@ -343,9 +347,7 @@
     const flows = ctx.data.content.flows;
     const main = el('div', 'doc-main doc-main--flows');
     const intro = el('header', 'page-head');
-    intro.append(el('h1', 'page-head__title', `핵심 흐름 ${flows.length}개`),
-      el('p', 'page-head__lead', '사용자가 가장 자주 지나는 길을 단계 순서대로 늘어놓았습니다. 옆으로 밀어 다음 단계를 보고, 카드를 누르면 크게 봅니다.'),
-      flowIndex(ctx));
+    intro.append(el('h1', 'page-head__title', '핵심 흐름'), flowIndex(ctx));
     main.append(intro, ...flows.map((f, i) => flowNode(ctx, f, i, pool)));
     stage.append(main);
     const target = ctx.state.sec && document.getElementById(`flow-${ctx.state.sec}`);
