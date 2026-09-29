@@ -309,7 +309,6 @@ div { scrollbar-width: none; }
 .nd-button--plain-destructive { color: var(--alert); padding-left: 0; padding-right: 0; }
 .nd-button--muted { color: var(--mu); }
 .nd-button--viewer { background: var(--nd-viewer-control); color: var(--nd-on-media); }
-.nd-button--float { box-shadow: var(--nd-shadow-float); }
 
 /* FollowButton = Button filled (팔로우) / outlined (팔로잉, 요청됨 muted) / self (나) */
 .nd-follow.is-following { background: transparent; border-color: var(--bd); color: var(--fg); }
@@ -366,7 +365,7 @@ div { scrollbar-width: none; }
   position: absolute; right: var(--nd-space-lg); bottom: var(--nd-above-tabbar); z-index: var(--nd-z-fab);
   width: var(--nd-fab); height: var(--nd-fab); border-radius: var(--nd-radius-full);
   background: var(--brand); color: var(--on-brand); display: flex; align-items: center; justify-content: center;
-  box-shadow: var(--nd-shadow-float); transition: transform .15s ease;
+  transition: transform .15s ease;
 }
 .nd-fab:hover { transform: scale(1.06); }
 .nd-fab:active { transform: scale(.96); opacity: var(--nd-opacity-pressed); }
@@ -641,21 +640,17 @@ button.nd-person-row:hover { background: var(--sf); }
 .nd-header--viewer { background: transparent; color: var(--nd-on-media); }
 .nd-header__counter { font-size: 15px; font-weight: 600; color: var(--nd-viewer-counter); }
 
-/* ---------- Tab bar (TabView mock, labels always shown) ---------- */
+/* ---------- Tab bar (TabView mock, icons only — the tab name is the accessibility label) ---------- */
 
 .nd-tabbar {
   box-sizing: border-box; flex: none; position: relative; z-index: var(--nd-z-tabbar); display: flex;
   height: var(--sys-tabbar); padding-bottom: var(--sys-home);
   border-top: var(--nd-stroke-hairline) solid var(--bd); background: var(--bg);
 }
-.nd-tabbar__item {
-  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--nd-space-xs);
-  color: var(--fg);
-}
+.nd-tabbar__item { flex: 1; display: flex; align-items: center; justify-content: center; color: var(--fg); }
 .nd-tabbar__item.is-selected { color: var(--tab); }
 .nd-tabbar__icon { position: relative; display: flex; }
 .nd-tabbar__badge { position: absolute; top: 0; right: calc(-1 * var(--nd-space-xs)); }
-.nd-tabbar__label { font-size: 10px; line-height: 12px; font-weight: 500; }
 
 /* ---------- 5.1 Sheet + scrim ---------- */
 
@@ -837,9 +832,13 @@ button.nd-person-row:hover { background: var(--sf); }
 .nd-post__name { font-size: var(--fs1, 15px); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: left; }
 .nd-post__meta { flex: 1; min-width: 0; font-size: var(--fs2, 15px); color: var(--mu); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: left; }
 .nd-post__vis { display: flex; flex: none; color: var(--mu); }
+/* ⋯ sits at the trailing edge (margin-left auto) with its glyph centred over the share reaction: the share glyph is the reaction's
+   inline padding in from the action bar's end, and the bar (pulled out by that padding on the left) stops at its max width —
+   the max() term moves ⋯ in by the same amount once the column is wider than that. */
 .nd-post__more {
-  margin: calc((var(--nd-post-header-lh) - var(--nd-touch)) / 2) calc((var(--nd-icon-sm) - var(--nd-touch)) / 2)
-          calc((var(--nd-post-header-lh) - var(--nd-touch)) / 2) calc(-1 * var(--nd-space-xs));
+  margin: calc((var(--nd-post-header-lh) - var(--nd-touch)) / 2)
+          calc((var(--nd-icon-sm) - var(--nd-touch)) / 2 + var(--nd-space-sm) + max(0px, 100cqw + var(--nd-space-sm) - var(--nd-actions-max-w)))
+          calc((var(--nd-post-header-lh) - var(--nd-touch)) / 2) auto;
   color: var(--mu);
 }
 .nd-post__more:hover { background: var(--sf); }
@@ -1113,7 +1112,14 @@ button.nd-quote:hover { background: var(--sf); }
 .nd-emoji-grid { display: grid; grid-template-columns: repeat(8, 1fr); }
 .nd-emoji-grid__cell { height: var(--nd-touch); display: flex; align-items: center; justify-content: center; border-radius: var(--nd-radius-sm); }
 .nd-emoji-grid__cell:hover { background: var(--sf); }
-.nd-emoji { color: var(--nd-on-media); }
+/* Custom emoji — one rule for every use. Inline (names, body, notification lines): a 1.2em tile whose baseline is its .78em glyph's
+   bottom edge (.21em above the tile's bottom), so vertical-align -.02em puts the tile's centre on the text's cap/Hangul centre and the
+   tile stays inside the line box (never changes line height). `--tile` = fixed-size picker / suggestion image (size set inline). */
+.nd-emoji {
+  display: inline-flex; align-items: center; justify-content: center; flex: none; width: 1.2em; height: 1.2em;
+  margin: 0 .08em; border-radius: .26em; vertical-align: -.02em; color: var(--nd-on-media);
+}
+.nd-emoji--tile { margin: 0; border-radius: var(--nd-radius-xs); vertical-align: middle; }
 
 /* Lists screen */
 .nd-list-disc { flex: none; width: var(--nd-avatar-lg); height: var(--nd-avatar-lg); border-radius: var(--nd-radius-full); display: flex; align-items: center; justify-content: center; }
@@ -1434,13 +1440,14 @@ button.nd-link-card:hover { background: var(--sf); }
 .nd-post__name { display: flex; align-items: center; flex: 0 1 auto; min-width: 0; }
 .nd-post__name-prefix { flex: none; white-space: pre; }
 .nd-post__name-rest { flex: 0 1 auto; min-width: 1em; white-space: pre; overflow: hidden; text-overflow: ellipsis; }
-.nd-post__name-emoji { flex: none; display: flex; align-items: center; padding-left: var(--nd-space-xs); }
+/* emoji runs are inline (not flex-centred) so they sit on the name's baseline via the .nd-emoji rule */
+.nd-post__name-emoji { flex: none; display: block; white-space: normal; padding-left: var(--nd-space-xs); }
 .nd-post__name-extra {
-  flex: 0 10000000 auto; min-width: 0; display: flex; flex-wrap: wrap; align-items: center;
+  flex: 0 10000000 auto; min-width: 0; display: block; white-space: normal;
   height: var(--nd-post-header-lh); overflow: hidden;
 }
 /* zero-width first item: an emoji that no longer fits wraps onto the hidden second line instead of being clipped */
-.nd-post__name-extra::before { content: ''; width: 0; height: var(--nd-post-header-lh); }
+.nd-post__name-extra::before { content: ''; display: inline-block; width: 0; }
 .nd-post__handle-slot { flex: 0 100000000 auto; min-width: 0; display: flex; flex-wrap: wrap; height: var(--nd-post-header-lh); overflow: hidden; text-align: left; }
 .nd-post__handle { flex: 1 1 0; min-width: 5ch; max-width: max-content; font-size: var(--fs2, 15px); color: var(--mu); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .nd-post__time { flex: none; font-size: var(--fs2, 15px); color: var(--mu); white-space: nowrap; text-align: left; }

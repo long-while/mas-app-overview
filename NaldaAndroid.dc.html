@@ -1200,7 +1200,7 @@
   <sc-if value="{{ showTabs }}" hint-placeholder-val="{{ true }}">
     <div role="tablist" class="nd-nav-bar">
       <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="4">
-        <button onClick="{{ t.go }}" role="tab" aria-selected="{{ t.active }}" aria-label="{{ t.label }}" class="nd-nav-bar__item {{ t.cls }}"><span class="nd-nav-bar__indicator">{{ t.icon }}<sc-if value="{{ t.badge }}" hint-placeholder-val="{{ false }}"><span class="nd-nav-bar__badge"></span></sc-if></span><sc-if value="{{ t.active }}" hint-placeholder-val="{{ false }}"><span class="nd-nav-bar__label">{{ t.label }}</span></sc-if></button>
+        <button onClick="{{ t.go }}" role="tab" aria-selected="{{ t.active }}" aria-label="{{ t.label }}" class="nd-nav-bar__item {{ t.cls }}"><span class="nd-nav-bar__indicator">{{ t.icon }}<sc-if value="{{ t.badge }}" hint-placeholder-val="{{ false }}"><span class="nd-nav-bar__badge"></span></sc-if></span></button>
       </sc-for>
     </div>
   </sc-if>
@@ -1536,9 +1536,9 @@
           <button onClick="{{ toggleCw }}" aria-label="내용 경고" aria-pressed="{{ cwOn }}" class="nd-icon-button {{ cwToolCls }}">{{ ic.warn }}</button>
           <button onClick="{{ openEmoji }}" aria-label="커스텀 이모지" class="nd-icon-button {{ emojiToolCls }}">{{ ic.smile }}</button>
           <sc-if value="{{ showScheduleTool }}" hint-placeholder-val="{{ true }}"><button onClick="{{ openSchedule }}" aria-label="예약" class="nd-icon-button {{ scheduleToolCls }}">{{ scheduleToolIcon }}</button></sc-if>
-          <sc-if value="{{ canAddField }}" hint-placeholder-val="{{ true }}"><button onClick="{{ addField }}" aria-label="글 이어 쓰기" class="nd-icon-button">{{ ic.plus }}</button></sc-if>
         </div>
         <div class="nd-compose__counter {{ remainCls }}" aria-label="{{ remainA11y }}"><sc-if value="{{ isOverActive }}" hint-placeholder-val="{{ false }}"><span class="nd-compose__over">{{ overText }}</span></sc-if><span>{{ remain }}</span><span class="nd-compose__ring" style="background:conic-gradient({{ ringColor }} {{ remainPct }}, var(--bd) 0)"><span class="nd-compose__ring-hole"></span></span></div>
+        <sc-if value="{{ canAddField }}" hint-placeholder-val="{{ true }}"><button onClick="{{ addField }}" aria-label="글 이어 쓰기" class="nd-icon-button">{{ ic.plus }}</button></sc-if>
       </div>
 
       <sc-if value="{{ ov.pollDur }}" hint-placeholder-val="{{ false }}"><div onClick="{{ closeOverlay }}" class="nd-menu-catcher"></div></sc-if>
@@ -2558,7 +2558,7 @@ class Component extends DCLogic {
   emoji(code,size){
     const e=EMOJI[code];if(!e)return ':'+code+':';
     const num=typeof size==='number';
-    return React.createElement('span',{role:'img','aria-label':':'+code+':',title:':'+code+':',style:{display:'inline-flex',alignItems:'center',justifyContent:'center',width:size,height:size,borderRadius:num?'var(--nd-radius-xs)':'.26em',background:e[0],color:'var(--on-brand)',verticalAlign:num?'middle':'-.22em',margin:num?0:'0 .08em',flex:'none'}},this.svg(e[1],num?Math.round(size*.64):'.78em',{fill:!!e[2]}));
+    return React.createElement('span',{role:'img','aria-label':':'+code+':',title:':'+code+':',className:num?'nd-emoji nd-emoji--tile':'nd-emoji',style:num?{width:size,height:size,background:e[0]}:{background:e[0]}},this.svg(e[1],num?Math.round(size*.64):'.78em',{fill:!!e[2]}));
   }
   rich(text){
     if(!text||text.indexOf(':')<0)return text;

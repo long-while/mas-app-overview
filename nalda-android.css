@@ -407,7 +407,7 @@ div { scrollbar-width: none; }
   position: absolute; right: var(--nd-space-lg); bottom: calc(var(--nd-nav-bar-h) + var(--nd-space-lg)); z-index: var(--nd-z-fab);
   width: var(--nd-fab); height: var(--nd-fab); border-radius: var(--nd-radius-lg);
   display: flex; align-items: center; justify-content: center;
-  background-color: var(--brand); color: var(--on-brand); box-shadow: var(--nd-shadow-float);
+  background-color: var(--brand); color: var(--on-brand);
 }
 
 /* ───────────── Avatar (components.md §2.1) */
@@ -764,10 +764,7 @@ div { scrollbar-width: none; }
   flex: none; height: var(--nd-nav-bar-h); display: flex; align-items: stretch; padding: 0 var(--nd-space-sm);
   box-sizing: border-box; background: var(--sf); position: relative; z-index: var(--nd-z-tabbar);
 }
-.nd-nav-bar__item {
-  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--nd-space-xs);
-  color: var(--mu);
-}
+.nd-nav-bar__item { flex: 1; display: flex; align-items: center; justify-content: center; color: var(--mu); }
 .nd-nav-bar__indicator {
   position: relative; width: var(--sys-nav-indicator-w); height: var(--sys-nav-indicator-h); flex: none;
   border-radius: var(--nd-radius-full); display: flex; align-items: center; justify-content: center;
@@ -776,7 +773,6 @@ div { scrollbar-width: none; }
 .nd-nav-bar__item:hover .nd-nav-bar__indicator { background-image: linear-gradient(var(--nd-state-hover), var(--nd-state-hover)); }
 .nd-nav-bar__item.is-selected { color: var(--selected-tab); }
 .nd-nav-bar__item.is-selected .nd-nav-bar__indicator { background-color: var(--hl); }
-.nd-nav-bar__label { font-size: 12px; line-height: 16px; font-weight: 500; color: var(--fg); }
 .nd-nav-bar__badge {
   position: absolute; top: var(--nd-space-xs); right: var(--nd-space-lg);
   width: var(--nd-unread-dot); height: var(--nd-unread-dot); border-radius: var(--nd-radius-full);
@@ -826,7 +822,7 @@ div { scrollbar-width: none; }
 .nd-post__avatar-col { width: var(--nd-avatar-lg); flex: none; display: flex; flex-direction: column; align-items: center; }
 .nd-post__thread-up { width: var(--nd-stroke-regular); height: var(--nd-space-sm); border-radius: var(--nd-stroke-hairline); background: var(--tl); margin: calc(-1 * var(--nd-space-md)) 0 var(--nd-space-xs); }
 .nd-post__thread-down { width: var(--nd-stroke-regular); flex: 1; min-height: var(--nd-space-md); border-radius: var(--nd-stroke-hairline); background: var(--tl); margin: var(--nd-space-xs) 0 calc(-1 * var(--nd-space-xs)); }
-.nd-post__main { flex: 1; min-width: 0; }
+.nd-post__main { flex: 1; min-width: 0; container-type: inline-size; }
 .nd-post__header { display: flex; align-items: center; gap: var(--nd-space-xs); min-width: 0; line-height: var(--lh1); }
 /* PostHeader truncation (P1-08): "· time", visibility and ⋯ never shrink → the handle shrinks first (flex-shrink 1000) and wraps out of
    its one-line slot once "@" + 2 characters + "…" no longer fit → then the name's rest ellipsizes; the first 4 characters and the
@@ -834,18 +830,23 @@ div { scrollbar-width: none; }
 .nd-post__name { display: flex; align-items: center; flex: 0 1 auto; min-width: 0; overflow: hidden; font-size: var(--fs1); font-weight: 600; text-align: left; }
 .nd-post__name-prefix { flex: none; white-space: pre; }
 .nd-post__name-rest { flex: 0 1 auto; min-width: 1em; white-space: pre; overflow: hidden; text-overflow: ellipsis; }
+/* inline emoji run: sits on the name's baseline (.nd-emoji rule); an emoji that no longer fits wraps onto the clipped 2nd line */
 .nd-post__name-emoji {
-  flex: 0 100 auto; min-width: calc(1.2em + var(--nd-space-xs)); box-sizing: border-box; display: flex; flex-wrap: wrap;
-  align-items: center; align-content: flex-start; height: var(--lh1); overflow: hidden; padding-left: var(--nd-space-xs);
+  flex: 0 100 auto; min-width: calc(1.2em + var(--nd-space-xs)); box-sizing: border-box; display: block; white-space: normal;
+  height: var(--lh1); overflow: hidden; padding-left: var(--nd-space-xs);
 }
 .nd-post__handle-slot { flex: 0 1000 auto; min-width: 0; display: flex; flex-wrap: wrap; height: var(--lh1); overflow: hidden; text-align: left; }
 .nd-post__handle { flex: 1 1 0; min-width: 5ch; max-width: max-content; font-size: var(--fs2); color: var(--mu); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.nd-post__time { flex: 1 0 auto; font-size: var(--fs2); color: var(--mu); white-space: nowrap; text-align: left; }
+.nd-post__time { flex: none; font-size: var(--fs2); color: var(--mu); white-space: nowrap; text-align: left; }
 .nd-post__vis { display: flex; flex: none; color: var(--mu); }
+/* ⋯ sits at the trailing edge (margin-left auto) with its glyph centred over the share reaction: the share glyph is the reaction's
+   inline padding in from the action bar's end, and the bar (pulled out by that padding on the left) stops at its max width —
+   the max() term moves ⋯ in by the same amount once the column is wider than that. */
 .nd-post__more {
   color: var(--mu);
-  margin: calc((var(--lh1) - var(--nd-touch)) / 2) calc(-1 * (var(--nd-touch) - var(--nd-icon-sm)) / 2)
-    calc((var(--lh1) - var(--nd-touch)) / 2) calc(-1 * var(--nd-space-xs));
+  margin: calc((var(--lh1) - var(--nd-touch)) / 2)
+    calc(-1 * (var(--nd-touch) - var(--nd-icon-sm)) / 2 + var(--nd-space-sm) + max(0px, 100cqw + var(--nd-space-sm) - var(--nd-action-bar-max-w)))
+    calc((var(--lh1) - var(--nd-touch)) / 2) auto;
 }
 .nd-post__text {
   margin: var(--nd-space-xs) 0 0; font-size: var(--fs1); line-height: var(--lh1);
@@ -979,7 +980,7 @@ div { scrollbar-width: none; }
 }
 .nd-refresh__spinner { display: flex; animation: ndSpin 1s linear infinite; }
 .nd-new-pill {
-  position: absolute; left: 50%; transform: translateX(-50%); z-index: var(--nd-z-fab); box-shadow: var(--nd-shadow-float);
+  position: absolute; left: 50%; transform: translateX(-50%); z-index: var(--nd-z-fab);
   animation: ndPop var(--nd-dur-fade) ease-out; transition: top var(--nd-dur-header) var(--nd-ease-emphasized);
 }
 
@@ -1066,10 +1067,14 @@ div { scrollbar-width: none; }
 .nd-compose__thumb-alt { position: absolute; left: var(--nd-space-sm); bottom: var(--nd-space-sm); }
 .nd-compose__note { margin-top: var(--nd-space-xs); font-size: 12px; line-height: 16px; color: var(--mu); word-break: keep-all; }
 .nd-compose__toolbar {
-  flex: none; display: flex; align-items: center; justify-content: space-between; height: var(--nd-row-min-settings);
+  flex: none; display: flex; align-items: center; justify-content: space-between; height: var(--nd-row-min-settings); gap: var(--nd-space-sm);
   padding: 0 var(--nd-space-xs); border-top: var(--nd-stroke-hairline) solid var(--bd); color: var(--tb);
 }
-.nd-compose__tools { flex: 1; display: flex; min-width: 0; overflow-x: auto; }
+.nd-compose__tools {
+  flex: 1; display: flex; min-width: 0; overflow-x: auto;
+  /* a tool cut off at the scroll edge fades out over one button padding instead of ending in a hard slice */
+  mask-image: linear-gradient(to left, transparent, black var(--nd-space-md));
+}
 /* Tools never shrink below the 48 touch target: when they don't fit, the tool row scrolls and the counter stays pinned at the end (android/README.md §4). */
 .nd-compose__tools .nd-icon-button { flex: none; }
 .nd-compose__counter { flex: none; display: flex; align-items: center; gap: var(--nd-space-sm); padding: 0 var(--nd-space-sm); font-size: 14px; line-height: 20px; font-weight: 500; color: var(--mu); }
@@ -1087,6 +1092,14 @@ div { scrollbar-width: none; }
 .nd-poll-editor__add { align-self: flex-start; }
 
 /* Emoji picker */
+/* Custom emoji — one rule for every use. Inline (names, body, notification lines): a 1.2em tile whose baseline is its .78em glyph's
+   bottom edge (.21em above the tile's bottom), so vertical-align -.02em puts the tile's centre on the text's cap/Hangul centre and the
+   tile stays inside the line box (never changes line height). `--tile` = fixed-size picker / suggestion image (size set inline). */
+.nd-emoji {
+  display: inline-flex; align-items: center; justify-content: center; flex: none; width: 1.2em; height: 1.2em;
+  margin: 0 .08em; border-radius: .26em; vertical-align: -.02em; color: var(--on-brand);
+}
+.nd-emoji--tile { margin: 0; border-radius: var(--nd-radius-xs); vertical-align: middle; }
 .nd-emoji-grid { display: grid; grid-template-columns: repeat(8, 1fr); }
 .nd-emoji-cell { height: var(--nd-touch); display: flex; align-items: center; justify-content: center; border-radius: var(--nd-radius-full); }
 .nd-emoji-scroll { flex: 1; min-height: 0; overflow-y: auto; padding: 0 var(--nd-space-sm); }

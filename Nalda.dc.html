@@ -35,7 +35,7 @@
         <sc-if value="{{ netOffline }}" hint-placeholder-val="{{ false }}"><div role="status" class="nd-banner nd-banner--action nd-home__banner">{{ ic16.offline }}<span class="nd-banner__text">오프라인 · 마지막으로 불러온 글을 보고 있어요</span><button onClick="{{ retryNet }}" class="nd-button nd-button--xs nd-button--plain">다시 시도</button></div></sc-if>
         <div role="status" aria-live="polite" class="nd-sr-only">{{ liveAnnounce }}</div>
         <sc-if value="{{ refreshing }}" hint-placeholder-val="{{ false }}"><div class="nd-home__spinner"><span class="nd-home__spin">{{ ic16.spinner }}</span></div></sc-if>
-        <sc-if value="{{ hasNewPill }}" hint-placeholder-val="{{ false }}"><button onClick="{{ loadNew }}" class="nd-button nd-button--sm nd-button--filled nd-button--float nd-home__pill {{ newPillCls }}">{{ ic16.arrowUp }}<span>{{ newPillLabel }}</span></button></sc-if>
+        <sc-if value="{{ hasNewPill }}" hint-placeholder-val="{{ false }}"><button onClick="{{ loadNew }}" class="nd-button nd-button--sm nd-button--filled nd-home__pill {{ newPillCls }}">{{ ic16.arrowUp }}<span>{{ newPillLabel }}</span></button></sc-if>
         <div ref="{{ homeRef }}" onScroll="{{ onHomeScroll }}" class="nd-scroll nd-scroll--fab nd-home__scroll {{ homeScrollCls }}">
           <sc-if value="{{ netError }}" hint-placeholder-val="{{ false }}"><div class="nd-empty-state"><span class="nd-empty-state__disc">{{ ic32.warn }}</span><div class="nd-empty-state__title">타임라인을 불러올 수 없어요</div><div class="nd-empty-state__body">nalda.kr이 응답하지 않습니다 (503). 서버 점검 중일 수 있어요.</div><div class="nd-empty-state__actions"><button onClick="{{ retryNet }}" class="nd-button nd-button--md nd-button--outlined">다시 시도</button><button onClick="{{ openServerInfo }}" class="nd-button nd-button--md nd-button--plain">서버 상태 보기</button></div></div></sc-if>
           <sc-if value="{{ homeEmpty }}" hint-placeholder-val="{{ false }}"><div class="nd-empty-state"><span class="nd-empty-state__disc nd-empty-state__disc--brand">{{ ic32.home }}</span><div class="nd-empty-state__title">아직 조용하네요</div><div class="nd-empty-state__body">팔로우한 사람의 글이 여기에 모입니다. 로컬 탭에서 이 서버 사람들을 둘러보세요.</div><div class="nd-empty-state__actions"><button onClick="{{ feedLocal }}" class="nd-button nd-button--md nd-button--outlined">로컬 둘러보기</button></div></div>
@@ -1255,7 +1255,7 @@
   <sc-if value="{{ showTabs }}" hint-placeholder-val="{{ true }}">
     <div role="tablist" class="nd-tabbar">
       <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="4">
-        <button onClick="{{ t.go }}" role="tab" aria-selected="{{ t.active }}" class="nd-tabbar__item {{ t.cls }}"><span class="nd-tabbar__icon">{{ t.icon }}<sc-if value="{{ t.badge }}" hint-placeholder-val="{{ false }}"><span class="nd-dot nd-dot--ring nd-tabbar__badge"></span></sc-if></span><span class="nd-tabbar__label">{{ t.label }}</span></button>
+        <button onClick="{{ t.go }}" role="tab" aria-selected="{{ t.active }}" aria-label="{{ t.label }}" class="nd-tabbar__item {{ t.cls }}"><span class="nd-tabbar__icon">{{ t.icon }}<sc-if value="{{ t.badge }}" hint-placeholder-val="{{ false }}"><span class="nd-dot nd-dot--ring nd-tabbar__badge"></span></sc-if></span></button>
       </sc-for>
     </div>
   </sc-if>
@@ -1609,9 +1609,9 @@
           <button onClick="{{ toggleCw }}" aria-label="내용 경고" aria-pressed="{{ cwOn }}" class="nd-icon-button {{ cwToolCls }}">{{ ic.warn }}</button>
           <button onClick="{{ openEmoji }}" aria-label="커스텀 이모지" class="nd-icon-button {{ emojiToolCls }}">{{ ic.smile }}</button>
           <sc-if value="{{ showScheduleTool }}" hint-placeholder-val="{{ true }}"><button onClick="{{ openSchedule }}" aria-label="예약" class="nd-icon-button {{ scheduleToolCls }}">{{ scheduleToolIcon }}</button></sc-if>
-          <sc-if value="{{ canAddField }}" hint-placeholder-val="{{ true }}"><button onClick="{{ addField }}" aria-label="글 이어 쓰기" class="nd-icon-button">{{ ic.plus }}</button></sc-if>
         </div>
         <div role="img" aria-label="{{ remainLabel }}" class="nd-compose__counter {{ remainCls }}"><sc-if value="{{ isOverLimit }}" hint-placeholder-val="{{ false }}"><span aria-hidden="true" class="nd-compose__over">{{ overText }}</span></sc-if><span aria-hidden="true">{{ remain }}</span><span class="nd-compose__ring" style="background:conic-gradient(var(--brand) {{ remainPct }}, var(--bd) 0)"></span></div>
+        <sc-if value="{{ canAddField }}" hint-placeholder-val="{{ true }}"><button onClick="{{ addField }}" aria-label="글 이어 쓰기" class="nd-icon-button">{{ ic.plus }}</button></sc-if>
       </div>
 
       <!-- VISIBILITY + QUOTE MENU (iOS pop-up menu, inside compose) -->
@@ -2685,7 +2685,7 @@ class Component extends DCLogic {
     const e=EMOJI[code];if(!e)return ':'+code+':';
     const num=typeof size==='number';
     // Tile = server image stand-in: Radius.xs corners; glyph snapped to the icon scale (28 tile → 16 glyph).
-    return React.createElement('span',{role:'img','aria-label':':'+code+':',title:':'+code+':',className:'nd-emoji',style:{display:'inline-flex',alignItems:'center',justifyContent:'center',width:size,height:size,borderRadius:num?'var(--nd-radius-xs)':'.26em',background:e[0],verticalAlign:num?'middle':'-.22em',margin:num?0:'0 .08em',flex:'none'}},this.svg(e[1],num?Math.round(size*.64/4)*4:'.78em',{fill:!!e[2]}));
+    return React.createElement('span',{role:'img','aria-label':':'+code+':',title:':'+code+':',className:num?'nd-emoji nd-emoji--tile':'nd-emoji',style:num?{width:size,height:size,background:e[0]}:{background:e[0]}},this.svg(e[1],num?Math.round(size*.64/4)*4:'.78em',{fill:!!e[2]}));
   }
   rich(text){
     if(!text||!/[:@]/.test(text))return text;
